@@ -13,9 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D2DC56D8-C96
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{14E8819C-AAD3-4111-A469-FC3D424040A7}"
 	ProjectSection(SolutionItems) = preProject
-		HDInsightSDK.vsmdi = HDInsightSDK.vsmdi
 		libraries.testsettings = libraries.testsettings
 		Local.testsettings = Local.testsettings
+		MicrosoftAvro.vsmdi = MicrosoftAvro.vsmdi
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "git", "git", "{55754CA3-22EA-490E-959E-D8178E3C60E4}"
