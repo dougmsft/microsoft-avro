@@ -3,7 +3,7 @@
 <TestSettings name="checkin" id="60dd83bb-f033-4e53-a3cb-fa613cc27dfb"
               xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
   <Description>These are default test settings for a local test run.</Description>
-  <Deployment userDeploymentRoot="..\..\..\TestResults" useDefaultDeploymentRoot="false" />
+  <Deployment userDeploymentRoot="TestResults" useDefaultDeploymentRoot="false" />
   <Execution>
     <TestTypeSpecific>
       <UnitTestRunConfig testTypeId="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b">

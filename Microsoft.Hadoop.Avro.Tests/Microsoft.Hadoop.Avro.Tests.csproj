@@ -7,7 +7,7 @@
     <SpecFlowTasksPath>$(LibraryNugetPackageFolder)\SpecFlow.1.9.0\tools\specflow.exe</SpecFlowTasksPath>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
-  <Import Project="..\..\..\..\tools\Library.Settings.targets" />
+  <Import Project="..\tools\Library.Settings.targets" />
   <Import Project="$(LibraryToolsFolder)\Test.Dependencies.target" />
   <ItemGroup>
     <Reference Include="Avro">
@@ -27,6 +27,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="CodeGenTests\GenerationVerification.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>GenerationVerification.feature.cs</LastGenOutput>
