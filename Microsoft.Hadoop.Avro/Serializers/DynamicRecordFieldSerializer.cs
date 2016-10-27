@@ -11,6 +11,7 @@ namespace Microsoft.Hadoop.Avro.SerializerBuilder
     using System.Linq.Expressions;
     using System.Reflection;
     using Microsoft.Hadoop.Avro.Schema;
+    using Microsoft.Hadoop.Avro.Serializers;
 
     internal sealed class DynamicRecordFieldSerializer : IFieldSerializer
     {

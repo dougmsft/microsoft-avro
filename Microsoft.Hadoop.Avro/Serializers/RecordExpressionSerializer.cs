@@ -12,6 +12,7 @@ namespace Microsoft.Hadoop.Avro.SerializerBuilder
     using System.Linq.Expressions;
     using System.Reflection;
     using Microsoft.Hadoop.Avro.Schema;
+    using Microsoft.Hadoop.Avro.Serializers;
 
     internal sealed class RecordSerializer : ObjectSerializerBase
     {
@@ -24,7 +25,7 @@ namespace Microsoft.Hadoop.Avro.SerializerBuilder
         private Delegate recursiveDeserializer;
         private Delegate recursiveSkipper;
 
-        public RecordExpressionSerializer(RecordSchema schema)
+        public RecordSerializer(RecordSchema schema)
         {
             this.schema = schema;
             this.visited = new HashSet<RecordSchema>();
@@ -41,7 +42,7 @@ namespace Microsoft.Hadoop.Avro.SerializerBuilder
             if (this.visited.Contains(this.schema))
             {
                 // Serializer has already been generated, access it using a level of indirection thru the serializer registry.
-                MethodInfo getSerializer = typeof(RecordExpressionSerializer)
+                MethodInfo getSerializer = typeof(RecordSerializer)
                     .GetMethod("GetSerializer")
                     .MakeGenericMethod(runtimeObjectType, encoderType);
                 MethodCallExpression serializer = Expression.Call(Expression.Constant(this), getSerializer);
@@ -97,7 +98,7 @@ namespace Microsoft.Hadoop.Avro.SerializerBuilder
 
             if (this.deserializerVisited.Contains(this.schema))
             {
-                MethodInfo getDeserializer = typeof(RecordExpressionSerializer).GetMethod("GetDeserializer").MakeGenericMethod(objectType, decoderType);
+                MethodInfo getDeserializer = typeof(RecordSerializer).GetMethod("GetDeserializer").MakeGenericMethod(objectType, decoderType);
                 MethodCallExpression serializer = Expression.Call(Expression.Constant(this), getDeserializer);
                 return Expression.Invoke(serializer, new[] { decoder });
             }
@@ -108,8 +109,8 @@ namespace Microsoft.Hadoop.Avro.SerializerBuilder
 
             var body = new List<Expression>();
 
-            MethodInfo info = typeof(RecordExpressionSerializer).GetMethod("CreateRecord");
-            Expression newObject = Expression.Call(Expression.Constant(this, typeof(RecordExpressionSerializer)), info);
+            MethodInfo info = typeof(RecordSerializer).GetMethod("CreateRecord");
+            Expression newObject = Expression.Call(Expression.Constant(this, typeof(RecordSerializer)), info);
             body.Add(Expression.Assign(instance, newObject));
 
             foreach (RecordField field in this.schema.Fields)
@@ -140,7 +141,7 @@ namespace Microsoft.Hadoop.Avro.SerializerBuilder
         {
             if (this.skipperVisited.Contains(this.schema))
             {
-                MethodInfo getSkipper = typeof(RecordExpressionSerializer).GetMethod("GetSkipper").MakeGenericMethod(decoderType);
+                MethodInfo getSkipper = typeof(RecordSerializer).GetMethod("GetSkipper").MakeGenericMethod(decoderType);
                 MethodCallExpression skipper = Expression.Call(Expression.Constant(this), getSkipper);
                 return Expression.Invoke(skipper, new[] { decoder });
             }

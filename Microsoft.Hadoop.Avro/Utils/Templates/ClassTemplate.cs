@@ -14,6 +14,7 @@ namespace Microsoft.Hadoop.Avro.Utils.Templates
     using System.Globalization;
     using System.Linq;
     using Microsoft.Hadoop.Avro.Schema;
+    using Microsoft.Hadoop.Avro.Utils;
     
     /// <summary>
     /// Class to produce the template output
@@ -533,7 +534,7 @@ this.Write("}");
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;
-        private global::System.CodeDom.Compiler.CompilerErrorCollection errorsField;
+        private CompilerErrorCollection errorsField;
         private global::System.Collections.Generic.List<int> indentLengthsField;
         private string currentIndentField = "";
         private bool endsWithNewline;
@@ -561,13 +562,13 @@ this.Write("}");
         /// <summary>
         /// The error collection for the generation process
         /// </summary>
-        public System.CodeDom.Compiler.CompilerErrorCollection Errors
+        public CompilerErrorCollection Errors
         {
             get
             {
                 if ((this.errorsField == null))
                 {
-                    this.errorsField = new global::System.CodeDom.Compiler.CompilerErrorCollection();
+                    this.errorsField = new CompilerErrorCollection();
                 }
                 return this.errorsField;
             }
@@ -682,7 +683,7 @@ this.Write("}");
         /// </summary>
         public void Error(string message)
         {
-            System.CodeDom.Compiler.CompilerError error = new global::System.CodeDom.Compiler.CompilerError();
+            CompilerError error = new CompilerError();
             error.ErrorText = message;
             this.Errors.Add(error);
         }
@@ -691,7 +692,7 @@ this.Write("}");
         /// </summary>
         public void Warning(string message)
         {
-            System.CodeDom.Compiler.CompilerError error = new global::System.CodeDom.Compiler.CompilerError();
+            CompilerError error = CompilerError();
             error.ErrorText = message;
             error.IsWarning = true;
             this.Errors.Add(error);
