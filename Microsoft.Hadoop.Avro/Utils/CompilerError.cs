@@ -17,17 +17,15 @@
 namespace Microsoft.Hadoop.Avro.Utils
 {
     using System;
-    using System.Collections;
+    using System.Collections.Generic;
 
-    class CompilerError
+    public class CompilerError
     {
         private string errorText;
         private bool   isWarning;
-        private IList  errorList;
 
         public CompilerError()
         {
-            errorList = new IList();
         }
 
         public string ErrorText
@@ -44,45 +42,21 @@ namespace Microsoft.Hadoop.Avro.Utils
 
     }
 
-    class CompilerErrorCollection : System.Collections.ICollection
+    public class CompilerErrorCollection
     {
-        int ICollection.Count
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        private SortedDictionary<int,CompilerError>  errors;
 
-        bool ICollection.IsSynchronized
+        public CompilerErrorCollection()
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        object ICollection.SyncRoot
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            errors = new SortedDictionary<int,CompilerError>();
         }
 
         public int Add(CompilerError value)
         {
-            return errorList.Add(value);
+            var count = errors.Count;
+            errors.Add(count,value);
+            return count;
         }
 
-        void ICollection.CopyTo(Array array, int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
