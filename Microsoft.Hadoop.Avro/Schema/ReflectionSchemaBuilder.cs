@@ -161,7 +161,7 @@ namespace Microsoft.Hadoop.Avro.Schema
                 return schema;
             }
 
-            if ((type.IsInterface || type.IsAbstract)
+            if ((type.GetTypeInfo().IsInterface || type.GetTypeInfo().IsAbstract)
                 || this.HasApplicableKnownType(type))
             {
                 return this.BuildKnownTypeSchema(type, schemas, currentDepth);
@@ -198,7 +198,7 @@ namespace Microsoft.Hadoop.Avro.Schema
         /// <exception cref="System.Runtime.Serialization.SerializationException">Thrown when <paramref name="type"/> is not supported.</exception>
         private TypeSchema BuildComplexTypeSchema(Type type, Dictionary<string, NamedSchema> schemas, uint currentDepth)
         {
-            if (type.IsEnum)
+            if (type.GetTypeInfo().IsEnum)
             {
                 return this.BuildEnumTypeSchema(type, schemas);
             }
@@ -211,7 +211,7 @@ namespace Microsoft.Hadoop.Avro.Schema
             // Dictionary
             Type dictionaryType = type
                 .GetAllInterfaces()
-                .SingleOrDefault(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
+                .SingleOrDefault(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
 
             if (dictionaryType != null
                 && (dictionaryType.GetGenericArguments()[0] == typeof(string)
@@ -226,7 +226,7 @@ namespace Microsoft.Hadoop.Avro.Schema
             // Enumerable
             Type enumerableType = type
                 .GetAllInterfaces()
-                .SingleOrDefault(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+                .SingleOrDefault(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
             if (enumerableType != null)
             {
                 var itemType = enumerableType.GetGenericArguments()[0];
@@ -244,7 +244,7 @@ namespace Microsoft.Hadoop.Avro.Schema
             }
 
             // Others
-            if (type.IsClass || type.IsValueType)
+            if (type.GetTypeInfo().IsClass || type.GetTypeInfo().IsValueType)
             {
                 return this.BuildRecordTypeSchema(type, schemas, currentDepth);
             }
@@ -388,7 +388,7 @@ namespace Microsoft.Hadoop.Avro.Schema
             }
             
             var result = attribute.TypeAlternatives.ToList();
-            if (memberType != typeof(object) && !memberType.IsAbstract && !memberType.IsInterface)
+            if (memberType != typeof(object) && !memberType.GetTypeInfo().IsAbstract && !memberType.GetTypeInfo().IsInterface)
             {
                 result.Add(memberType);
             }

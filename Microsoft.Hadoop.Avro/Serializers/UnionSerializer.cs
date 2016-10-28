@@ -24,6 +24,7 @@ namespace Microsoft.Hadoop.Avro.Serializers
     using System.Collections.Generic;
     using System.Runtime.Serialization;
     using Microsoft.Hadoop.Avro.Schema;
+    using System.Reflection;
 
     /// <summary>
     /// Serializer of Union, used for reference types and interfaces/abstract classes.
@@ -172,12 +173,12 @@ namespace Microsoft.Hadoop.Avro.Serializers
 
         private int MoreSpecializedTypesFirst(IndexedSchema s1, IndexedSchema s2)
         {
-            if (s1.Schema.RuntimeType.IsAssignableFrom(s2.Schema.RuntimeType))
+            if (s1.Schema.RuntimeType.GetTypeInfo().IsAssignableFrom(s2.Schema.RuntimeType))
             {
                 return 1;
             }
 
-            if (s2.Schema.RuntimeType.IsAssignableFrom(s1.Schema.RuntimeType))
+            if (s2.Schema.RuntimeType.GetTypeInfo().IsAssignableFrom(s1.Schema.RuntimeType))
             {
                 return -1;
             }
@@ -262,7 +263,7 @@ namespace Microsoft.Hadoop.Avro.Serializers
                 var mapSchema = this.itemSchemas[i] as MapSchema;
                 if (mapSchema != null)
                 {
-                    var valueType = dictionary.GetType().GetGenericArguments()[1];
+                    var valueType = dictionary.GetType().GetTypeInfo().GetGenericArguments()[1];
                     if (mapSchema.ValueSchema.RuntimeType == valueType)
                     {
                         encoder.Encode(i);

@@ -103,7 +103,7 @@ namespace Microsoft.Hadoop.Avro
 
             if (type.GetTypeInfo().IsInterface ||
                 type.IsNativelySupported() ||
-                (type.GetTypeInfo().IsEnum && !type.GetCustomAttributes(false).OfType<DataContractAttribute>().Any()))
+                (type.GetTypeInfo().IsEnum && !type.GetTypeInfo().GetCustomAttributes(false).OfType<DataContractAttribute>().Any()))
             {
                 return new TypeSerializationInfo
                 {
@@ -115,7 +115,7 @@ namespace Microsoft.Hadoop.Avro
 
             type = Nullable.GetUnderlyingType(type) ?? type;
 
-            var attributes = type.GetCustomAttributes(false);
+            var attributes = type.GetTypeInfo().GetCustomAttributes(false);
             var dataContract = attributes.OfType<DataContractAttribute>().SingleOrDefault();
             if (dataContract == null)
             {

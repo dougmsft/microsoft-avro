@@ -192,7 +192,7 @@ namespace Microsoft.Hadoop.Avro.Serializers
             var body = new List<Expression>();
 
             // Check for null.
-            if (!this.Schema.RuntimeType.IsValueType)
+            if (!this.Schema.RuntimeType.GetTypeInfo().IsValueType)
             {
                 var exception =
                     new SerializationException(

@@ -49,7 +49,7 @@ namespace Microsoft.Hadoop.Avro.Serializers
             }
 
             var member = this.GetMember(@object);
-            if (this.schema.TypeSchema.RuntimeType.IsValueType ||
+            if (this.schema.TypeSchema.RuntimeType.GetTypeInfo().IsValueType ||
                 this.schema.MemberInfo is FieldInfo)
             {
                 return this.schema.TypeSchema.Serializer.BuildSerializer(encoder, member);
@@ -74,7 +74,7 @@ namespace Microsoft.Hadoop.Avro.Serializers
 
             var value = this.schema.TypeSchema.Serializer.BuildDeserializer(decoder);
             var member = this.GetMember(@object);
-            if (@object.Type.IsValueType)
+            if (@object.Type.GetTypeInfo().IsValueType)
             {
                 var tmp = Expression.Variable(value.Type);
                 return Expression.Block(

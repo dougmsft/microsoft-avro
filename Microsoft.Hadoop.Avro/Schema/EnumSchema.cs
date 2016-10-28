@@ -20,6 +20,7 @@ namespace Microsoft.Hadoop.Avro.Schema
     using System.Diagnostics;
     using System.Globalization;
     using System.Linq;
+    using System.Reflection;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -65,7 +66,7 @@ namespace Microsoft.Hadoop.Avro.Schema
             this.valueToSymbol = new Dictionary<int, string>();
             this.avroToCSharpValueMapping = new List<long>();
 
-            if (runtimeType.IsEnum)
+            if (runtimeType.GetTypeInfo().IsEnum)
             {
                 this.symbols = Enum.GetNames(runtimeType).ToList();
                 Array values = Enum.GetValues(runtimeType);

@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 namespace Microsoft.Hadoop.Avro.Resources {
-    using System;
+    using System.Reflection;
     
     
     /// <summary>
@@ -39,7 +39,8 @@ namespace Microsoft.Hadoop.Avro.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Hadoop.Avro.Resources.StringResources", typeof(StringResources).Assembly);
+                    global::System.Resources.ResourceManager temp =
+                        new global::System.Resources.ResourceManager("Microsoft.Hadoop.Avro.Resources.StringResources", typeof(StringResources).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

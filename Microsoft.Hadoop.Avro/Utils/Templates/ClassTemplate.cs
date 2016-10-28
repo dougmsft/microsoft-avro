@@ -13,6 +13,7 @@ namespace Microsoft.Hadoop.Avro.Utils.Templates
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Reflection;
     using Microsoft.Hadoop.Avro.Schema;
     using Microsoft.Hadoop.Avro.Utils;
     
@@ -770,7 +771,7 @@ this.Write("}");
                     throw new global::System.ArgumentNullException("objectToConvert");
                 }
                 System.Type t = objectToConvert.GetType();
-                System.Reflection.MethodInfo method = t.GetMethod("ToString", new System.Type[] {
+                System.Reflection.MethodInfo method = t.GetTypeInfo().GetMethod("ToString", new System.Type[] {
                             typeof(System.IFormatProvider)});
                 if ((method == null))
                 {

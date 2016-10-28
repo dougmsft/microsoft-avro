@@ -45,7 +45,7 @@ namespace Microsoft.Hadoop.Avro.Serializers
             var surrogate = Expression.Constant(this.settings.Surrogate);
             MethodInfo serialize = typeof(IAvroSurrogate).GetMethod("GetObjectToSerialize");
 
-            Expression castValue = this.Schema.RuntimeType.IsValueType ? Expression.Convert(value, typeof(object)) : value;
+            Expression castValue = this.Schema.RuntimeType.GetTypeInfo().IsValueType ? Expression.Convert(value, typeof(object)) : value;
 
             Expression obj = Expression.TypeAs(
                 Expression.Call(surrogate, serialize, new[] { castValue, Expression.Constant(this.Schema.SurrogateType) }),
@@ -65,7 +65,7 @@ namespace Microsoft.Hadoop.Avro.Serializers
             MethodInfo deserialize = typeof(IAvroSurrogate).GetMethod("GetDeserializedObject");
 
             Expression deserialized = Expression.Call(surrogate, deserialize, new[] { obj, Expression.Constant(this.Schema.RuntimeType) });
-            return this.Schema.RuntimeType.IsValueType
+            return this.Schema.RuntimeType.GetTypeInfo().IsValueType
                 ? Expression.Convert(deserialized, this.Schema.RuntimeType)
                 : Expression.TypeAs(deserialized, this.Schema.RuntimeType);
         }

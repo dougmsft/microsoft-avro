@@ -34,7 +34,7 @@ namespace Microsoft.Hadoop.Avro
         /// <returns>True if type t has a public parameter-less constructor, false otherwise.</returns>
         public static bool HasParameterlessConstructor(this Type type)
         {
-            return type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) != null;
+            return type.GetTypeInfo().GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) != null;
         }
 
         /// <summary>
@@ -49,16 +49,16 @@ namespace Microsoft.Hadoop.Avro
             return type == typeof(IntPtr)
                 || type == typeof(UIntPtr)
                 || type == typeof(object)
-                || type.ContainsGenericParameters
+                || type.GetTypeInfo().ContainsGenericParameters
                 || (!type.IsArray
-                && !type.IsValueType
+                && !type.GetTypeInfo().IsValueType
                 && !type.IsAnonymous()
                 && !type.HasParameterlessConstructor()
                 && type != typeof(string)
                 && type != typeof(Uri)
-                && !type.IsAbstract
-                && !type.IsInterface
-                && !(type.IsGenericType && SupportedInterfaces.Contains(type.GetGenericTypeDefinition())));
+                && !type.GetTypeInfo().IsAbstract
+                && !type.GetTypeInfo().IsInterface
+                && !(type.GetTypeInfo().IsGenericType && SupportedInterfaces.Contains(type.GetGenericTypeDefinition())));
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace Microsoft.Hadoop.Avro
                 || type.IsArray
                 || type.IsKeyValuePair()
                 || type.GetAllInterfaces()
-                       .FirstOrDefault(t => t.IsGenericType && 
+                       .FirstOrDefault(t => t.GetTypeInfo().IsGenericType && 
                                             t.GetGenericTypeDefinition() == typeof(IEnumerable<>)) != null;
         }
 
@@ -106,8 +106,8 @@ namespace Microsoft.Hadoop.Avro
 
         public static bool IsAnonymous(this Type type)
         {
-            return type.IsClass
-                && type.GetCustomAttributes(false).Any(a => a is CompilerGeneratedAttribute)
+            return type.GetTypeInfo().IsClass
+                && type.GetTypeInfo().GetCustomAttributes(false).Any(a => a is CompilerGeneratedAttribute)
                 && !type.IsNested
                 && type.Name.StartsWith("<>", StringComparison.Ordinal)
                 && type.Name.Contains("__Anonymous");
@@ -158,7 +158,7 @@ namespace Microsoft.Hadoop.Avro
             return t
                 .GetFields(Flags)
                 .Where(f => !f.IsDefined(typeof(CompilerGeneratedAttribute), false))
-                .Concat(GetAllFields(t.BaseType));
+                .Concat(GetAllFields(t.GetTypeInfo().BaseType));
         }
 
         /// <summary>
@@ -183,7 +183,7 @@ namespace Microsoft.Hadoop.Avro
                 .GetProperties(Flags)
                 .Where(p => !p.IsDefined(typeof(CompilerGeneratedAttribute), false)
                             && p.GetIndexParameters().Length == 0)
-                .Concat(GetAllProperties(t.BaseType));
+                .Concat(GetAllProperties(t.GetTypeInfo().BaseType));
         }
 
         public static IEnumerable<Type> GetAllInterfaces(this Type t)
@@ -225,37 +225,37 @@ namespace Microsoft.Hadoop.Avro
             {
                 throw new ArgumentNullException("type");
             }
-            return type.GetCustomAttributes(false).ToList().Find(a => a is FlagsAttribute) != null;
+            return type.GetTypeInfo().GetCustomAttributes(false).ToList().Find(a => a is FlagsAttribute) != null;
         }
 
         public static bool CanContainNull(this Type type)
         {
             var underlyingType = Nullable.GetUnderlyingType(type);
-            return !type.IsValueType || underlyingType != null;
+            return !type.GetTypeInfo().IsValueType || underlyingType != null;
         }
 
         public static bool IsKeyValuePair(this Type type)
         {
-            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(KeyValuePair<,>);
+            return type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(KeyValuePair<,>);
         }
 
         public static bool CanBeKnownTypeOf(this Type type, Type baseType)
         {
-            return !type.IsAbstract
+            return !type.GetTypeInfo().IsAbstract
                    && ! type.IsUnsupported()
-                   && (type.IsSubclassOf(baseType) 
+                   && (type.GetTypeInfo().IsSubclassOf(baseType) 
                    || type == baseType 
-                   || (baseType.IsInterface && baseType.IsAssignableFrom(type))
-                   || (baseType.IsGenericType && baseType.IsInterface && baseType.GenericIsAssignable(type)
+                   || (baseType.GetTypeInfo().IsInterface && baseType.GetTypeInfo().IsAssignableFrom(type))
+                   || (baseType.GetTypeInfo().IsGenericType && baseType.GetTypeInfo().IsInterface && baseType.GenericIsAssignable(type)
                            && type.GetGenericArguments()
-                                  .Zip(baseType.GetGenericArguments(), (type1, type2) => new Tuple<Type, Type>(type1, type2))
+                                  .Zip(baseType.GetTypeInfo().GetGenericArguments(), (type1, type2) => new Tuple<Type, Type>(type1, type2))
                                   .ToList()
                                   .TrueForAll(tuple => CanBeKnownTypeOf(tuple.Item1, tuple.Item2))));
         }
 
         internal static bool GenericIsAssignable(this Type type, Type instanceType)
         {
-            if (!type.IsGenericType || !instanceType.IsGenericType)
+            if (!type.GetTypeInfo().IsGenericType || !instanceType.GetTypeInfo().IsGenericType)
             {
                 return false;
             }
@@ -273,7 +273,7 @@ namespace Microsoft.Hadoop.Avro
                 return Enumerable.Empty<Type>();
             }
 
-            return t.GetCustomAttributes(true)
+            return t.GetTypeInfo().GetCustomAttributes(true)
                 .OfType<KnownTypeAttribute>()
                 .Select(a => a.Type);
         }
@@ -340,7 +340,7 @@ namespace Microsoft.Hadoop.Avro
         internal static string AvroSchemaName(this Type type)
         {
             string result = type.Name;
-            if (type.IsGenericType)
+            if (type.GetTypeInfo().IsGenericType)
             {
                 result = type.Name + "_" + string.Join("_", type.GetGenericArguments().Select(AvroSchemaName));
             }

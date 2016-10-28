@@ -19,6 +19,7 @@ namespace Microsoft.Hadoop.Avro.Serializers
     using System.Globalization;
     using System.Linq;
     using System.Runtime.Serialization;
+    using System.Reflection;
     using Microsoft.Hadoop.Avro.Schema;
 
     /// <summary>
@@ -151,10 +152,10 @@ namespace Microsoft.Hadoop.Avro.Serializers
             else
             {
                 Type listType =
-                    s.RuntimeType.GetAllInterfaces().SingleOrDefault(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IList<>));
+                    s.RuntimeType.GetAllInterfaces().SingleOrDefault(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IList<>));
 
                 Type enumerableType =
-                    s.RuntimeType.GetAllInterfaces().SingleOrDefault(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+                    s.RuntimeType.GetAllInterfaces().SingleOrDefault(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
 
                 if (listType != null)
                 {
