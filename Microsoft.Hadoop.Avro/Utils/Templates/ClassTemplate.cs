@@ -692,7 +692,7 @@ this.Write("}");
         /// </summary>
         public void Warning(string message)
         {
-            CompilerError error = CompilerError();
+            CompilerError error = new CompilerError();
             error.ErrorText = message;
             error.IsWarning = true;
             this.Errors.Add(error);

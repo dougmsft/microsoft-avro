@@ -101,9 +101,9 @@ namespace Microsoft.Hadoop.Avro
 
             bool canContainNull = this.allowNullable && type.CanContainNull();
 
-            if (type.IsInterface ||
+            if (type.GetTypeInfo().IsInterface ||
                 type.IsNativelySupported() ||
-                (type.IsEnum && !type.GetCustomAttributes(false).OfType<DataContractAttribute>().Any()))
+                (type.GetTypeInfo().IsEnum && !type.GetCustomAttributes(false).OfType<DataContractAttribute>().Any()))
             {
                 return new TypeSerializationInfo
                 {

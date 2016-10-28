@@ -161,6 +161,7 @@
     <Compile Include="Resolvers\AvroDataContractResolver.cs" />
     <Compile Include="Resolvers\AvroPublicMemberContractResolver.cs" />
     <Compile Include="Utils\CodeGenerator.cs" />
+    <Compile Include="Utils\CompilerError.cs" />
     <Compile Include="Utils\GeneratorCore.cs" />
     <Compile Include="Utils\Templates\ClassTemplate-Methods.cs" />
     <Compile Include="Utils\Templates\ClassTemplate.cs">

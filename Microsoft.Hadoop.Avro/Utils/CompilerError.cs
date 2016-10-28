@@ -16,6 +16,8 @@
 
 namespace Microsoft.Hadoop.Avro.Utils
 {
+    using System.Collections;
+
     class CompilerError
     {
         private string errorText;
@@ -35,8 +37,11 @@ namespace Microsoft.Hadoop.Avro.Utils
 
     }
 
-    class CompilerErrorCollection
+    class CompilerErrorCollection : System.Collections.CollectionBase
     {
-
+        public int Add(CompilerError value)
+        {
+            return List.Add(value);
+        }
     }
 }
