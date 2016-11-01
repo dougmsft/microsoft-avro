@@ -44,7 +44,7 @@ namespace Microsoft.Hadoop.Avro.Schema
             Justification = "All Avro tokens are ASCII.")]
         internal override void ToJsonSafe(JsonTextWriter writer, HashSet<NamedSchema> seenSchemas)
         {
-            writer.WriteValue(this.Type.ToLower(CultureInfo.InvariantCulture));
+            writer.WriteValue(CultureInfo.InvariantCulture.TextInfo.ToLower(Type));
         }
     }
 }

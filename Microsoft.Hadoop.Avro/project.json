@@ -2,10 +2,10 @@
     "version": "1.0.0-*",
     "buildOptions": {
         "debugType": "portable",
-        "emitEntryPoint": true
     },
     "dependencies": {
-        "Newtonsoft.Json": "9.0.1"
+        "Newtonsoft.Json": "9.0.1",
+        "System.ComponentModel.TypeConverter": "4.1.0"
     },
     "frameworks": {
         "netcoreapp1.1": {

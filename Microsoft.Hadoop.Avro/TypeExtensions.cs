@@ -34,7 +34,7 @@ namespace Microsoft.Hadoop.Avro
         /// <returns>True if type t has a public parameter-less constructor, false otherwise.</returns>
         public static bool HasParameterlessConstructor(this Type type)
         {
-            return type.GetTypeInfo().GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) != null;
+            return type.GetTypeInfo().GetConstructor(Type.EmptyTypes) != null;
         }
 
         /// <summary>

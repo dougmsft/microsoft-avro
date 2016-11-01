@@ -16,8 +16,7 @@
 
 namespace Microsoft.Hadoop.Avro.Utils
 {
-    using System;
-    using System.Collections.Generic;
+    using System.Collections;
 
     public class CompilerError
     {
@@ -42,20 +41,16 @@ namespace Microsoft.Hadoop.Avro.Utils
 
     }
 
-    public class CompilerErrorCollection
+    public class CompilerErrorCollection : CollectionBase
     {
-        private SortedDictionary<int,CompilerError>  errors;
-
         public CompilerErrorCollection()
         {
-            errors = new SortedDictionary<int,CompilerError>();
         }
 
         public int Add(CompilerError value)
         {
-            var count = errors.Count;
-            errors.Add(count,value);
-            return count;
+            List.Add(value);
+            return 0;
         }
 
     }
