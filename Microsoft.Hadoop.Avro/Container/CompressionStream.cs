@@ -55,7 +55,7 @@ namespace Microsoft.Hadoop.Avro.Container
 
         public override void Flush()
         {
-            this.compressionStream.Close();
+            this.compressionStream.Dispose();
         }
 
         public override long Length

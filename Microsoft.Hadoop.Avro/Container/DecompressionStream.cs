@@ -47,7 +47,7 @@ namespace Microsoft.Hadoop.Avro.Container
 
         public override void Flush()
         {
-            this.decompressed.Close();
+            this.decompressed.Dispose();
         }
 
         public override long Length
