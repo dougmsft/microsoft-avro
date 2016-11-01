@@ -9,6 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AvroTestApp", "AvroTestApp\AvroTestApp.xproj", "{6A6C205A-F89B-4512-BCD7-61CC6AD618B4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3CE95BF6-AEA1-4E40-B0EB-9072530E782C} = {3CE95BF6-AEA1-4E40-B0EB-9072530E782C}
+	EndProjectSection
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microsoft.Hadoop.AvroNetCore.", "Microsoft.Hadoop.Avro\Microsoft.Hadoop.AvroNetCore..xproj", "{3CE95BF6-AEA1-4E40-B0EB-9072530E782C}"
 EndProject
