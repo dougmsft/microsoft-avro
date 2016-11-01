@@ -42,8 +42,18 @@ namespace AvroTestApp
     {
         public static void Main(string[] args)
         {
+            string line = Environment.NewLine;
+
             string fileName = "Messages.avro";
-            string filePath = new DirectoryInfo(".") + @"\" + fileName;
+            string filePath = null;
+            if (Environment.NewLine.Contains("\r"))
+            {
+                filePath = new DirectoryInfo(".") + @"\" + fileName;
+            }
+            else
+            {
+                filePath = new DirectoryInfo(".") + @"/" + fileName;
+            }
 
             List<TestMsg> msgs = new List<TestMsg>();
             msgs.Add(new AvroTestApp.TestMsg(1, 189.12));
