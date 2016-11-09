@@ -1,5 +1,5 @@
 ﻿{
-  "projects": [ "AvroTestApp" ],
+  "projects": [ "AvroTestApp", "Microsoft.Hadoop.AvroNetCore" ],
   "sdk": {
     "version": "1.0.0-preview2.1-003155"
   }
