@@ -41,7 +41,7 @@ namespace Microsoft.Hadoop.Avro.Utils
 
     }
 
-    public class CompilerErrorCollection : CollectionBase
+    public class CompilerErrorCollection //: CollectionBase
     {
         public CompilerErrorCollection()
         {
@@ -49,7 +49,7 @@ namespace Microsoft.Hadoop.Avro.Utils
 
         public int Add(CompilerError value)
         {
-            List.Add(value);
+            //List.Add(value);
             return 0;
         }
 
