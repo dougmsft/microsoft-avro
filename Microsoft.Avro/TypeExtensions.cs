@@ -23,7 +23,6 @@ namespace Microsoft.Hadoop.Avro
     using System.Runtime.CompilerServices;
     using System.Runtime.Serialization;
     using System.Text.RegularExpressions;
-    using Microsoft.Hadoop.Avro.Schema;
 
     internal static class TypeExtensions
     {

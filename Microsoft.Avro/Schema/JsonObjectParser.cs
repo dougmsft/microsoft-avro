@@ -181,7 +181,7 @@ namespace Microsoft.Hadoop.Avro.Schema
 
         private static T ConvertTo<T>(string jsonObject)
         {
-            var converter = TypeDescriptor.GetConverter(typeof(T));
+            var converter = System.ComponentModel.TypeDescriptor.GetConverter(typeof(T));
             try
             {
                 return (T)converter.ConvertFromString(jsonObject);

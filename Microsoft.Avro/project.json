@@ -1,0 +1,42 @@
+{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "debugType": "portable"
+  },
+  "dependencies": {
+    "Newtonsoft.Json": "9.0.1",
+    "System.ComponentModel.TypeConverter": "4.1.0"
+  },
+  "frameworks": {
+    "netcoreapp1.1": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.1.0-preview1-001100-00"
+        }
+      },
+      "imports": "dnxcore50"
+    },
+    "net451": {
+      "dependencies": {
+        "System.Runtime.Serialization.Primitives": "4.0.0",
+        "NETStandard.Library": "1.6.0",
+        "Microsoft.NETCore.Portable.Compatibility": "1.0.1"
+      },
+      "frameworkAssemblies": {
+        "System.Runtime": {
+          "type": "build",
+          "version": "4.0.10"
+        },
+        "System.Runtime.Serialization.Primitives": {
+          "type": "build",
+          "version": "4.0.0"
+        }
+      }
+    }
+  },
+  "configurations": {
+    "Release": {},
+    "Debug": {}
+  }
+}
