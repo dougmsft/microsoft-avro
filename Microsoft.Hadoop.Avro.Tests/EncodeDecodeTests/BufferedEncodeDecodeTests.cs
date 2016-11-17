@@ -18,9 +18,9 @@ namespace Microsoft.Hadoop.Avro.Tests
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Runtime.Serialization;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     
-    [TestClass]
+    [Trait("Category","BufferedEncodeDecode")]
     public class BufferedEncodeDecodeTests : EncodeDecodeTests
     {
         internal override IEncoder CreateEncoder(Stream stream)
@@ -34,8 +34,7 @@ namespace Microsoft.Hadoop.Avro.Tests
         }
 
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", Justification = "Constructor should throw.")]
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_CreateWithNullStream()
         {
             Utilities.ShouldThrow<ArgumentNullException>(() => new BinaryEncoder(null));
@@ -43,10 +42,8 @@ namespace Microsoft.Hadoop.Avro.Tests
             Utilities.ShouldThrow<ArgumentNullException>(() => new BufferedBinaryEncoder(null));
             Utilities.ShouldThrow<ArgumentNullException>(() => new BufferedBinaryDecoder(null));
         }
-
-        #region Decode tests
-        [TestMethod]
-        [TestCategory("CheckIn")]
+#region Decode tests
+        [Fact]
         public void BufferedDecode_InvalidInt_UnexpectedStreamEnd()
         {
             Utilities.ShouldThrow<SerializationException>(() => new BufferedBinaryDecoder(this.Stream).DecodeInt());
@@ -68,8 +65,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             Utilities.ShouldThrow<SerializationException>(() => new BufferedBinaryDecoder(this.Stream).DecodeInt());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void BufferedDecode_InvalidLong_UnexpectedStreamEnd()
         {
             Utilities.ShouldThrow<SerializationException>(() => new BufferedBinaryDecoder(this.Stream).DecodeLong());
@@ -111,92 +107,104 @@ namespace Microsoft.Hadoop.Avro.Tests
             Utilities.ShouldThrow<SerializationException>(() => new BufferedBinaryDecoder(this.Stream).DecodeLong());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void BufferedDecode_InvalidString_UnexpectedStreamEnd()
         {
-            var randomString = Utilities.GetRandom<string>(false);
-            this.Encoder.Encode(randomString);
-            this.Encoder.Flush();
-            this.Stream.Seek(0, SeekOrigin.Begin);
-            var buffer = new byte[this.Stream.Length - 1];
-            this.Stream.Read(buffer, 0, buffer.Length);
-            using (var memoryStream = new MemoryStream(buffer))
-            {
-                var decoder = new BufferedBinaryDecoder(memoryStream);
-                decoder.DecodeString();
-            }
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var randomString = Utilities.GetRandom<string>(false);
+                    this.Encoder.Encode(randomString);
+                    this.Encoder.Flush();
+                    this.Stream.Seek(0, SeekOrigin.Begin);
+                    var buffer = new byte[this.Stream.Length - 1];
+                    this.Stream.Read(buffer, 0, buffer.Length);
+                    using (var memoryStream = new MemoryStream(buffer))
+                    {
+                        var decoder = new BufferedBinaryDecoder(memoryStream);
+                        decoder.DecodeString();
+                    }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void BufferedDecode_InvalidBool_UnexpectedStreamEnd()
         {
-            this.Decoder.DecodeBool();
+            Assert.Throws<SerializationException>(() =>
+                {
+                    this.Decoder.DecodeBool();
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void BufferedDecode_InvalidDouble_UnexpectedStreamEnd()
         {
-            var numberOfBytes = Utilities.GetRandom<int>(false) % 8;
-            for (int i = 0; i < numberOfBytes; i++)
-            {
-                this.Stream.WriteByte(0xFF);
-            }
-            this.Stream.Seek(0, SeekOrigin.Begin);
-            this.Decoder.DecodeDouble();
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var numberOfBytes = Utilities.GetRandom<int>(false)%8;
+                    for (int i = 0; i < numberOfBytes; i++)
+                    {
+                        this.Stream.WriteByte(0xFF);
+                    }
+                    this.Stream.Seek(0, SeekOrigin.Begin);
+                    this.Decoder.DecodeDouble();
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void BufferedDecode_InvalidFloat_UnexpectedStreamEnd()
         {
-            var numberOfBytes = Utilities.GetRandom<int>(false) % 4;
-            for (int i = 0; i < numberOfBytes; i++)
-            {
-                this.Stream.WriteByte(0xFF);
-            }
-            this.Stream.Seek(0, SeekOrigin.Begin);
-            this.Decoder.DecodeFloat();
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var numberOfBytes = Utilities.GetRandom<int>(false)%4;
+                    for (int i = 0; i < numberOfBytes; i++)
+                    {
+                        this.Stream.WriteByte(0xFF);
+                    }
+                    this.Stream.Seek(0, SeekOrigin.Begin);
+                    this.Decoder.DecodeFloat();
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void BufferedDecode_InvalidFixed_UnexpectedStreamEnd()
         {
-            var randomByteArray = Utilities.GetRandom<byte[]>(false);
-            this.Stream.Write(randomByteArray, 0, randomByteArray.Length - 1);
-            this.Decoder.DecodeFixed(randomByteArray.Length);
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var randomByteArray = Utilities.GetRandom<byte[]>(false);
+                    this.Stream.Write(randomByteArray, 0, randomByteArray.Length - 1);
+                    this.Decoder.DecodeFixed(randomByteArray.Length);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void BufferedDecode_InvalidByteArray_UnexpectedStreamEnd()
         {
-            var randomByteArray = Utilities.GetRandom<byte[]>(false);
-            this.Encoder.Encode(randomByteArray);
-            this.Encoder.Flush();
-            this.Stream.Seek(0, SeekOrigin.Begin);
-            var buffer = new byte[this.Stream.Length - 1];
-            this.Stream.Read(buffer, 0, buffer.Length);
-            using (var memoryStream = new MemoryStream(buffer))
-            {
-                var decoder = new BufferedBinaryDecoder(memoryStream);
-                decoder.DecodeByteArray();
-            }
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var randomByteArray = Utilities.GetRandom<byte[]>(false);
+                    this.Encoder.Encode(randomByteArray);
+                    this.Encoder.Flush();
+                    this.Stream.Seek(0, SeekOrigin.Begin);
+                    var buffer = new byte[this.Stream.Length - 1];
+                    this.Stream.Read(buffer, 0, buffer.Length);
+                    using (var memoryStream = new MemoryStream(buffer))
+                    {
+                        var decoder = new BufferedBinaryDecoder(memoryStream);
+                        decoder.DecodeByteArray();
+                    }
+                }
+            );
         }
         #endregion
+        
 
         #region Skip tests
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void BufferedSkip_InvalidInt_UnexpectedStreamEnd()
         {
             Utilities.ShouldThrow<SerializationException>(() => new BufferedBinaryDecoder(this.Stream).SkipInt());
@@ -218,8 +226,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             Utilities.ShouldThrow<SerializationException>(() => new BufferedBinaryDecoder(this.Stream).SkipInt());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void BufferedSkip_InvalidLong_UnexpectedStreamEnd()
         {
             Utilities.ShouldThrow<SerializationException>(() => new BufferedBinaryDecoder(this.Stream).SkipLong());
@@ -265,86 +272,98 @@ namespace Microsoft.Hadoop.Avro.Tests
             Utilities.ShouldThrow<SerializationException>(() => new BufferedBinaryDecoder(this.Stream).SkipLong());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void BufferedSkip_InvalidString_UnexpectedStreamEnd()
         {
-            var randomString = Utilities.GetRandom<string>(false);
-            this.Encoder.Encode(randomString);
-            this.Encoder.Flush();
-            this.Stream.Seek(0, SeekOrigin.Begin);
-            var buffer = new byte[this.Stream.Length - 1];
-            this.Stream.Read(buffer, 0, buffer.Length);
-            using (var memoryStream = new MemoryStream(buffer))
-            {
-                var decoder = new BufferedBinaryDecoder(memoryStream);
-                decoder.SkipString();
-            }
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var randomString = Utilities.GetRandom<string>(false);
+                    this.Encoder.Encode(randomString);
+                    this.Encoder.Flush();
+                    this.Stream.Seek(0, SeekOrigin.Begin);
+                    var buffer = new byte[this.Stream.Length - 1];
+                    this.Stream.Read(buffer, 0, buffer.Length);
+                    using (var memoryStream = new MemoryStream(buffer))
+                    {
+                        var decoder = new BufferedBinaryDecoder(memoryStream);
+                        decoder.SkipString();
+                    }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void BufferedSkip_InvalidBool_UnexpectedStreamEnd()
         {
-            this.Decoder.SkipBool();
+            Assert.Throws<SerializationException>(() =>
+                {
+                    this.Decoder.SkipBool();
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void BufferedSkip_InvalidDouble_UnexpectedStreamEnd()
         {
-            var numberOfBytes = Utilities.GetRandom<int>(false) % 8;
-            for (int i = 0; i < numberOfBytes; i++)
-            {
-                this.Stream.WriteByte(0xFF);
-            }
-            this.Stream.Seek(0, SeekOrigin.Begin);
-            this.Decoder.SkipDouble();
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var numberOfBytes = Utilities.GetRandom<int>(false)%8;
+                    for (int i = 0; i < numberOfBytes; i++)
+                    {
+                        this.Stream.WriteByte(0xFF);
+                    }
+                    this.Stream.Seek(0, SeekOrigin.Begin);
+                    this.Decoder.SkipDouble();
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void BufferedSkip_InvalidFloat_UnexpectedStreamEnd()
         {
-            var numberOfBytes = Utilities.GetRandom<int>(false) % 4;
-            for (int i = 0; i < numberOfBytes; i++)
-            {
-                this.Stream.WriteByte(0xFF);
-            }
-            this.Stream.Seek(0, SeekOrigin.Begin);
-            this.Decoder.SkipFloat();
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var numberOfBytes = Utilities.GetRandom<int>(false)%4;
+                    for (int i = 0; i < numberOfBytes; i++)
+                    {
+                        this.Stream.WriteByte(0xFF);
+                    }
+                    this.Stream.Seek(0, SeekOrigin.Begin);
+                    this.Decoder.SkipFloat();
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void BufferedSkip_InvalidFixed_UnexpectedStreamEnd()
         {
-            var randomByteArray = Utilities.GetRandom<byte[]>(false);
-            this.Stream.Write(randomByteArray, 0, randomByteArray.Length - 1);
-            this.Decoder.SkipFixed(randomByteArray.Length);
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var randomByteArray = Utilities.GetRandom<byte[]>(false);
+                    this.Stream.Write(randomByteArray, 0, randomByteArray.Length - 1);
+                    this.Decoder.SkipFixed(randomByteArray.Length);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void BufferedSkip_InvalidByteArray_UnexpectedStreamEnd()
         {
-            var randomByteArray = Utilities.GetRandom<byte[]>(false);
-            this.Encoder.Encode(randomByteArray);
-            this.Encoder.Flush();
-            this.Stream.Seek(0, SeekOrigin.Begin);
-            var buffer = new byte[this.Stream.Length - 1];
-            this.Stream.Read(buffer, 0, buffer.Length);
-            using (var memoryStream = new MemoryStream(buffer))
-            {
-                var decoder = new BufferedBinaryDecoder(memoryStream);
-                decoder.SkipByteArray();
-            }
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var randomByteArray = Utilities.GetRandom<byte[]>(false);
+                    this.Encoder.Encode(randomByteArray);
+                    this.Encoder.Flush();
+                    this.Stream.Seek(0, SeekOrigin.Begin);
+                    var buffer = new byte[this.Stream.Length - 1];
+                    this.Stream.Read(buffer, 0, buffer.Length);
+                    using (var memoryStream = new MemoryStream(buffer))
+                    {
+                        var decoder = new BufferedBinaryDecoder(memoryStream);
+                        decoder.SkipByteArray();
+                    }
+                }
+            );
         }
 
         #endregion //Skip tests

@@ -29,101 +29,88 @@ namespace Microsoft.Hadoop.Avro.Tests
     using Microsoft.Hadoop.Avro;
     using Microsoft.Hadoop.Avro.Schema;
     using Microsoft.Hadoop.Avro.Serializers;
-    using Microsoft.Hadoop.Avro.Tests.TestClasses;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Microsoft.Hadoop.Avro.Tests.Classes;
+    using Xunit;
 
-    [TestClass]
+    [Trait("Category","AvroSerializer")]
     public sealed class AvroSerializerTests
     {
         #region Different type tests
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_CreationWithType()
         {
             var serializer = AvroSerializer.Create<int>();
-            Assert.IsNotNull(serializer);
+            Assert.NotNull(serializer);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeInt()
         {
             RoundTripSerializationWithCheck(13);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeEnum()
         {
             RoundTripSerializationWithCheck(Utilities.RandomEnumeration.Value3);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeBitEnum()
         {
             RoundTripSerializationWithCheck(FlagsEnumClass.Create());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeClassWithTwoFieldsOfSameType()
         {
             RoundTripSerializationWithCheck(TwoFieldsOfTheSameTypeClass.Create());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeClassWithIntField()
         {
             RoundTripSerializationWithCheck(ClassOfInt.Create(true));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeClassWithFields()
         {
             RoundTripSerializationWithCheck(ClassWithFields.Create());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeNestedClass()
         {
             RoundTripSerializationWithCheck(NestedClass.Create(true));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeRecursiveClass()
         {
             RoundTripSerializationWithCheck(Recursive.Create());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeSimpleFlatClass()
         {
             RoundTripSerializationWithCheck(SimpleFlatClass.Create());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeComplexNestedClass()
         {
             RoundTripSerializationWithCheck(ComplexNestedClass.Create());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeGuidClass()
         {
             RoundTripSerializationWithCheck(ClassOfGuid.Create(true));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializerEmptyStruct()
         {
             var expected = new EmptyStruct();
@@ -132,8 +119,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 actual => { });
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializerComplexStructWithNull()
         {
             var expected = new ComplexStruct();
@@ -141,31 +127,27 @@ namespace Microsoft.Hadoop.Avro.Tests
                 expected);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializerComplexStructWithValues()
         {
             var expected = new ComplexStruct(new List<int> { 1, 2, 3 });
             RoundTripSerializationWithCheck(expected);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeClassWithUri()
         {
             RoundTripSerializationWithCheck(ContainingUrlClass.Create());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeAnonymousClass()
         {
             var testObject = new { IntField = 13, DoubleField = 13.0 };
             RoundTripSerializationWithCheck(testObject, new AvroSerializerSettings { Resolver = new AvroPublicMemberContractResolver() });
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeGenericListWithAnonymousTypeParameter()
         {
             var expected = new[]
@@ -174,104 +156,94 @@ namespace Microsoft.Hadoop.Avro.Tests
                 new { Name = Utilities.GetRandom<string>(false), Value = Utilities.GetRandom<int>(false) },
                 new { Name = Utilities.GetRandom<string>(false), Value = Utilities.GetRandom<int>(false) }
             };
-            RoundTripSerializationWithCheck(expected, actual => Assert.IsTrue(expected.SequenceEqual(actual)), new AvroSerializerSettings { Resolver = new AvroPublicMemberContractResolver() });
+            RoundTripSerializationWithCheck(expected, actual => Assert.True(expected.SequenceEqual(actual)), new AvroSerializerSettings { Resolver = new AvroPublicMemberContractResolver() });
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeGenericClassWithAnonymousTypeParameter()
         {
             var expected = GenericClassBuilder.Build(new { Name = Utilities.GetRandom<string>(false), Value = Utilities.GetRandom<int>(false) });
             RoundTripSerializationWithCheck(expected, new AvroSerializerSettings { Resolver = new AvroPublicMemberContractResolver() });
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeArrayClass()
         {
             RoundTripSerializationWithCheck(ArrayClass.Create());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeJaggedArrayClass()
         {
             RoundTripSerializationWithCheck(JaggedArrayClass.Create());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeMultidimensionalArrayClass()
         {
             RoundTripSerializationWithCheck(MultidimArrayClass.Create());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeEnumClass()
         {
             RoundTripSerializationWithCheck(ClassOfEnum.Create(true));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeFixed()
         {
             RoundTripSerializationWithCheck(AvroFixedClass.Create(7));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void Serializer_SerializeFixedWithWrongSize()
         {
-            var obj = AvroFixedClass.Create(5);
-            RoundTripSerializationWithCheck(obj);
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var obj = AvroFixedClass.Create(5);
+                    RoundTripSerializationWithCheck(obj);
+                }
+            );
         }
         #endregion
 
         #region List tests
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeListClass()
         {
             RoundTripSerializationWithCheck(ClassOfListOfGuid.Create(true));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeIList()
         {
             var knownTypes = new[] { typeof(List<Guid>), typeof(List<int>) };
             RoundTripSerializationWithCheck(IListClass.Create(), new AvroSerializerSettings { KnownTypes = knownTypes });
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeIListWithArray()
         {
             var knownTypes = new[] { typeof(Guid[]), typeof(List<int>) };
             RoundTripSerializationWithCheck(IListClass.CreateWithArray(), new AvroSerializerSettings { KnownTypes = knownTypes });
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeIListWithCollection()
         {
             var knownTypes = new[] { typeof(Collection<Guid>), typeof(Collection<int>) };
             RoundTripSerializationWithCheck(IListClass.CreateWithCollection(), new AvroSerializerSettings { KnownTypes = knownTypes });
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeInheritedList()
         {
             var testObject = new ListInheritedClass<int> { 1, 2, 3 };
             RoundTripSerializationWithCheck(testObject);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeListOfLists()
         {
             var expected = new List<List<ClassOfInt>>
@@ -284,11 +256,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 expected,
                 actual =>
                 {
-                    Assert.AreEqual(expected.Count, actual.Count);
+                    Assert.Equal(expected.Count, actual.Count);
                     expected.Select(
                         (e, index) =>
                         {
-                            CollectionAssert.AreEqual(e, actual[index]);
+                            Assert.Equal(e, actual[index]);
                             return true;
                         });
                 });
@@ -296,8 +268,7 @@ namespace Microsoft.Hadoop.Avro.Tests
 
         #endregion
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeHashSet()
         {
             var expected = new HashSet<ClassOfInt>
@@ -308,20 +279,18 @@ namespace Microsoft.Hadoop.Avro.Tests
 
             RoundTripSerializationWithCheck(
                 expected,
-                actual => Assert.IsTrue(expected.SequenceEqual(actual)));
+                actual => Assert.True(expected.SequenceEqual(actual)));
         }
 
         #region Dictionary Tests
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeInheritedDictionary()
         {
             RoundTripSerializationWithCheck(DictionaryInheritedClass.Create());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeInheritedUriDictionaryWithNestedType()
         {
             var testObject = new DictionaryInheritedClass<Uri, NestedClass>
@@ -333,8 +302,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             RoundTripSerializationWithCheck(testObject);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeStringDictionaryWithStringType()
         {
             var testObject = ContainingDictionaryClass<string, string>.Create(
@@ -347,8 +315,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             RoundTripSerializationWithCheck(testObject);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeStringDictionaryWithRecursiveType()
         {
             var testObject = ContainingDictionaryClass<string, Recursive>.Create(
@@ -361,8 +328,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             RoundTripSerializationWithCheck(testObject);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeUriDictionaryWithRecursiveType()
         {
             var testObject = ContainingDictionaryClass<Uri, Recursive>.Create(
@@ -375,8 +341,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             RoundTripSerializationWithCheck(testObject);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeStringDictionaryOfNestedType()
         {
             var expected = new Dictionary<string, NestedClass>
@@ -388,12 +353,11 @@ namespace Microsoft.Hadoop.Avro.Tests
 
             RoundTripSerializationWithCheck(
                 (IDictionary<string, NestedClass>)expected,
-                actual => Assert.IsTrue(Utilities.DictionaryEquals(expected, actual)),
+                actual => Assert.True(Utilities.DictionaryEquals(expected, actual)),
                 settings);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeClassOfIntDictionaryWithRecursiveType()
         {
             var expected = new Dictionary<ClassOfInt, Recursive>
@@ -404,11 +368,10 @@ namespace Microsoft.Hadoop.Avro.Tests
 
             RoundTripSerializationWithCheck(
                 expected,
-                actual => Assert.IsTrue(Utilities.DictionaryEquals(expected, actual)));
+                actual => Assert.True(Utilities.DictionaryEquals(expected, actual)));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeStringIDictionaryWithStringTypeUsingKnownTypes()
         {
             var expected = Utilities.GetRandom<Dictionary<string, string>>(false);
@@ -416,7 +379,7 @@ namespace Microsoft.Hadoop.Avro.Tests
 
             RoundTripSerializationWithCheck(
                 (IDictionary<string, string>)expected,
-                actual => Assert.IsTrue(Utilities.DictionaryEquals(expected, actual)),
+                actual => Assert.True(Utilities.DictionaryEquals(expected, actual)),
                 settings);
         }
 
@@ -424,15 +387,13 @@ namespace Microsoft.Hadoop.Avro.Tests
 
         #region DateTime tests
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeClassWithDateTimeOffset()
         {
             RoundTripSerializationWithCheck(DateTimeOffsetContainingClass.Create());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeClassWithDateTimeOffsetUsingPosixDateTime()
         {
             var expected = new DateTimeOffsetContainingClass
@@ -449,34 +410,32 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
                 var actual = serializer.Deserialize(stream);
 
-                Assert.AreEqual(expected.LocalTime.Date, actual.LocalTime.Date);
-                Assert.AreEqual(expected.LocalTime.Hour, actual.LocalTime.Hour);
-                Assert.AreEqual(expected.LocalTime.Minute, actual.LocalTime.Minute);
-                Assert.AreEqual(expected.LocalTime.Second, actual.LocalTime.Second);
+                Assert.Equal(expected.LocalTime.Date, actual.LocalTime.Date);
+                Assert.Equal(expected.LocalTime.Hour, actual.LocalTime.Hour);
+                Assert.Equal(expected.LocalTime.Minute, actual.LocalTime.Minute);
+                Assert.Equal(expected.LocalTime.Second, actual.LocalTime.Second);
 
-                Assert.AreEqual(expected.UtcTime.Date, actual.UtcTime.Date);
-                Assert.AreEqual(expected.UtcTime.Hour, actual.UtcTime.Hour);
-                Assert.AreEqual(expected.UtcTime.Minute, actual.UtcTime.Minute);
-                Assert.AreEqual(expected.UtcTime.Second, actual.UtcTime.Second);
+                Assert.Equal(expected.UtcTime.Date, actual.UtcTime.Date);
+                Assert.Equal(expected.UtcTime.Hour, actual.UtcTime.Hour);
+                Assert.Equal(expected.UtcTime.Minute, actual.UtcTime.Minute);
+                Assert.Equal(expected.UtcTime.Second, actual.UtcTime.Second);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_DateTimePosixRoundTrip()
         {
             var expected = new DateTime(1111907664);
             var posixTime = DateTimeSerializer.ConvertDateTimeToPosixTime(expected);
             var actual = DateTimeSerializer.ConvertPosixTimeToDateTime(posixTime);
-            Assert.AreEqual(expected.Hour, actual.Hour);
-            Assert.AreEqual(expected.Minute, actual.Minute);
-            Assert.AreEqual(expected.Second, actual.Second);
+            Assert.Equal(expected.Hour, actual.Hour);
+            Assert.Equal(expected.Minute, actual.Minute);
+            Assert.Equal(expected.Second, actual.Second);
         }
 
         #endregion //DateTime tests
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeAnonymousClassDeserializeToAnother()
         {
             var expected = new { IntField = Utilities.GetRandom<int>(false), DoubleField = Utilities.GetRandom<double>(false) };
@@ -491,13 +450,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
                 var actual = Typed(deserialized, deserializer.Deserialize(stream));
 
-                Assert.AreEqual(expected.DoubleField, actual.AnotherDoubleField);
-                Assert.AreEqual(expected.IntField, actual.AnotherIntField);
+                Assert.Equal(expected.DoubleField, actual.AnotherDoubleField);
+                Assert.Equal(expected.IntField, actual.AnotherIntField);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeUsingTwoSerializers()
         {
             var expected = ClassWithFields.Create();
@@ -510,15 +468,14 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 var actual = firstSerializer.Deserialize(stream);
-                Assert.AreEqual(expected, actual);
+                Assert.Equal(expected, actual);
 
                 actual = secondSerializer.Deserialize(stream);
-                Assert.AreEqual(expected, actual);
+                Assert.Equal(expected, actual);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_GetNewSerializerInstanceFromCache()
         {
             var cache = new Cache<Tuple<string, Type, AvroSerializerSettings>, GeneratedSerializer>();
@@ -529,27 +486,25 @@ namespace Microsoft.Hadoop.Avro.Tests
             cache.Add(key, serializer);
 
             var serializer1 = cache.Get(sameKey);
-            Assert.AreEqual(serializer, serializer1);
+            Assert.Equal(serializer, serializer1);
 
             settings.UsePosixTime = false;
             var serializer2 = cache.Get(key);
 
-            Assert.IsNull(serializer2);
+            Assert.Null(serializer2);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_CreateIdenticalSerializerIfNoCacheIsUsed()
         {
-            Assert.AreEqual(AvroSerializer.CacheEntriesCount, 0);
+            Assert.Equal(AvroSerializer.CacheEntriesCount, 0);
             var firstSerializer = AvroSerializer.Create<ClassOfInt>(new AvroSerializerSettings { UseCache = true });
-            Assert.AreEqual(AvroSerializer.CacheEntriesCount, 1);
+            Assert.Equal(AvroSerializer.CacheEntriesCount, 1);
             var secondSerializer = AvroSerializer.Create<ClassOfInt>(new AvroSerializerSettings { UseCache = true });
-            Assert.AreEqual(AvroSerializer.CacheEntriesCount, 1);
+            Assert.Equal(AvroSerializer.CacheEntriesCount, 1);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeWithoutGeneratingSerializer()
         {
             try
@@ -561,16 +516,15 @@ namespace Microsoft.Hadoop.Avro.Tests
                     serializer.Serialize(stream, expected);
                 }
 
-                Assert.Fail("Exception should be thrown.");
+                Assert.True(false, "Exception should be thrown.");
             }
             catch (InvalidOperationException ex)
             {
-                Assert.IsTrue(ex.Message.Contains("Serialization is not supported. Please change the serialization settings."));
+                Assert.True(ex.Message.Contains("Serialization is not supported. Please change the serialization settings."));
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_DeserializeWithoutGeneratingDeserializer()
         {
             try
@@ -581,18 +535,17 @@ namespace Microsoft.Hadoop.Avro.Tests
                     serializer.Deserialize(stream);
                 }
 
-                Assert.Fail("Exception should be thrown.");
+                Assert.True(false, "Exception should be thrown.");
             }
             catch (InvalidOperationException ex)
             {
-                Assert.IsTrue(ex.Message.Contains("Deserialization is not supported. Please change the serialization settings."));
+                Assert.True(ex.Message.Contains("Deserialization is not supported. Please change the serialization settings."));
             }
         }
 
         #region Concurrency and performance tests
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_MultithreadSerializationRecursiveType()
         {
             const int NumberOfThreads = 10;
@@ -620,7 +573,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                                 for (var j = 0; j < NumberOfSerializationsPerThread; j++)
                                 {
                                     var actual = serializer.Deserialize(stream);
-                                    Assert.AreEqual(expected, actual);
+                                    Assert.Equal(expected, actual);
                                 }
                             }
                         }
@@ -634,11 +587,10 @@ namespace Microsoft.Hadoop.Avro.Tests
 
             threads.ForEach(t => t.Start());
             threads.ForEach(t => t.Join());
-            Assert.AreEqual(0, failed);
+            Assert.Equal(0, failed);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_MultithreadedSerialization()
         {
             var expected = SimpleFlatClass.Create();
@@ -653,7 +605,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                             try
                             {
                                 var serializer = input as IAvroSerializer<SimpleFlatClass>;
-                                Assert.IsNotNull(serializer);
+                                Assert.NotNull(serializer);
                                 using (var stream = new MemoryStream())
                                 {
                                     var expectedValues = new List<SimpleFlatClass>();
@@ -670,7 +622,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                                         actualValues.Add(serializer.Deserialize(stream));
                                     }
 
-                                    CollectionAssert.AreEqual(expectedValues, actualValues);
+                                    Assert.Equal(expectedValues, actualValues);
                                 }
                             }
                             catch (Exception)
@@ -684,22 +636,21 @@ namespace Microsoft.Hadoop.Avro.Tests
             var s = AvroSerializer.Create<SimpleFlatClass>(new AvroSerializerSettings { Resolver = new AvroDataContractResolver(true) });
             threads.ForEach(t => t.Start(s));
             threads.ForEach(t => t.Join());
-            Assert.AreEqual(0, failedThreads);
+            Assert.Equal(0, failedThreads);
         }
 
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Dispose is called."), TestMethod]
-        [TestCategory("CheckIn")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Dispose is called."), Fact]
         public void Serializer_ConcurrentCollections()
         {
             {
                 var blocking = new BlockingCollection<Recursive> { Recursive.Create(), Recursive.Create() };
-                RoundTripSerializationWithCheck(blocking, actual => Assert.IsTrue(blocking.SequenceEqual(actual)));
+                RoundTripSerializationWithCheck(blocking, actual => Assert.True(blocking.SequenceEqual(actual)));
                 blocking.Dispose();
             }
 
             {
                 var bag = new ConcurrentBag<NullableStruct> { NullableStruct.Create(), NullableStruct.Create() };
-                RoundTripSerializationWithCheck(bag, actual => Assert.IsTrue(bag.SequenceEqual(actual)));
+                RoundTripSerializationWithCheck(bag, actual => Assert.True(bag.SequenceEqual(actual)));
             }
 
             {
@@ -710,13 +661,13 @@ namespace Microsoft.Hadoop.Avro.Tests
                     queue,
                     actual =>
                     {
-                        Assert.AreEqual(queue.Count, actual.Count);
+                        Assert.Equal(queue.Count, actual.Count);
                         queue.Select(
                             (e, index) =>
                             {
                                 List<Recursive> elem;
                                 actual.TryDequeue(out elem);
-                                CollectionAssert.AreEqual(e, elem);
+                                Assert.Equal(e, elem);
                                 return true;
                             });
                     });
@@ -726,12 +677,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 var stack = new ConcurrentStack<NullableStruct>();
                 stack.Push(NullableStruct.Create());
                 stack.Push(NullableStruct.Create());
-                RoundTripSerializationWithCheck(stack, actual => Assert.IsTrue(stack.SequenceEqual(actual)));
+                RoundTripSerializationWithCheck(stack, actual => Assert.True(stack.SequenceEqual(actual)));
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeHugeObjects()
         {
             var expected = new SimpleFlatClass
@@ -743,15 +693,14 @@ namespace Microsoft.Hadoop.Avro.Tests
 
             RoundTripSerializationWithCheck(
                 expected,
-                actual => Assert.AreEqual(expected, actual));
+                actual => Assert.Equal(expected, actual));
         }
 
         #endregion //Concurrency and performance tests
 
         #region Resolvers tests
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeNonDataContractClassUsingDataContractResolver()
         {
             try
@@ -759,16 +708,15 @@ namespace Microsoft.Hadoop.Avro.Tests
                 var serializer = AvroSerializer.Create<NonDataContractClassWithFields>(
                     new AvroSerializerSettings());
                 serializer.Serialize((Stream)null, null);
-                Assert.Fail("Exception should be thrown.");
+                Assert.True(false, "Exception should be thrown.");
             }
             catch (SerializationException ex)
             {
-                Assert.IsTrue(ex.Message.Contains("Type 'Microsoft.Hadoop.Avro.Tests.NonDataContractClassWithFields' is not supported by the resolver."));
+                Assert.True(ex.Message.Contains("Type 'Microsoft.Hadoop.Avro.Tests.NonDataContractClassWithFields' is not supported by the resolver."));
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeDataContractClassUsingDataContractResolver()
         {
             var expected = DataContractClassWithFields.Create();
@@ -776,125 +724,142 @@ namespace Microsoft.Hadoop.Avro.Tests
             var settings = new AvroSerializerSettings();
 
             var actual = RoundTripSerializationWithCheck(expected, settings);
-            Assert.AreNotEqual(expected.NotSerializedValue, actual.NotSerializedValue);
+            Assert.NotEqual(expected.NotSerializedValue, actual.NotSerializedValue);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeInheritedClassWithDataContractResolver()
         {
             var expected = InheritedSimpleInt.Create();
             var settings = new AvroSerializerSettings();
 
             var actual = RoundTripSerializationWithCheck(expected, settings);
-            Assert.AreEqual(expected.DataMemberIntProperty, actual.DataMemberIntProperty);
-            Assert.AreNotEqual(expected.PublicIntProperty, actual.PublicIntProperty);
+            Assert.Equal(expected.DataMemberIntProperty, actual.DataMemberIntProperty);
+            Assert.NotEqual(expected.PublicIntProperty, actual.PublicIntProperty);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeInheritedClassWithWithPublicMembersResolver()
         {
             var expected = InheritedSimpleInt.Create();
 
             var actual = RoundTripSerializationWithCheck(expected, new AvroSerializerSettings { Resolver = new AvroPublicMemberContractResolver() });
-            Assert.AreEqual(expected.PublicIntProperty, actual.PublicIntProperty);
-            Assert.AreNotEqual(expected.DataMemberIntProperty, actual.DataMemberIntProperty);
+            Assert.Equal(expected.PublicIntProperty, actual.PublicIntProperty);
+            Assert.NotEqual(expected.DataMemberIntProperty, actual.DataMemberIntProperty);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void Serializer_SerializeUnsupportedMembersUsingCustomResolver()
         {
-            var serializer = AvroSerializer.Create<ClassOfEvents>(new AvroSerializerSettings { Resolver = new DummyEventResolver() });
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var serializer =
+                        AvroSerializer.Create<ClassOfEvents>(new AvroSerializerSettings
+                        {
+                            Resolver = new DummyEventResolver()
+                        });
+                }
+            );
         }
 
         #endregion //Resolvers tests
 
         #region tests of nulls
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Serializer_SerializeToNullStream()
         {
-            var expected = ClassOfInt.Create(true);
-            var serializer = AvroSerializer.Create<ClassOfInt>();
-            serializer.Serialize((Stream)null, expected);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    var expected = ClassOfInt.Create(true);
+                    var serializer = AvroSerializer.Create<ClassOfInt>();
+                    serializer.Serialize((Stream) null, expected);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Serializer_DeserializeNullStream()
         {
-            var serializer = AvroSerializer.Create<ClassOfInt>();
-            serializer.Deserialize((Stream)null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    var serializer = AvroSerializer.Create<ClassOfInt>();
+                    serializer.Deserialize((Stream) null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Serializer_SerializeUsingNullEncoder()
         {
-            var serializer = AvroSerializer.Create<int>();
-            serializer.Serialize((IEncoder)null, 0);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    var serializer = AvroSerializer.Create<int>();
+                    serializer.Serialize((IEncoder) null, 0);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Serializer_DeserializeUsingNullDecoder()
         {
-            var serializer = AvroSerializer.Create<int>();
-            serializer.Deserialize((IDecoder)null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    var serializer = AvroSerializer.Create<int>();
+                    serializer.Deserialize((IDecoder) null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults",
             Justification = "This test only verifies whether the constructor will throw as expected.")]
         public void Serializer_CreationWithNullSettings()
         {
-            AvroSerializer.Create<ClassOfInt>(null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    AvroSerializer.Create<ClassOfInt>(null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void Serializer_SerializerNullObject()
         {
-            var settings = new AvroSerializerSettings();
-            RoundTripSerializationWithCheck<ClassOfInt>(null, settings);
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var settings = new AvroSerializerSettings();
+                    RoundTripSerializationWithCheck<ClassOfInt>(null, settings);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeNullValues()
         {
             var expected = new[] { "string1", "string2", null };
 
             RoundTripSerializationWithCheck(
                 expected,
-                actual => CollectionAssert.AreEqual(expected, actual));
+                actual => Assert.Equal(expected, actual));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Serializer_CreateDeserializerOnlyWithNullSchema()
         {
-            AvroSerializer.CreateDeserializerOnly<ClassOfInt>(null, new AvroSerializerSettings());
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    AvroSerializer.CreateDeserializerOnly<ClassOfInt>(null, new AvroSerializerSettings());
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Serializer_CreateDeserializerOnlyWithNullSettings()
         {
-            const string StringSchema = @"{
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    const string StringSchema = @"{
                              ""type"":""record"",
                              ""name"":""Microsoft.Hadoop.Avro.Tests.ClassOfInt"",
                              ""fields"":
@@ -904,14 +869,15 @@ namespace Microsoft.Hadoop.Avro.Tests
                                                ""type"":""int""
                                            }
                                        ]
-                          }";
-            AvroSerializer.CreateDeserializerOnly<ClassOfInt>(StringSchema, null);
+                         }";
+                    AvroSerializer.CreateDeserializerOnly<ClassOfInt>(StringSchema, null);
+                }
+            );
         }
 
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", 
             Justification = "This test only verifies whether the method will throw as expected.")]
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_ObjectSerializerBaseWithNullArguments()
         {
             Utilities.ShouldThrow<ArgumentNullException>(() => new DummyObjectSerializerBase(null));
@@ -934,8 +900,7 @@ namespace Microsoft.Hadoop.Avro.Tests
 
         #region Surrogates tests
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeClassWithoutParameterlessConstructor()
         {
             var expected = ClassWithoutParameterlessConstructor.Create();
@@ -944,8 +909,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             RoundTripSerializationWithCheck(expected, settings);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeInheritedStringDictionaryWithSurrogates()
         {
             var expected = new DictionaryInheritedClass<string, ClassWithoutParameterlessConstructor>
@@ -958,8 +922,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             RoundTripSerializationWithCheck(expected, settings);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeInheritedListWithSurrogates()
         {
             var expected = new ListInheritedClass<ClassWithoutParameterlessConstructor>
@@ -972,8 +935,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             RoundTripSerializationWithCheck(expected, settings);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeUriDictionaryWithSurrogate()
         {
             var expected = new Dictionary<Uri, ClassWithoutParameterlessConstructor>
@@ -995,8 +957,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 settings);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeListWithSurrogate()
         {
             var expected = new List<AnotherClassWithoutParameterlessConstructor>
@@ -1009,35 +970,40 @@ namespace Microsoft.Hadoop.Avro.Tests
             var settings = new AvroSerializerSettings { Surrogate = new Surrogate(), Resolver = new AvroDataContractResolver(true) };
             RoundTripSerializationWithCheck(
                 expected,
-                actual => CollectionAssert.AreEqual(expected, actual),
+                actual => Assert.Equal(expected, actual),
                 settings);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void Serializer_SerializeWithSurrogateThatDoesNotSupportTypes()
         {
-            var expected = new List<Surrogate>
-            {
-                new Surrogate(),
-                new Surrogate(),
-                new Surrogate()
-            };
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var expected = new List<Surrogate>
+                    {
+                        new Surrogate(),
+                        new Surrogate(),
+                        new Surrogate()
+                    };
 
-            var settings = new AvroSerializerSettings { Surrogate = new Surrogate(), Resolver = new AvroDataContractResolver(true) };
-            RoundTripSerializationWithCheck(
-                expected,
-                actual => CollectionAssert.AreEqual(expected, actual),
-                settings);
+                    var settings = new AvroSerializerSettings
+                    {
+                        Surrogate = new Surrogate(),
+                        Resolver = new AvroDataContractResolver(true)
+                    };
+                    RoundTripSerializationWithCheck(
+                        expected,
+                        actual => Assert.Equal(expected, actual),
+                        settings);
+                }
+            );
         }
 
         #endregion //Surrogates tests
 
         #region KnownTypes tests
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeAbstractClassUsingDataContractKnownTypes()
         {
             var settings = new AvroSerializerSettings
@@ -1048,48 +1014,44 @@ namespace Microsoft.Hadoop.Avro.Tests
             var expected = new AbstractShape[] { Rectangle.Create(), Square.Create() };
             RoundTripSerializationWithCheck(
                 expected,
-                actual => CollectionAssert.AreEqual(expected, actual),
+                actual => Assert.Equal(expected, actual),
                 settings);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeAbstractClassUsingKnownTypesInSettings()
         {
             var expected = new AbstractShape[] { Rectangle.Create(), Square.Create() };
 
             RoundTripSerializationWithCheck(
                 expected,
-                actual => CollectionAssert.AreEqual(expected, actual),
+                actual => Assert.Equal(expected, actual),
                 new AvroSerializerSettings { KnownTypes = new HashSet<Type> { typeof(Rectangle), typeof(Square) } });
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeConcreteBaseClassUsingDataContractKnownTypes()
         {
             var expected = ConcreteShape.Create();
 
             RoundTripSerializationWithCheck(
                 expected,
-                actual => Assert.AreEqual(expected, actual),
+                actual => Assert.Equal(expected, actual),
                 new AvroSerializerSettings { Resolver = new AvroDataContractResolver() });
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeConcreteBaseClassUsingKnownTypesInSettings()
         {
             var expected = ConcreteShape.Create();
 
             RoundTripSerializationWithCheck(
                 expected,
-                actual => Assert.AreEqual(expected, actual),
+                actual => Assert.Equal(expected, actual),
                 new AvroSerializerSettings { KnownTypes = new HashSet<Type> { typeof(SquareInheritingConcreteConcreteShape) } });
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeClassWithAbstractAndInterfaceMembersUsingKnownTypesInSettings()
         {
             var expected = ClassWithAbstractMembers.Create();
@@ -1099,8 +1061,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 new AvroSerializerSettings { KnownTypes = new HashSet<Type> { typeof(Rectangle), typeof(Square), typeof(AnotherSquare), typeof(ClassImplementingInterface) } });
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeClassWithAbstractAndInterfaceMembersUsingDataContractKnownTypes()
         {
             var expected = ClassWithAbstractMembers.Create();
@@ -1110,8 +1071,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 new AvroSerializerSettings { KnownTypes = new HashSet<Type> { typeof(ClassImplementingInterface) } });
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeInterfaceUsingKnownTypesInSettings()
         {
             IInterface expected = ClassImplementingInterface.Create();
@@ -1121,8 +1081,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 new AvroSerializerSettings { KnownTypes = new HashSet<Type> { typeof(ClassImplementingInterface) } });
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeInheritedClassesUsingKnownTypesInSettings()
         {
             IInterface expected = InheritedClassImplementingInterface.CreateInherited();
@@ -1132,36 +1091,44 @@ namespace Microsoft.Hadoop.Avro.Tests
                 new AvroSerializerSettings { KnownTypes = new HashSet<Type> { typeof(ClassImplementingInterface), typeof(InheritedClassImplementingInterface) } });
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void Serializer_SerializeAbstractClassWithInvalidDataContractKnownTypes()
         {
-            AvroSerializer.Create<AbstractClassWithInvalidKnownTypes>();
+            Assert.Throws<SerializationException>(() =>
+                {
+                    AvroSerializer.Create<AbstractClassWithInvalidKnownTypes>();
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void Serializer_SerializeAbstractClassWithInvalidKnownTypesInSettings()
         {
-            AvroSerializer.Create<AbstractClassWithInvalidKnownTypes>(new AvroSerializerSettings { KnownTypes = new HashSet<Type> { typeof(Rectangle), typeof(Square) } });
+            Assert.Throws<SerializationException>(() =>
+                {
+                    AvroSerializer.Create<AbstractClassWithInvalidKnownTypes>(new AvroSerializerSettings
+                    {
+                        KnownTypes = new HashSet<Type> {typeof(Rectangle), typeof(Square)}
+                    });
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void Serializer_SerializeInterfaceWithInvalidKnownTypesInSettings()
         {
-            IInterface expected = ClassImplementingInterface.Create();
+            Assert.Throws<SerializationException>(() =>
+                {
+                    IInterface expected = ClassImplementingInterface.Create();
 
-            RoundTripSerializationWithCheck(
-                expected,
-                new AvroSerializerSettings { KnownTypes = new HashSet<Type> { typeof(Rectangle), typeof(Square) } });
+                    RoundTripSerializationWithCheck(
+                        expected,
+                        new AvroSerializerSettings {KnownTypes = new HashSet<Type> {typeof(Rectangle), typeof(Square)}});
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeInheritedClass()
         {
             Square expected = DifferentSquare.Create();
@@ -1172,8 +1139,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 settings);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeBaseClass()
         {
             Square expected = Square.Create();
@@ -1184,17 +1150,21 @@ namespace Microsoft.Hadoop.Avro.Tests
                 settings);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void Serializer_GiveInterfaceInKnownTypes()
         {
-            var settings = new AvroSerializerSettings { KnownTypes = new List<Type> { typeof(IInheritedInterface) } };
-            AvroSerializer.Create<IInterface>(settings);
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var settings = new AvroSerializerSettings
+                    {
+                        KnownTypes = new List<Type> {typeof(IInheritedInterface)}
+                    };
+                    AvroSerializer.Create<IInterface>(settings);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_ProvidingSameKnownTypeAsSerialized()
         {
             DifferentSquare expected = DifferentSquare.Create();
@@ -1205,8 +1175,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 settings);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeInheritedClassWithBaseHavingKnownTypes()
         {
             var expected = ClassInheritingClassWithAbstractMembers.Create();
@@ -1217,24 +1186,21 @@ namespace Microsoft.Hadoop.Avro.Tests
 
         #region Nullables tests
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeClassWithNullableFields()
         {
             var expected = NullableFieldsClass.Create();
             RoundTripSerializationWithCheck(expected, new AvroSerializerSettings { Resolver = new AvroDataContractResolver(true) });
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeNullableInt()
         {
             int? expected = 10;
             RoundTripSerializationWithCheck(expected);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeNullableIntWithNullValue()
         {
             int? expected = null;
@@ -1245,8 +1211,7 @@ namespace Microsoft.Hadoop.Avro.Tests
 
         #region NullableSchema tests
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializerClassWithNullableSchemaFields()
         {
             var settings = new AvroSerializerSettings();
@@ -1254,8 +1219,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             RoundTripSerializationWithCheck(expected, settings);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializerClassWithSchemaNullableFieldUsingDataContractResolverWithCSharpNulls()
         {
             var settings = new AvroSerializerSettings { Resolver = new AvroDataContractResolver(true) };
@@ -1263,8 +1227,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             RoundTripSerializationWithCheck(expected, settings);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializerClassWithSchemaNullableFieldUsingDataContractResolverWithNoNulls()
         {
             var settings = new AvroSerializerSettings();
@@ -1272,8 +1235,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             RoundTripSerializationWithCheck(expected, settings);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializerClassWithSchemaNullableFieldUsingPublicMembersResolverWithCSharpNulls()
         {
             var settings = new AvroSerializerSettings { Resolver = new AvroDataContractResolver(true) };
@@ -1281,8 +1243,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             RoundTripSerializationWithCheck(expected, settings);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializerClassWithSchemaNullableFieldUsingPublicMembersResolverWithNoNulls()
         {
             var settings = new AvroSerializerSettings();
@@ -1292,8 +1253,7 @@ namespace Microsoft.Hadoop.Avro.Tests
 
         #endregion //NullableSchema tests
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SerializerSettings_EqualityTest()
         {
             var settings = new AvroSerializerSettings { GenerateSerializer = false, KnownTypes = new List<Type> { typeof(Square) } };
@@ -1317,7 +1277,7 @@ namespace Microsoft.Hadoop.Avro.Tests
         {
             return RoundTripSerializationWithCheck(
                 serialized,
-                actual => Assert.AreEqual(serialized, actual),
+                actual => Assert.Equal(serialized, actual),
                 settings);
         }
 
@@ -1346,8 +1306,7 @@ namespace Microsoft.Hadoop.Avro.Tests
 
         #region AvroUnion tests
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeUnionOfIntStringNull()
         {
             var expected = ClassOfUnion.Create();
@@ -1355,40 +1314,40 @@ namespace Microsoft.Hadoop.Avro.Tests
 
             var fieldType =
                 ((RecordSchema)serializer.WriterSchema).Fields.First(f => f.Name == "IntClassOfIntNullFieldClassOfInt").TypeSchema as UnionSchema;
-            Assert.IsNotNull(fieldType);
-            Assert.IsTrue(fieldType.Schemas[0].RuntimeType == typeof(int));
-            Assert.IsTrue(fieldType.Schemas[1].RuntimeType == typeof(ClassOfInt));
-            Assert.IsTrue(fieldType.Schemas[2].RuntimeType == typeof(AvroNull));
+            Assert.NotNull(fieldType);
+            Assert.True(fieldType.Schemas[0].RuntimeType == typeof(int));
+            Assert.True(fieldType.Schemas[1].RuntimeType == typeof(ClassOfInt));
+            Assert.True(fieldType.Schemas[2].RuntimeType == typeof(AvroNull));
             using (var stream = new MemoryStream())
             {
                 serializer.Serialize(stream, expected);
                 stream.Seek(0, SeekOrigin.Begin);
                 var actual = serializer.Deserialize(stream);
 
-                Assert.AreEqual(expected, actual);
+                Assert.Equal(expected, actual);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void Serializer_SeiralizeUnionOnIntStringNullUsingWrongValue()
         {
-            var obj = ClassOfUnion.Create();
-            obj.IntStringNullFieldInt = Utilities.GetRandom<float>(false);
-            RoundTripSerializationWithCheck(obj);
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var obj = ClassOfUnion.Create();
+                    obj.IntStringNullFieldInt = Utilities.GetRandom<float>(false);
+                    RoundTripSerializationWithCheck(obj);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_AvroUnionBackwardCompatbilityWithKnownTypes()
         {
             var expected = ClassWithKnownTypesAndAvroUnion.Create();
             RoundTripSerializationWithCheck(expected);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeClassOfUnion()
         {
             // support multiple collections type as known types.
@@ -1400,8 +1359,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             RoundTripSerializationWithCheck(serializer, deserializer, expected);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeClassWith2ArrayMapKnownTypes()
         {
             var serializer = AvroSerializer.Create<ClassOfUnionWith2ArrayAndMap>();
@@ -1412,8 +1370,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             RoundTripSerializationWithCheck(serializer, deserializer, expected);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeClassOfUnionWith2SameArrayAndMap()
         {
             //  according to avro spec http://avro.apache.org/docs/current/spec.html#Unions
@@ -1425,10 +1382,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             // assert the actual schema only contains 1 int array and 1 int map, to be compliance with avro spec.
             const string expectedSchema = 
                 @"{""type"":""record"","+
-                @"""name"":""Microsoft.Hadoop.Avro.Tests.TestClasses.ClassOfUnionWith2SameArrayAndMap"","+
+                @"""name"":""Microsoft.Hadoop.Avro.Tests.Classes.ClassOfUnionWith2SameArrayAndMap"","+
                 @"""fields"":[{""name"":""IntArray"",""type"":[{""type"":""array"",""items"":""int""},""null""]},"+
                 @"{""name"":""IntMap"",""type"":[{""type"":""map"",""values"":""int""},""null""]}]}";
-            Assert.AreEqual(expectedSchema, schema);
+            Assert.Equal(expectedSchema, schema);
 
             var deserializer = AvroSerializer.CreateDeserializerOnly<ClassOfUnionWith2SameArrayAndMap>(schema, new AvroSerializerSettings());
 
@@ -1437,8 +1394,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             RoundTripSerializationWithCheck(serializer, deserializer, expected);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_SerializeClassWithGenericMemberHavingMultipleMatchingKnownTypes()
         {
             // support multiple collections type as known types.
@@ -1459,28 +1415,27 @@ namespace Microsoft.Hadoop.Avro.Tests
             RoundTripSerializationWithCheck(serializer, deserializer, expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void UnionSchema_TestIsSameTypeAs()
         {
             TypeSchema intArray1 = new ArraySchema(new IntSchema(typeof(int)), typeof(int[]));
             TypeSchema intArray2 = new ArraySchema(new IntSchema(typeof(int)), typeof(int[]));
-            Assert.IsTrue(UnionSchema.IsSameTypeAs(intArray1, intArray2));
+            Assert.True(UnionSchema.IsSameTypeAs(intArray1, intArray2));
 
             TypeSchema stringArray = new ArraySchema(new StringSchema(typeof(string)), typeof(string[]));
-            Assert.IsFalse(UnionSchema.IsSameTypeAs(intArray1, stringArray));
+            Assert.False(UnionSchema.IsSameTypeAs(intArray1, stringArray));
 
             TypeSchema intMap1 = new MapSchema(new IntSchema(typeof(int)), new IntSchema(typeof(int)), typeof(Dictionary<int, int>));
             TypeSchema intMap2 = new MapSchema(new IntSchema(typeof(int)), new IntSchema(typeof(int)), typeof(Dictionary<int, int>));
-            Assert.IsTrue(UnionSchema.IsSameTypeAs(intMap1, intMap2));
+            Assert.True(UnionSchema.IsSameTypeAs(intMap1, intMap2));
 
             TypeSchema stringMap = new MapSchema(new StringSchema(typeof(string)), new StringSchema(typeof(string)), typeof(Dictionary<string, string>));
-            Assert.IsFalse(UnionSchema.IsSameTypeAs(intMap1, stringMap));
+            Assert.False(UnionSchema.IsSameTypeAs(intMap1, stringMap));
 
-            Assert.IsFalse(UnionSchema.IsSameTypeAs(stringArray, stringMap));
+            Assert.False(UnionSchema.IsSameTypeAs(stringArray, stringMap));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Serializer_ClassOfObjectDictionary()
         {
             var resolver = new AvroCustomContractResolver();
@@ -1500,7 +1455,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
                 var actual = deserializer.Deserialize(stream);
 
-                Assert.AreEqual(serialized, actual);
+                Assert.Equal(serialized, actual);
             }
         }
 

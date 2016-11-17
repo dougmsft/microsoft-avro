@@ -20,21 +20,19 @@ namespace Microsoft.Hadoop.Avro.Tests
     using System.IO;
     using System.Runtime.Serialization;
     using Microsoft.Hadoop.Avro.Schema;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
 
-    [TestClass]
+    [Trait("Category", "SchemaEvolution")]
     public sealed class SchemaEvolutionTests
     {
         private AvroSerializerSettings dataContractSettings;
 
-        [TestInitialize]
-        public void TestSetup()
+        public SchemaEvolutionTests()
         {
             this.dataContractSettings = new AvroSerializerSettings();
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaEvolution_ArrayWithIdenticalElementType()
         {
             const string WriterSchema =
@@ -54,12 +52,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Position = 0;
 
                 var actual = deserializer.Deserialize(stream);
-                CollectionAssert.AreEqual(expected, actual);
+                Assert.Equal(expected, actual);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaEvolution_ArrayWithWriterIntPromotedToReaderLong()
         {
             const string WriterSchema =
@@ -79,12 +76,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Position = 0;
 
                 var actual = deserializer.Deserialize(stream);
-                CollectionAssert.AreEqual(Array.ConvertAll(expected, i => (long)i), actual);
+                Assert.Equal(Array.ConvertAll(expected, i => (long)i), actual);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaEvolution_RecordWithPromotionalNumericFields()
         {
             const string WriterSchema =
@@ -121,18 +117,17 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Position = 0;
 
                 var actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.IntToLongField, actual.IntToLongField);
-                Assert.AreEqual(expected.IntToFloatField, actual.IntToFloatField);
-                Assert.AreEqual(expected.IntToDoubleField, actual.IntToDoubleField);
-                Assert.AreEqual(expected.LongToFloatField, actual.LongToFloatField);
-                Assert.AreEqual(expected.LongToDoubleField, actual.LongToDoubleField);
-                Assert.AreEqual(expected.FloatToDoubleField, actual.FloatToDoubleField);
+                Assert.Equal(expected.IntToLongField, actual.IntToLongField);
+                Assert.Equal(expected.IntToFloatField, actual.IntToFloatField);
+                Assert.Equal(expected.IntToDoubleField, actual.IntToDoubleField);
+                Assert.Equal(expected.LongToFloatField, actual.LongToFloatField);
+                Assert.Equal(expected.LongToDoubleField, actual.LongToDoubleField);
+                Assert.Equal(expected.FloatToDoubleField, actual.FloatToDoubleField);
             }
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity",
-            Justification = "Tests complex hierarchy."), TestMethod]
-        [TestCategory("CheckIn")]
+            Justification = "Tests complex hierarchy."), Fact]
         public void SchemaEvolution_RecordWithPermutatedAndMissingWriterFields()
         {
             const string WriterSchema =
@@ -199,18 +194,17 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Position = 0;
 
                 var actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.DoubleB, actual.DoubleB);
-                Assert.AreEqual(expected.FloatB, actual.FloatB);
-                Assert.AreEqual(expected.FloatA, actual.FloatA);
-                Assert.AreEqual(expected.BoolB, actual.BoolB);
-                Assert.AreEqual(expected.BoolA, actual.BoolA);
-                Assert.AreEqual(expected.DoubleA, actual.DoubleA);
+                Assert.Equal(expected.DoubleB, actual.DoubleB);
+                Assert.Equal(expected.FloatB, actual.FloatB);
+                Assert.Equal(expected.FloatA, actual.FloatA);
+                Assert.Equal(expected.BoolB, actual.BoolB);
+                Assert.Equal(expected.BoolA, actual.BoolA);
+                Assert.Equal(expected.DoubleA, actual.DoubleA);
             }
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity",
-            Justification = "Tests complex hierarchy."), TestMethod]
-        [TestCategory("CheckIn")]
+            Justification = "Tests complex hierarchy."), Fact]
         public void SchemaEvolution_RecordSkippers()
         {
             const string WriterSchema =
@@ -283,13 +277,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Position = 0;
 
                 dynamic actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.Existing, actual.Existing);
-                Assert.AreEqual(expected.AnotherExisting, actual.AnotherExisting);
+                Assert.Equal(expected.Existing, actual.Existing);
+                Assert.Equal(expected.AnotherExisting, actual.AnotherExisting);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaEvolution_RecordWithIdenticalFields()
         {
             const string WriterSchema = @"{
@@ -313,11 +306,10 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Position = 0;
 
                 var actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.PrimitiveInt, actual.PrimitiveInt);
+                Assert.Equal(expected.PrimitiveInt, actual.PrimitiveInt);
             }
         }
 
-        [TestCategory("CheckIn")]
         public void TestRecordEvolutionWithExtraReaderFieldsAndDefaultValues()
         {
             const string WriterSchema = @"{
@@ -344,22 +336,22 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 dynamic actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(actual.ExtraFieldInt, 0);
-                Assert.AreEqual(actual.ExtraFieldLong, 0);
-                Assert.AreEqual(actual.ExtraFieldFloat, 0.0f);
-                Assert.AreEqual(actual.ExtraFieldDouble, 0.0d);
-                Assert.AreEqual(actual.ExtraFieldString, null);
-                Assert.AreEqual(actual.ExtraFieldBool, false);
-                Assert.AreEqual(expected.IntField, actual.IntField);
+                Assert.Equal(actual.ExtraFieldInt, 0);
+                Assert.Equal(actual.ExtraFieldLong, 0);
+                Assert.Equal(actual.ExtraFieldFloat, 0.0f);
+                Assert.Equal(actual.ExtraFieldDouble, 0.0d);
+                Assert.Equal(actual.ExtraFieldString, null);
+                Assert.Equal(actual.ExtraFieldBool, false);
+                Assert.Equal(expected.IntField, actual.IntField);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void SchemaEvolution_RecordWithIncompatibleReaderAndWriterValueTypes()
         {
-            const string WriterSchema = @"{
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string WriterSchema = @"{
                              ""type"":""record"",
                              ""name"":""Microsoft.Hadoop.Avro.Tests.SimpleIntClass"",
                              ""fields"":
@@ -371,13 +363,15 @@ namespace Microsoft.Hadoop.Avro.Tests
                                        ]
                           }";
 
-            var serializer = AvroSerializer.CreateGeneric(WriterSchema);
-            var deserializer = AvroSerializer.CreateDeserializerOnly<SimpleIntClassWithStringFieldType>(WriterSchema, this.dataContractSettings);
-            Assert.Fail();
+                    var serializer = AvroSerializer.CreateGeneric(WriterSchema);
+                    var deserializer = AvroSerializer.CreateDeserializerOnly<SimpleIntClassWithStringFieldType>(
+                        WriterSchema, this.dataContractSettings);
+                    Assert.True(false, "");
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaEvolution_RecordWithNoMatchedFields()
         {
             const string WriterSchema = @"{
@@ -396,8 +390,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             var deserializer = AvroSerializer.CreateDeserializerOnly<SimpleIntClassWithDifferentFieldName>(WriterSchema, this.dataContractSettings);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaEvolution_RecordWithAliasRelativeToNamespace()
         {
             const string WriterSchema =
@@ -433,12 +426,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 dynamic actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.IntField, actual.IntField);
+                Assert.Equal(expected.IntField, actual.IntField);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaEvolution_RecordWithMemberOrderChanged()
         {
             var settings = new AvroSerializerSettings() { Resolver = new AvroDataContractResolver(true, true) };
@@ -452,13 +444,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 AnotherRectangle actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.Width, actual.Width);
-                Assert.AreEqual(expected.Height, actual.Height);
+                Assert.Equal(expected.Width, actual.Width);
+                Assert.Equal(expected.Height, actual.Height);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaEvolution_SerializeWithoutGetter()
         {
             try
@@ -467,12 +458,11 @@ namespace Microsoft.Hadoop.Avro.Tests
             }
             catch (SerializationException ex)
             {
-                Assert.AreEqual(true, ex.Message.Contains("Microsoft.Hadoop.Avro.Tests.NoGetter"));
+                Assert.Equal(true, ex.Message.Contains("Microsoft.Hadoop.Avro.Tests.NoGetter"));
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaEvolution_RecordWithFullyQualifiedAlias()
         {
             const string WriterSchema =
@@ -508,12 +498,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 dynamic actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.IntField, actual.IntField);
+                Assert.Equal(expected.IntField, actual.IntField);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaEvolution_RecordWithUnionWriterAndUnionReaderContainingMoreOptions()
         {
             const string WriterSchema =
@@ -559,14 +548,13 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 dynamic actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.CategoryName, actual.CategoryName);
-                Assert.AreEqual(expected.Description, actual.Description);
-                CollectionAssert.AreEqual(expected.Picture, actual.Picture);
+                Assert.Equal(expected.CategoryName, actual.CategoryName);
+                Assert.Equal(expected.Description, actual.Description);
+                Assert.Equal(expected.Picture, actual.Picture);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaEvolution_RecordWithUnionReaderAndNonUnionWriter()
         {
             const string WriterSchema =
@@ -612,14 +600,13 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 dynamic actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.CategoryName, actual.CategoryName);
-                Assert.AreEqual(expected.Description, actual.Description);
-                CollectionAssert.AreEqual(expected.Picture, actual.Picture);
+                Assert.Equal(expected.CategoryName, actual.CategoryName);
+                Assert.Equal(expected.Description, actual.Description);
+                Assert.Equal(expected.Picture, actual.Picture);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaEvolution_RecordWithNonUnionReaderAndUnionWriter()
         {
             const string WriterSchema =
@@ -665,218 +652,232 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 dynamic actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.CategoryName, actual.CategoryName);
-                Assert.AreEqual(expected.Description, actual.Description);
-                CollectionAssert.AreEqual(expected.Picture, actual.Picture);
+                Assert.Equal(expected.CategoryName, actual.CategoryName);
+                Assert.Equal(expected.Description, actual.Description);
+                Assert.Equal(expected.Picture, actual.Picture);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void SchemaEvolution_RecordWithWrongUnionReaderAndUnionWriter()
         {
-            const string WriterSchema =
-           @"{
-                 ""name"":""Category"",
-                 ""namespace"":""ApacheAvro.Types"",
-                 ""type"":""record"",
-                 ""fields"":
-                           [
-                                {""name"":""CategoryName"", ""type"":""string""},
-                                {""name"":""Id"", ""type"":[""int"", ""null""]}
-                           ]
-             }";
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string WriterSchema =
+                        @"{
+                         ""name"":""Category"",
+                         ""namespace"":""ApacheAvro.Types"",
+                         ""type"":""record"",
+                         ""fields"":
+                                   [
+                                        {""name"":""CategoryName"", ""type"":""string""},
+                                        {""name"":""Id"", ""type"":[""int"", ""null""]}
+                                   ]
+                     }";
 
-            const string ReaderSchema =
-           @"{
-                 ""name"":""Category"",
-                 ""namespace"":""ApacheAvro.Types"",
-                 ""type"":""record"",
-                 ""fields"":
-                           [
-                                {""name"":""CategoryName"", ""type"":""string""},
-                                {""name"":""Id"", ""type"":[""string"", ""null""]}
-                           ]
-             }";
+                     const string ReaderSchema =
+                                @"{
+                         ""name"":""Category"",
+                         ""namespace"":""ApacheAvro.Types"",
+                         ""type"":""record"",
+                         ""fields"":
+                                   [
+                                        {""name"":""CategoryName"", ""type"":""string""},
+                                        {""name"":""Id"", ""type"":[""string"", ""null""]}
+                                   ]
+                     }";
 
-            var serializer = AvroSerializer.CreateGeneric(WriterSchema);
-            var deserializer = AvroSerializer.CreateGenericDeserializerOnly(WriterSchema, ReaderSchema);
+                    var serializer = AvroSerializer.CreateGeneric(WriterSchema);
+                    var deserializer = AvroSerializer.CreateGenericDeserializerOnly(WriterSchema, ReaderSchema);
 
-            using (var stream = new MemoryStream())
-            {
-                dynamic expected = new AvroRecord(serializer.WriterSchema);
-                expected.CategoryName = "Test";
-                expected.Description = "Test";
-                expected.Picture = new byte[] { 0x10, 0x20, 0x30, 0x40 };
-                expected.Id = 1;
+                    using (var stream = new MemoryStream())
+                    {
+                        dynamic expected = new AvroRecord(serializer.WriterSchema);
+                        expected.CategoryName = "Test";
+                        expected.Description = "Test";
+                        expected.Picture = new byte[] {0x10, 0x20, 0x30, 0x40};
+                        expected.Id = 1;
 
-                serializer.Serialize(stream, expected);
-                stream.Seek(0, SeekOrigin.Begin);
+                        serializer.Serialize(stream, expected);
+                        stream.Seek(0, SeekOrigin.Begin);
 
-                dynamic actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.CategoryName, actual.CategoryName);
-                Assert.AreEqual(expected.Description, actual.Description);
-                CollectionAssert.AreEqual(expected.Picture, actual.Picture);
-            }
+                        dynamic actual = deserializer.Deserialize(stream);
+                        Assert.Equal(expected.CategoryName, actual.CategoryName);
+                        Assert.Equal(expected.Description, actual.Description);
+                        Assert.Equal(expected.Picture, actual.Picture);
+                    }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void SchemaEvolution_RecordWithWrongNonUnionReaderAndUnionWriter()
         {
-            const string WriterSchema =
-           @"{
-                 ""name"":""Category"",
-                 ""namespace"":""ApacheAvro.Types"",
-                 ""type"":""record"",
-                 ""fields"":
-                           [
-                                {""name"":""CategoryName"", ""type"":""string""},
-                                {""name"":""Description"", ""type"":[""null"", ""string""]},
-                                {""name"":""Picture"", ""type"":[""bytes"", ""null""]},
-                                {""name"":""Id"", ""type"":[""int"", ""null""]}
-                           ]
-             }";
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string WriterSchema =
+                        @"{
+                         ""name"":""Category"",
+                         ""namespace"":""ApacheAvro.Types"",
+                         ""type"":""record"",
+                         ""fields"":
+                                   [
+                                        {""name"":""CategoryName"", ""type"":""string""},
+                                        {""name"":""Description"", ""type"":[""null"", ""string""]},
+                                        {""name"":""Picture"", ""type"":[""bytes"", ""null""]},
+                                        {""name"":""Id"", ""type"":[""int"", ""null""]}
+                                   ]
+                     }";
 
-            const string ReaderSchema =
-           @"{
-                 ""name"":""Category"",
-                 ""namespace"":""ApacheAvro.Types"",
-                 ""type"":""record"",
-                 ""fields"":
-                           [
-                                {""name"":""CategoryName"", ""type"":""string""},
-                                {""name"":""Description"", ""type"":""string""},
-                                {""name"":""Picture"", ""type"":""string""},
-                                {""name"":""Id"", ""type"":""int""}
-                           ]
-             }";
+                            const string ReaderSchema =
+                                @"{
+                         ""name"":""Category"",
+                         ""namespace"":""ApacheAvro.Types"",
+                         ""type"":""record"",
+                         ""fields"":
+                                   [
+                                        {""name"":""CategoryName"", ""type"":""string""},
+                                        {""name"":""Description"", ""type"":""string""},
+                                        {""name"":""Picture"", ""type"":""string""},
+                                        {""name"":""Id"", ""type"":""int""}
+                                   ]
+                     }";
 
-            var serializer = AvroSerializer.CreateGeneric(WriterSchema);
-            var deserializer = AvroSerializer.CreateGenericDeserializerOnly(WriterSchema, ReaderSchema);
+                    var serializer = AvroSerializer.CreateGeneric(WriterSchema);
+                    var deserializer = AvroSerializer.CreateGenericDeserializerOnly(WriterSchema, ReaderSchema);
 
-            using (var stream = new MemoryStream())
-            {
-                dynamic expected = new AvroRecord(serializer.WriterSchema);
-                expected.CategoryName = "Test";
-                expected.Description = "Test";
-                expected.Picture = new byte[] { 0x10, 0x20, 0x30, 0x40 };
-                expected.Id = 1;
+                    using (var stream = new MemoryStream())
+                    {
+                        dynamic expected = new AvroRecord(serializer.WriterSchema);
+                        expected.CategoryName = "Test";
+                        expected.Description = "Test";
+                        expected.Picture = new byte[] {0x10, 0x20, 0x30, 0x40};
+                        expected.Id = 1;
 
-                serializer.Serialize(stream, expected);
-                stream.Seek(0, SeekOrigin.Begin);
+                        serializer.Serialize(stream, expected);
+                        stream.Seek(0, SeekOrigin.Begin);
 
-                dynamic actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.CategoryName, actual.CategoryName);
-                Assert.AreEqual(expected.Description, actual.Description);
-                CollectionAssert.AreEqual(expected.Picture, actual.Picture);
-            }
+                        dynamic actual = deserializer.Deserialize(stream);
+                        Assert.Equal(expected.CategoryName, actual.CategoryName);
+                        Assert.Equal(expected.Description, actual.Description);
+                        Assert.Equal(expected.Picture, actual.Picture);
+                    }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void SchemaEvolution_RecordWithWrongUnionReaderAndNonUnionWriter()
         {
-            const string WriterSchema =
-           @"{
-                 ""name"":""Category"",
-                 ""namespace"":""ApacheAvro.Types"",
-                 ""type"":""record"",
-                 ""fields"":
-                           [
-                                {""name"":""CategoryName"", ""type"":""string""},
-                                {""name"":""Description"", ""type"":""string""},
-                                {""name"":""Picture"", ""type"":""bytes""},
-                                {""name"":""Id"", ""type"":""int""}
-                           ]
-             }";
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string WriterSchema =
+                        @"{
+                         ""name"":""Category"",
+                         ""namespace"":""ApacheAvro.Types"",
+                         ""type"":""record"",
+                         ""fields"":
+                                   [
+                                        {""name"":""CategoryName"", ""type"":""string""},
+                                        {""name"":""Description"", ""type"":""string""},
+                                        {""name"":""Picture"", ""type"":""bytes""},
+                                        {""name"":""Id"", ""type"":""int""}
+                                   ]
+                     }";
 
-            const string ReaderSchema =
-           @"{
-                 ""name"":""Category"",
-                 ""namespace"":""ApacheAvro.Types"",
-                 ""type"":""record"",
-                 ""fields"":
-                           [
-                                {""name"":""CategoryName"", ""type"":""string""},
-                                {""name"":""Id"", ""type"":[""string"", ""null""]}
-                           ]
-             }";
+                            const string ReaderSchema =
+                                @"{
+                         ""name"":""Category"",
+                         ""namespace"":""ApacheAvro.Types"",
+                         ""type"":""record"",
+                         ""fields"":
+                                   [
+                                        {""name"":""CategoryName"", ""type"":""string""},
+                                        {""name"":""Id"", ""type"":[""string"", ""null""]}
+                                   ]
+                     }";
 
-            var serializer = AvroSerializer.CreateGeneric(WriterSchema);
-            var deserializer = AvroSerializer.CreateGenericDeserializerOnly(WriterSchema, ReaderSchema);
+                    var serializer = AvroSerializer.CreateGeneric(WriterSchema);
+                    var deserializer = AvroSerializer.CreateGenericDeserializerOnly(WriterSchema, ReaderSchema);
 
-            using (var stream = new MemoryStream())
-            {
-                dynamic expected = new AvroRecord(serializer.WriterSchema);
-                expected.CategoryName = "Test";
-                expected.Description = "Test";
-                expected.Picture = new byte[] { 0x10, 0x20, 0x30, 0x40 };
-                expected.Id = 1;
+                    using (var stream = new MemoryStream())
+                    {
+                        dynamic expected = new AvroRecord(serializer.WriterSchema);
+                        expected.CategoryName = "Test";
+                        expected.Description = "Test";
+                        expected.Picture = new byte[] {0x10, 0x20, 0x30, 0x40};
+                        expected.Id = 1;
 
-                serializer.Serialize(stream, expected);
-                stream.Seek(0, SeekOrigin.Begin);
+                        serializer.Serialize(stream, expected);
+                        stream.Seek(0, SeekOrigin.Begin);
 
-                dynamic actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.CategoryName, actual.CategoryName);
-                Assert.AreEqual(expected.Description, actual.Description);
-                CollectionAssert.AreEqual(expected.Picture, actual.Picture);
-            }
+                        dynamic actual = deserializer.Deserialize(stream);
+                        Assert.Equal(expected.CategoryName, actual.CategoryName);
+                        Assert.Equal(expected.Description, actual.Description);
+                        Assert.Equal(expected.Picture, actual.Picture);
+                    }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void SchemaEvolution_EnumCaseSensitiveSymbolMatching()
         {
-            const string WriterSchema = @"{ 
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string WriterSchema = @"{ 
                 ""type"": ""enum"",
                 ""name"": ""Suit"",
                 ""namespace"":""Microsoft.Hadoop.Avro.Tests"",
                 ""symbols"" : [""Spades"", ""Hearts"", ""Diamonds"", ""Clubs""]}";
 
-            var serializer = AvroSerializer.CreateGeneric(WriterSchema);
-            var deserializer = AvroSerializer.CreateDeserializerOnly<SuitAllCaps>(WriterSchema, this.dataContractSettings);
-            Assert.Fail();
+                    var serializer = AvroSerializer.CreateGeneric(WriterSchema);
+                    var deserializer = AvroSerializer.CreateDeserializerOnly<SuitAllCaps>(WriterSchema,
+                        this.dataContractSettings);
+                    Assert.True(false, "");
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void SchemaEvolution_EnumMatchingWithMissingWriterSymbols()
         {
-            const string WriterSchema = @"{ 
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string WriterSchema = @"{ 
                 ""type"": ""enum"",
                 ""name"": ""Suit"",
                 ""namespace"":""Microsoft.Hadoop.Avro.Tests"",
                 ""symbols"" : [""Spades"", ""Hearts"", ""Diamonds"", ""Clubs""]}";
 
-            var serializer = AvroSerializer.CreateGeneric(WriterSchema);
-            var deserializer = AvroSerializer.CreateDeserializerOnly<SuitMissingSymbols>(WriterSchema, this.dataContractSettings);
-            Assert.Fail();
+                    var serializer = AvroSerializer.CreateGeneric(WriterSchema);
+                    var deserializer = AvroSerializer.CreateDeserializerOnly<SuitMissingSymbols>(WriterSchema,
+                        this.dataContractSettings);
+                    Assert.True(false, "");
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void SchemaEvolution_EnumMatchingWithDifferentNames()
         {
-            const string WriterSchema = @"{ 
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string WriterSchema = @"{ 
                 ""type"": ""enum"",
                 ""name"": ""MySuit"",
                 ""namespace"":""Microsoft.Hadoop.Avro.Tests"",
                 ""symbols"" : [""Spades"", ""Hearts"", ""Diamonds"", ""Clubs""]}";
 
-            var serializer = AvroSerializer.CreateGeneric(WriterSchema);
-            var deserializer = AvroSerializer.CreateDeserializerOnly<Suit>(WriterSchema, this.dataContractSettings);
-            Assert.Fail();
+                    var serializer = AvroSerializer.CreateGeneric(WriterSchema);
+                    var deserializer = AvroSerializer.CreateDeserializerOnly<Suit>(WriterSchema,
+                        this.dataContractSettings);
+                    Assert.True(false, "");
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaEvolution_EnumWithExtraReaderSymbols()
         {
             const string WriterSchema = @"{
@@ -897,12 +898,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 var actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.Value, actual.ToString());
+                Assert.Equal(expected.Value, actual.ToString());
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaEvolution_CompatibleConversionOfFixedRecordToGuid()
         {
             const string WriterSchema = @"{ 
@@ -926,12 +926,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 var actual = deserializer.Deserialize(stream);
-                CollectionAssert.AreEqual(expected, actual.ToByteArray());
+                Assert.Equal(expected, actual.ToByteArray());
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaEvolution_CompatibleConversionOfDictionaryRecordToDictionaryClass()
         {
             const string WriterSchema = @"{
@@ -956,15 +955,14 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 var actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.Values["key1"], actual.Values["key1"]);
-                Assert.AreEqual(expected.Values["key2"], actual.Values["key2"]);
-                Assert.AreEqual(expected.Values.Count, actual.Values.Count);
-                Assert.AreEqual(2, actual.Values.Count);
+                Assert.Equal(expected.Values["key1"], actual.Values["key1"]);
+                Assert.Equal(expected.Values["key2"], actual.Values["key2"]);
+                Assert.Equal(expected.Values.Count, actual.Values.Count);
+                Assert.Equal(2, actual.Values.Count);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaEvolution_CompatiblePromotionOfDictionaryRecordOfIntToDictionaryOfLong()
         {
             const string WriterSchema = @"{
@@ -989,19 +987,19 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 var actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.Values["key1"], actual.Values["key1"]);
-                Assert.AreEqual(expected.Values["key2"], actual.Values["key2"]);
-                Assert.AreEqual(expected.Values.Count, actual.Values.Count);
-                Assert.AreEqual(2, actual.Values.Count);
+                Assert.Equal(expected.Values["key1"], actual.Values["key1"]);
+                Assert.Equal(expected.Values["key2"], actual.Values["key2"]);
+                Assert.Equal(expected.Values.Count, actual.Values.Count);
+                Assert.Equal(2, actual.Values.Count);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void SchemaEvolution_IncompatibleReaderAndWriterValueTypes()
         {
-            const string WriterSchema = @"{
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string WriterSchema = @"{
                 ""type"":""record"",
                 ""name"":""SimpleMap"",
                 ""namespace"":""Microsoft.Hadoop.Avro.Tests"",
@@ -1009,15 +1007,17 @@ namespace Microsoft.Hadoop.Avro.Tests
                     {""name"":""Values"",""type"":{""type"": ""map"",""values"": ""string""}}
                 ]}";
 
-            AvroSerializer.CreateGeneric(WriterSchema);
-            AvroSerializer.CreateDeserializerOnly<SimpleMapWithLongValues>(WriterSchema, this.dataContractSettings);
-            Assert.Fail();
+                    AvroSerializer.CreateGeneric(WriterSchema);
+                    AvroSerializer.CreateDeserializerOnly<SimpleMapWithLongValues>(WriterSchema,
+                        this.dataContractSettings);
+                    Assert.True(false, "");
+                }
+            );
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity",
             Justification = "Have to compare a typed object to dynamic one, this leads to a lot of Asserts")]
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaEvolution_MapEvolutionWithRecordContainingPromotionalTypes()
         {
             const string WriterSchema =
@@ -1074,22 +1074,22 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 var actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.Values["key1"].IntToLongField, actual.Values["key1"].IntToLongField);
-                Assert.AreEqual(expected.Values["key1"].IntToFloatField, actual.Values["key1"].IntToFloatField);
-                Assert.AreEqual(expected.Values["key1"].IntToDoubleField, actual.Values["key1"].IntToDoubleField);
-                Assert.AreEqual(expected.Values["key1"].LongToFloatField, actual.Values["key1"].LongToFloatField);
-                Assert.AreEqual(expected.Values["key1"].LongToDoubleField, actual.Values["key1"].LongToDoubleField);
-                Assert.AreEqual(expected.Values["key1"].FloatToDoubleField, actual.Values["key1"].FloatToDoubleField);
+                Assert.Equal(expected.Values["key1"].IntToLongField, actual.Values["key1"].IntToLongField);
+                Assert.Equal(expected.Values["key1"].IntToFloatField, actual.Values["key1"].IntToFloatField);
+                Assert.Equal(expected.Values["key1"].IntToDoubleField, actual.Values["key1"].IntToDoubleField);
+                Assert.Equal(expected.Values["key1"].LongToFloatField, actual.Values["key1"].LongToFloatField);
+                Assert.Equal(expected.Values["key1"].LongToDoubleField, actual.Values["key1"].LongToDoubleField);
+                Assert.Equal(expected.Values["key1"].FloatToDoubleField, actual.Values["key1"].FloatToDoubleField);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void SchemaEvolution_IncompatibleReaderSchemaAndWriterSchema()
         {
-            const string WriterSchema =
-            @"{
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string WriterSchema =
+                        @"{
                  ""name"":""OldName"",
                  ""namespace"":""Microsoft.Hadoop.Avro.Tests"",
                  ""type"":""record"",
@@ -1099,8 +1099,8 @@ namespace Microsoft.Hadoop.Avro.Tests
                            ]
              }";
 
-            const string ReaderSchema =
-            @"{
+                    const string ReaderSchema =
+                        @"{
                  ""name"":""NewNameNotInAliases"",
                  ""namespace"":""Microsoft.Hadoop.Avro.Tests"",
                  ""type"":""record"",
@@ -1110,8 +1110,10 @@ namespace Microsoft.Hadoop.Avro.Tests
                            ]
              }";
 
-            var serializer = AvroSerializer.CreateGeneric(WriterSchema);
-            var deserializer = AvroSerializer.CreateGenericDeserializerOnly(WriterSchema, ReaderSchema);
+                    var serializer = AvroSerializer.CreateGeneric(WriterSchema);
+                    var deserializer = AvroSerializer.CreateGenericDeserializerOnly(WriterSchema, ReaderSchema);
+                }
+            );
         }
     }
 }

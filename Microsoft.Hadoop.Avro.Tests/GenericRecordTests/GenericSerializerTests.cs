@@ -21,14 +21,13 @@ namespace Microsoft.Hadoop.Avro.Tests
     using Microsoft.CSharp.RuntimeBinder;
     using Microsoft.Hadoop.Avro;
     using Microsoft.Hadoop.Avro.Schema;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
 
-    [TestClass]
+    [Trait("Category","GenericSerializer")]
     public sealed class GenericSerializerTests
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity",
-            Justification = "Need to test complex objects."), TestMethod]
-        [TestCategory("CheckIn")]
+            Justification = "Need to test complex objects."), Fact]
         public void GenericSerializer_SerializeSimpleRecord()
         {
             const string StringSchema = @"{
@@ -66,20 +65,19 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Position = 0;
 
                 dynamic actual = serializer.Deserialize(stream);
-                Assert.AreEqual(expected.IntField, actual.IntField);
-                CollectionAssert.AreEqual(expected.MyGuid, actual.MyGuid);
-                CollectionAssert.AreEqual(expected.Arr, actual.Arr);
-                Assert.AreEqual(expected.LongField, actual.LongField);
+                Assert.Equal(expected.IntField, actual.IntField);
+                Utilities.ContainersEqual(expected.MyGuid, actual.MyGuid);
+                Utilities.ContainersEqual(expected.Arr, actual.Arr);
+                Assert.Equal(expected.LongField, actual.LongField);
                 Utilities.DictionaryEquals(expected.LongMap as IDictionary<string, long>, actual.LongMap as IDictionary<string, long>);
-                Assert.AreEqual(expected.DoubleField, actual.DoubleField);
-                Assert.AreEqual(expected.FloatField, actual.FloatField);
-                Assert.AreEqual(expected.BooleanField, actual.BooleanField);
-                CollectionAssert.AreEqual(expected.BytesField, actual.BytesField);
+                Assert.Equal(expected.DoubleField, actual.DoubleField);
+                Assert.Equal(expected.FloatField, actual.FloatField);
+                Assert.Equal(expected.BooleanField, actual.BooleanField);
+                Utilities.ContainersEqual(expected.BytesField, actual.BytesField);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void GenericSerializer_SerializeRecursiveRecord()
         {
             const string StringSchema = @"{
@@ -107,12 +105,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Position = 0;
 
                 var actual = serializer.Deserialize(stream) as AvroRecord;
-                Assert.IsTrue(ShallowlyEqual(expected, actual));
+                Assert.True(ShallowlyEqual(expected, actual));
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void GenericSerializer_SerializeNestedRecord()
         {
             const string StringSchema = @"{
@@ -154,13 +151,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Position = 0;
 
                 var actual = serializer.Deserialize(stream) as AvroRecord;
-                Assert.AreEqual(expected.GetField<AvroRecord>("Nested").GetField<int>("IntField"),
+                Assert.Equal(expected.GetField<AvroRecord>("Nested").GetField<int>("IntField"),
                                 actual.GetField<AvroRecord>("Nested").GetField<int>("IntField"));
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void GenericSerializer_SerializeUsingDifferentReaderWriterType()
         {
             const string StringSchema = @"{
@@ -186,12 +182,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Position = 0;
 
                 var actual = deserializer.Deserialize(stream) as AvroRecord;
-                Assert.IsTrue(expected["IntField"].Equals(actual["IntField"]));
+                Assert.True(expected["IntField"].Equals(actual["IntField"]));
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void GenericSerializer_SerializeRecordWithUnion()
         {
             const string StringSchema = @"{
@@ -220,12 +215,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 var actual = serializer.Deserialize(stream) as AvroRecord;
-                Assert.IsTrue(ShallowlyEqual(expected, actual));
+                Assert.True(ShallowlyEqual(expected, actual));
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void GenericSerializer_SerializeNestedRecordWithReferences()
         {
             const string StringSchema = 
@@ -257,7 +251,7 @@ namespace Microsoft.Hadoop.Avro.Tests
 
             var serializer = AvroSerializer.CreateGeneric(StringSchema);
             var recordSchema = serializer.ReaderSchema as RecordSchema;
-            Assert.IsNotNull(recordSchema);
+            Assert.NotNull(recordSchema);
             using (var stream = new MemoryStream())
             {
                 dynamic expected = new AvroRecord(serializer.ReaderSchema);
@@ -278,12 +272,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 var actual = serializer.Deserialize(stream) as AvroRecord;
-                Assert.IsTrue(ShallowlyEqual(expected, actual));
+                Assert.True(ShallowlyEqual(expected, actual));
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void GenericSerializer_SerializeEvolvedRecordWithExtraFieldHavingDefaultValue()
         {
             const string WriterSchema = @"{
@@ -317,13 +310,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 dynamic actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.IntField, actual.IntField);
-                Assert.AreEqual("Default", actual.ExtraField);
+                Assert.Equal(expected.IntField, actual.IntField);
+                Assert.Equal("Default", actual.ExtraField);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void GenericSerializer_SerializeEvolvedRecordWithPromotedField()
         {
             const string WriterSchema = @"{
@@ -356,12 +348,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 dynamic actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.IntField, actual.IntField);
+                Assert.Equal(expected.IntField, actual.IntField);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void GenericSerializer_SerializeEnum()
         {
             const string Schema = "{" +
@@ -384,13 +375,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 dynamic actual = serializer.Deserialize(stream);
-                Assert.AreEqual(expected.IntegerValue, actual.IntegerValue);
-                Assert.AreEqual(expected.Value, actual.Value);
+                Assert.Equal(expected.IntegerValue, actual.IntegerValue);
+                Assert.Equal(expected.Value, actual.Value);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void GenericSerializer_SerializeEnumEvolvedWithExtraSymbols()
         {
             const string WriterSchema = "{" +
@@ -426,36 +416,37 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
 
                 dynamic actual = deserializer.Deserialize(stream);
-                Assert.AreEqual(expected.IntegerValue, actual.IntegerValue);
-                Assert.AreEqual(expected.Value, actual.Value);
+                Assert.Equal(expected.IntegerValue, actual.IntegerValue);
+                Assert.Equal(expected.Value, actual.Value);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(RuntimeBinderException))]
+        [Fact]
         public void GenericSerializer_SerializeRecordWithUknownField()
         {
-            const string StringSchema = @"{
-                 ""name"":""Category"",
-                 ""namespace"":""ApacheAvro.Types"",
-                 ""type"":""record"",
-                 ""fields"":
-                           [
-                                {""name"":""CategoryName"", ""type"":""string""},
-                                {""name"":""Description"", ""type"":[""string"",""null""]},
-                                {""name"":""Picture"", ""type"":[""bytes"", ""null""]},
-                                {""name"":""Id"", ""type"":[""int"", ""null""]}
-                           ]
-             }";
+            Assert.Throws<RuntimeBinderException>(() =>
+                {
+                    const string StringSchema = @"{
+                         ""name"":""Category"",
+                         ""namespace"":""ApacheAvro.Types"",
+                         ""type"":""record"",
+                         ""fields"":
+                                   [
+                                        {""name"":""CategoryName"", ""type"":""string""},
+                                        {""name"":""Description"", ""type"":[""string"",""null""]},
+                                        {""name"":""Picture"", ""type"":[""bytes"", ""null""]},
+                                        {""name"":""Id"", ""type"":[""int"", ""null""]}
+                                   ]
+                         }";
 
-            var serializer = AvroSerializer.CreateGeneric(StringSchema);
-            dynamic expected = new AvroRecord(serializer.WriterSchema);
-            expected.UknownField = 5;
+                    var serializer = AvroSerializer.CreateGeneric(StringSchema);
+                    dynamic expected = new AvroRecord(serializer.WriterSchema);
+                    expected.UknownField = 5;
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void GenericSerializer_SerializeUnionWithArrayAndNull()
         {
             const string StringSchema = @"{
@@ -477,12 +468,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Position = 0;
 
                 dynamic actual = serializer.Deserialize(stream);
-                CollectionAssert.AreEqual(expected.Arr, actual.Arr);
+                Utilities.ContainersEqual(expected.Arr, actual.Arr);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void GenericSerializer_SerializeUnionWithMapAndNull()
         {
             const string StringSchema = @"{
@@ -510,20 +500,22 @@ namespace Microsoft.Hadoop.Avro.Tests
 
         #region Tests with null
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void GenericSerializer_CreateWithNullSchema()
         {
-            AvroSerializer.CreateGeneric(null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    AvroSerializer.CreateGeneric(null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void GenericSerializer_CreateGenericDeserializerWithNullWriterSchema()
         {
-            const string ReaderSchema = @"{
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    const string ReaderSchema = @"{
                              ""type"":""record"",
                              ""name"":""Microsoft.Hadoop.Avro.Tests.SimpleIntClass"",
                              ""fields"":
@@ -531,15 +523,17 @@ namespace Microsoft.Hadoop.Avro.Tests
                                            {""name"":""LongMap"", ""type"": [""null"", {""type"":""map"", ""values"":""long""}]},
                                        ]
                           }";
-            AvroSerializer.CreateGenericDeserializerOnly(null, ReaderSchema);
+                    AvroSerializer.CreateGenericDeserializerOnly(null, ReaderSchema);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void GenericSerializer_CreateGenericDeserializerWithNullReaderSchema()
         {
-            const string WriterSchema = @"{
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    const string WriterSchema = @"{
                              ""type"":""record"",
                              ""name"":""Microsoft.Hadoop.Avro.Tests.SimpleIntClass"",
                              ""fields"":
@@ -547,7 +541,9 @@ namespace Microsoft.Hadoop.Avro.Tests
                                            {""name"":""LongMap"", ""type"": [""null"", {""type"":""map"", ""values"":""long""}]},
                                        ]
                           }";
-            AvroSerializer.CreateGenericDeserializerOnly(WriterSchema, null);
+                    AvroSerializer.CreateGenericDeserializerOnly(WriterSchema, null);
+                }
+            );
         }
 
         #endregion
