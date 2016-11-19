@@ -20,23 +20,21 @@ namespace Microsoft.Hadoop.Avro.Tests
     using System.IO;
     using Microsoft.Hadoop.Avro.Container;
     using Microsoft.Hadoop.Avro.Schema;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
 
-    [TestClass]
+    [Trait("Category", "SequentialGenericWritingReading")]
     public sealed class SequentialGenericWritingReadingTests
     {
         private AvroSerializerSettings dataContractSettings;
 
-        [TestInitialize]
-        public void TestSetup()
+        public SequentialGenericWritingReadingTests()
         {
             this.dataContractSettings = new AvroSerializerSettings { Resolver = new AvroDataContractResolver(true) };
         }
 
         [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times",
             Justification = "We should handle several disposals properly.")]
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SequentialGenericWritingReading_SimpleRecord()
         {
             const string StringSchema = @"{
@@ -78,7 +76,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                             var j = 0;
                             foreach (var avroRecord in reader.Objects)
                             {
-                                Assert.AreEqual(expected[j++]["PrimitiveInt"], avroRecord.PrimitiveInt);
+                                Assert.Equal(expected[j++]["PrimitiveInt"], avroRecord.PrimitiveInt);
                             }
                         }
                     }
@@ -88,8 +86,7 @@ namespace Microsoft.Hadoop.Avro.Tests
 
         [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times",
             Justification = "We should handle multiple dispose properly.")]
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SequentialGenericWritingReading_NestedRecord()
         {
             const string StringSchema = @"{
@@ -145,8 +142,8 @@ namespace Microsoft.Hadoop.Avro.Tests
                             var j = 0;
                             foreach (var avroRecord in reader.Objects)
                             {
-                                Assert.AreEqual(expected[j]["PrimitiveInt"], avroRecord.PrimitiveInt);
-                                Assert.AreEqual(((dynamic)expected[j++]["ClassOfIntReference"])["PrimitiveInt"], avroRecord.ClassOfIntReference.PrimitiveInt);
+                                Assert.Equal(expected[j]["PrimitiveInt"], avroRecord.PrimitiveInt);
+                                Assert.Equal(((dynamic)expected[j++]["ClassOfIntReference"])["PrimitiveInt"], avroRecord.ClassOfIntReference.PrimitiveInt);
                             }
                         }
                     }
@@ -154,8 +151,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times",
             Justification = "We should handle multiple dispose properly.")]
         public void SequentialGenericWritingReading_RecursiveRecord()
@@ -204,9 +200,9 @@ namespace Microsoft.Hadoop.Avro.Tests
                             var j = 0;
                             foreach (var avroRecord in reader.Objects)
                             {
-                                Assert.AreEqual(expected[j]["IntField"], avroRecord.IntField);
-                                Assert.AreEqual(((dynamic)expected[j]["RecursiveField"])["IntField"], avroRecord.RecursiveField.IntField);
-                                Assert.AreEqual(
+                                Assert.Equal(expected[j]["IntField"], avroRecord.IntField);
+                                Assert.Equal(((dynamic)expected[j]["RecursiveField"])["IntField"], avroRecord.RecursiveField.IntField);
+                                Assert.Equal(
                                     ((dynamic)expected[j++]["RecursiveField"])["RecursiveField"], avroRecord.RecursiveField.RecursiveField);
                             }
                         }

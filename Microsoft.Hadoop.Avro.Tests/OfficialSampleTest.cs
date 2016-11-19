@@ -20,7 +20,7 @@ namespace Microsoft.Hadoop.Avro.Tests
     using System.Linq;
     using System.Runtime.Serialization;
     using Microsoft.Hadoop.Avro.Container;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
 
     [DataContract(Name = "SensorDataValue", Namespace = "Sensors")]
     internal class SensorData
@@ -42,11 +42,10 @@ namespace Microsoft.Hadoop.Avro.Tests
         public int Room { get; set; }
     }
 
-    [TestClass]
+    [Trait("Category","OfficialSample")]
     public class OfficialSampleTest
     {
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void TestSerializeDeserializeObject()
         {
             //CreateDeserializerOnly a new AvroSerializer instance and specify a custom serialization strategy AvroDataContractResolver
@@ -70,12 +69,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 var actual = avroSerializer.Deserialize(buffer);
 
                 //Finally, verify that deserialized data matches the original ones
-                Assert.IsTrue(this.Equal(expected, actual));
+                Assert.True(this.Equal(expected, actual));
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         [SuppressMessage("Microsoft.Usage", "CA2202:DoNotDisposeObjectsMultipleTimes",
         Justification = "Our implementation should be able to handle double dispose.")]
         public void TestSerializeDeserializeUsingSequentialContainers()
@@ -118,7 +116,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                     var pairs = testData.Zip(results, (serialized, deserialized) => new { expected = serialized, actual = deserialized });
                     foreach (var pair in pairs)
                     {
-                        Assert.IsTrue(this.Equal(pair.expected, pair.actual));
+                        Assert.True(this.Equal(pair.expected, pair.actual));
                     }
                 }
             }

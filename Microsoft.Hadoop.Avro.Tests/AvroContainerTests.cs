@@ -25,31 +25,28 @@ namespace Microsoft.Hadoop.Avro.Tests
     using global::Avro.Generic;
     using Microsoft.Hadoop.Avro;
     using Microsoft.Hadoop.Avro.Container;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using ApacheAvro = global::Avro;
     using Codec = Microsoft.Hadoop.Avro.Container.Codec;
 
+    [Trait("Category","CheckIn")]
     [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Justification = "Test class. Disposing in the tear off method.")]
-    [TestClass]
-    public sealed class AvroContainerTests
+    public sealed class AvroContainerTests : IDisposable
     {
         private Stream resultStream;
 
-        [TestInitialize]
-        public void TestInitialize()
+        public AvroContainerTests()
         {
             this.resultStream = new MemoryStream();
         }
 
-        [TestCleanup]
-        public void TestCleanup()
+        public void Dispose()
         {
             this.resultStream.Dispose();
             this.resultStream = null;
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Container_SerializeThreeObjects()
         {
             var expected = new List<ClassOfInt>
@@ -73,12 +70,11 @@ namespace Microsoft.Hadoop.Avro.Tests
             using (var reader = AvroContainer.CreateReader<ClassOfInt>(this.resultStream))
             {
                 reader.MoveNext();
-                Assert.IsTrue(expected.SequenceEqual(reader.Current.Objects));
+                Assert.True(expected.SequenceEqual(reader.Current.Objects));
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Container_SerializeHugeObject()
         {
             var single = new SimpleFlatClass
@@ -105,11 +101,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.resultStream.Seek(0, SeekOrigin.Begin);
             var reader = AvroContainer.CreateReader<SimpleFlatClass>(this.resultStream, true, new AvroSerializerSettings { Resolver = new AvroDataContractResolver(true) }, new CodecFactory());
             reader.MoveNext();
-            Assert.IsTrue(expected.SequenceEqual(reader.Current.Objects));
+            Assert.True(expected.SequenceEqual(reader.Current.Objects));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Container_SyncAfterEachObject()
         {
             var expected = new List<ClassOfInt>
@@ -139,11 +134,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             {
                 actual.AddRange(reader.Current.Objects);
             }
-            Assert.IsTrue(expected.SequenceEqual(actual));
+            Assert.True(expected.SequenceEqual(actual));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Container_SyncAfter1024Objects()
         {
             var expected = new List<ClassOfInt>();
@@ -180,11 +174,10 @@ namespace Microsoft.Hadoop.Avro.Tests
                 actual.AddRange(reader.Current.Objects);
             }
 
-            Assert.IsTrue(expected.SequenceEqual(actual));
+            Assert.True(expected.SequenceEqual(actual));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Container_SyncAfterDeflateCodec()
         {
             var expected = new List<ClassOfInt>();
@@ -221,11 +214,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             {
                 actual.AddRange(reader.Current.Objects);
             }
-            Assert.IsTrue(expected.SequenceEqual(actual));
+            Assert.True(expected.SequenceEqual(actual));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         [SuppressMessage("Microsoft.Usage", "CA2202:DoNotDisposeObjectsMultipleTimes",
         Justification = "There is no double dispose in this test.")]
         public void Container_Reset()
@@ -273,13 +265,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                     }
                 }
 
-                Assert.IsTrue(expected.SequenceEqual(actual));
-                Assert.IsTrue(expected.SequenceEqual(resetActual));
+                Assert.True(expected.SequenceEqual(actual));
+                Assert.True(expected.SequenceEqual(resetActual));
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         [SuppressMessage("Microsoft.Usage", "CA2202:DoNotDisposeObjectsMultipleTimes",
         Justification = "There is no double dispose in this test.")]
         public void Container_MicrosoftWriterApacheReader()
@@ -317,21 +308,20 @@ namespace Microsoft.Hadoop.Avro.Tests
 
                 for (var k = 0; k < expected.Count; ++k)
                 {
-                    Assert.AreEqual(expected[k].PrimitiveInt, actual[k]["PrimitiveInt"]);
+                    Assert.Equal(expected[k].PrimitiveInt, actual[k]["PrimitiveInt"]);
                 }
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Container_ApacheWriterMicrosoftReader()
         {
             var serializer = AvroSerializer.Create<ClassOfInt>(new AvroSerializerSettings { Resolver = new AvroDataContractResolver(true) });
             var schema = ApacheAvro.Schema.Parse(serializer.WriterSchema.ToString()) as ApacheAvro.UnionSchema;
-            Assert.IsNotNull(schema);
+            Assert.NotNull(schema);
 
             var recordSchema = schema.Schemas[1] as ApacheAvro.RecordSchema;
-            Assert.IsNotNull(recordSchema);
+            Assert.NotNull(recordSchema);
 
             var expected = new List<GenericRecord>();
             for (var i = 0; i < 7; i++)
@@ -362,16 +352,15 @@ namespace Microsoft.Hadoop.Avro.Tests
                     actual.AddRange(reader.Current.Objects);
                 }
 
-                Assert.AreEqual(expected.Count, actual.Count);
+                Assert.Equal(expected.Count, actual.Count);
                 for (var i = 0; i < expected.Count; ++i)
                 {
-                    Assert.AreEqual(expected[i]["PrimitiveInt"], actual[i].PrimitiveInt);
+                    Assert.Equal(expected[i]["PrimitiveInt"], actual[i].PrimitiveInt);
                 }
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         [SuppressMessage("Microsoft.Usage", "CA2202:DoNotDisposeObjectsMultipleTimes",
         Justification = "There is no double dispose in this test.")]
         public void Container_MicrosoftWriterApacherReaderOfNestedType()
@@ -410,21 +399,20 @@ namespace Microsoft.Hadoop.Avro.Tests
 
                 for (var k = 0; k < expected.Count; ++k)
                 {
-                    Assert.AreEqual(expected[k].PrimitiveInt, actual[k]["PrimitiveInt"]);
+                    Assert.Equal(expected[k].PrimitiveInt, actual[k]["PrimitiveInt"]);
                     if (expected[k].ClassOfIntReference == null)
                     {
-                        Assert.IsNull(actual[k]["ClassOfIntReference"]);
+                        Assert.Null(actual[k]["ClassOfIntReference"]);
                     }
                     else
                     {
-                        Assert.AreEqual(expected[k].ClassOfIntReference.PrimitiveInt, (actual[k]["ClassOfIntReference"] as GenericRecord)["PrimitiveInt"]);
+                        Assert.Equal(expected[k].ClassOfIntReference.PrimitiveInt, (actual[k]["ClassOfIntReference"] as GenericRecord)["PrimitiveInt"]);
                     }
                 }
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         [SuppressMessage("Microsoft.Usage", "CA2202:DoNotDisposeObjectsMultipleTimes",
         Justification = "There is no double dispose in this test.")]
         public void Container_MicrosoftWriterApacherReaderOfDictionary()
@@ -467,20 +455,19 @@ namespace Microsoft.Hadoop.Avro.Tests
                 var reader = DataFileReader<GenericRecord>.OpenReader(memoryStream);
                 var actual = new List<GenericRecord>(reader);
 
-                Assert.AreEqual(expected.Count, actual.Count);
+                Assert.Equal(expected.Count, actual.Count);
 
                 for (var i = 0; i < expected.Count; ++i)
                 {
                     var actualValue = actual[i]["Property"] as Dictionary<string, object>;
-                    Assert.AreEqual(actualValue["testkey" + i] as string, expected[i].Property["testkey" + i]);
+                    Assert.Equal(actualValue["testkey" + i] as string, expected[i].Property["testkey" + i]);
                 }
             }
         }
 
         #region Test invalid arguments for creation
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Container_CreateReaderWithNullArguments()
         {
             Utilities.ShouldThrow<ArgumentNullException>(() => AvroContainer.CreateReader<int>(null));
@@ -490,8 +477,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             Utilities.ShouldThrow<ArgumentNullException>(() => AvroContainer.CreateReader<int>(this.resultStream, true, new AvroSerializerSettings(), null));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Container_CreateWriterWithNullArguments()
         {
             Utilities.ShouldThrow<ArgumentNullException>(() => AvroContainer.CreateWriter<int>(null, Codec.Deflate));
@@ -501,8 +487,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             Utilities.ShouldThrow<ArgumentNullException>(() => AvroContainer.CreateWriter<int>(this.resultStream, true, new AvroSerializerSettings(), null));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Container_GenericWriterWithNullArguments()
         {
             const string WriterSchema =
@@ -520,8 +505,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             Utilities.ShouldThrow<ArgumentNullException>(() => AvroContainer.CreateGenericWriter(WriterSchema, this.resultStream, null));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Container_GenericReaderWithNullArguments()
         {
             const string ReaderSchema =
@@ -541,32 +525,35 @@ namespace Microsoft.Hadoop.Avro.Tests
             Utilities.ShouldThrow<ArgumentNullException>(() => AvroContainer.CreateGenericReader(ReaderSchema, this.resultStream, true, null));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Container_CreateWriterWithNullBlock()
         {
-            using (var s = AvroContainer.CreateWriter<int>(this.resultStream, Codec.Deflate))
-            {
-                s.WriteBlockAsync(null).Wait();
-            }
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    using (var s = AvroContainer.CreateWriter<int>(this.resultStream, Codec.Deflate))
+                    {
+                        s.WriteBlockAsync(null).Wait();
+                    }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Container_WriterSetNullMetadata()
         {
-            using (var s = AvroContainer.CreateWriter<int>(this.resultStream, Codec.Deflate))
-            {
-                s.SetMetadata(null);
-            }
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    using (var s = AvroContainer.CreateWriter<int>(this.resultStream, Codec.Deflate))
+                    {
+                        s.SetMetadata(null);
+                    }
+                }
+            );
         }
 
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Ctor should throw.")]
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", Justification = "Ctor should throw.")]
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Container_CreateBufferReaderBlockNullArguments()
         {
             Utilities.ShouldThrow<ArgumentNullException>(() => new AvroBufferReaderBlock<ClassOfInt>(null, Codec.Null, new byte[] { }, 1));
@@ -577,99 +564,105 @@ namespace Microsoft.Hadoop.Avro.Tests
 
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Ctor should throw.")]
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", Justification = "Ctor should throw.")]
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Container_CreateBufferWriterBlockNullArguments()
         {
             Utilities.ShouldThrow<ArgumentNullException>(() => new AvroBufferWriterBlock<ClassOfInt>(null, Codec.Null));
             Utilities.ShouldThrow<ArgumentNullException>(() => new AvroBufferWriterBlock<ClassOfInt>(AvroSerializer.Create<ClassOfInt>(), null));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentException))]
+        [Fact]
         public void Container_GenericWriterUsingCodecFactoryWithInvalidCodecName()
         {
-            const string WriterSchema =
-            @"{
-                 ""name"":""RecordContainingArray"",
-                 ""type"":""record"",
-                 ""fields"":
-                           [
-                                {""name"":""IntField"", ""type"":""int""},
-                           ]
-             }";
+            Assert.Throws<ArgumentException>(() =>
+                {
+                    const string WriterSchema =
+                        @"{
+                         ""name"":""RecordContainingArray"",
+                         ""type"":""record"",
+                         ""fields"":
+                                   [
+                                        {""name"":""IntField"", ""type"":""int""},
+                                   ]
+                        }";
 
-            var codecFactory = new CodecFactory();
+                    var codecFactory = new CodecFactory();
 
-            using (AvroContainer.CreateGenericWriter(WriterSchema, this.resultStream, codecFactory.Create("InvalidName")))
-            {
-            }
+                    using (AvroContainer.CreateGenericWriter(WriterSchema,
+                           this.resultStream, codecFactory.Create("InvalidName")))
+                    {
+                    }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Container_GenericWriterUsingCodecFactoryWithNullCodecName()
         {
-            const string WriterSchema =
-            @"{
-                 ""name"":""RecordContainingArray"",
-                 ""type"":""record"",
-                 ""fields"":
-                           [
-                                {""name"":""IntField"", ""type"":""int""},
-                           ]
-             }";
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    const string WriterSchema =
+                        @"{
+                         ""name"":""RecordContainingArray"",
+                         ""type"":""record"",
+                         ""fields"":
+                                   [
+                                        {""name"":""IntField"", ""type"":""int""},
+                                   ]
+                        }";
 
-            var codecFactory = new CodecFactory();
+                    var codecFactory = new CodecFactory();
 
-            using (AvroContainer.CreateGenericWriter(WriterSchema, this.resultStream, codecFactory.Create(null)))
-            {
-            }
+                    using (AvroContainer.CreateGenericWriter(WriterSchema,
+                            this.resultStream, codecFactory.Create(null)))
+                    {
+                    }
+                }
+            );
         }
 
         #endregion
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void Container_WriteInvalidSyncMarker()
         {
-            var expected = new List<ClassOfInt>
+            Assert.Throws<SerializationException>(() =>
                 {
-                    ClassOfInt.Create(true),
-                    ClassOfInt.Create(true),
-                };
+                    var expected = new List<ClassOfInt>
+                    {
+                        ClassOfInt.Create(true),
+                        ClassOfInt.Create(true),
+                    };
 
-            var writer = AvroContainer.CreateWriter<ClassOfInt>(this.resultStream, Codec.Null);
-            foreach (var obj in expected)
-            {
-                var block = writer.CreateBlockAsync().Result;
-                block.Write(obj);
-                writer.WriteBlockAsync(block).Wait();
-                this.resultStream.Seek(this.resultStream.Position - 1, SeekOrigin.Begin);
-                int markerLastByte = this.resultStream.ReadByte();
-                this.resultStream.Seek(this.resultStream.Position - 1, SeekOrigin.Begin);
-                this.resultStream.WriteByte((byte)((markerLastByte + 10) % 255));
-            }
-            writer.Dispose();
+                    var writer = AvroContainer.CreateWriter<ClassOfInt>(this.resultStream, Codec.Null);
+                    foreach (var obj in expected)
+                    {
+                        var block = writer.CreateBlockAsync().Result;
+                        block.Write(obj);
+                        writer.WriteBlockAsync(block).Wait();
+                        this.resultStream.Seek(this.resultStream.Position - 1, SeekOrigin.Begin);
+                        int markerLastByte = this.resultStream.ReadByte();
+                        this.resultStream.Seek(this.resultStream.Position - 1, SeekOrigin.Begin);
+                        this.resultStream.WriteByte((byte) ((markerLastByte + 10)%255));
+                    }
+                    writer.Dispose();
 
-            this.resultStream.Seek(0, SeekOrigin.Begin);
+                    this.resultStream.Seek(0, SeekOrigin.Begin);
 
-            var reader = AvroContainer.CreateReader<ClassOfInt>(this.resultStream);
+                    var reader = AvroContainer.CreateReader<ClassOfInt>(this.resultStream);
 
-            var actual = new List<ClassOfInt>();
-            while (reader.MoveNext())
-            {
-                actual.AddRange(reader.Current.Objects);
-            }
+                    var actual = new List<ClassOfInt>();
+                    while (reader.MoveNext())
+                    {
+                        actual.AddRange(reader.Current.Objects);
+                    }
+                }
+            );
         }
 
         #region Schema evolution with generic readers and writers
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         [SuppressMessage("Microsoft.Usage", "CA2202:DoNotDisposeObjectsMultipleTimes",
         Justification = "There is no double dispose in this test.")]
         public void Container_SchemaEvolution_RecordContainingArrayWithWriterIntPromotedToReaderLong()
@@ -738,18 +731,17 @@ namespace Microsoft.Hadoop.Avro.Tests
                 for (var k = 0; k < expected.Count; ++k)
                 {
                     var randomArray = randomArrays[k];
-                    Assert.AreEqual(randomArray.Length, ((dynamic)actual[k]).ArrayField.Length);
+                    Assert.Equal(randomArray.Length, ((dynamic)actual[k]).ArrayField.Length);
 
                     for (int t = 0; t < randomArray.Length; t++)
                     {
-                        Assert.AreEqual(randomArray[t], ((dynamic)actual[k]).ArrayField.GetValue(t));
+                        Assert.Equal(randomArray[t], ((dynamic)actual[k]).ArrayField.GetValue(t));
                     }
                 }
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         [SuppressMessage("Microsoft.Usage", "CA2202:DoNotDisposeObjectsMultipleTimes",
         Justification = "There is no double dispose in this test.")]
         public void Container_SchemaEvolution_RecordWithPromotionalIntFields()
@@ -827,15 +819,14 @@ namespace Microsoft.Hadoop.Avro.Tests
 
                 for (var k = 0; k < expected.Count; ++k)
                 {
-                    Assert.AreEqual(((dynamic)expected[k]).IntToLongField, ((dynamic)actual[k]).IntToLongField);
-                    Assert.AreEqual(((dynamic)expected[k]).IntToFloatField, ((dynamic)actual[k]).IntToFloatField);
-                    Assert.AreEqual(((dynamic)expected[k]).IntToDoubleField, ((dynamic)actual[k]).IntToDoubleField);
+                    Assert.Equal(((dynamic)expected[k]).IntToLongField, ((dynamic)actual[k]).IntToLongField);
+                    Assert.Equal(((dynamic)expected[k]).IntToFloatField, ((dynamic)actual[k]).IntToFloatField);
+                    Assert.Equal(((dynamic)expected[k]).IntToDoubleField, ((dynamic)actual[k]).IntToDoubleField);
                 }
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         [SuppressMessage("Microsoft.Usage", "CA2202:DoNotDisposeObjectsMultipleTimes",
         Justification = "There is no double dispose in this test.")]
         public void Container_SchemaEvolution_RecordWithPromotionalLongAndFloatFields()
@@ -913,15 +904,14 @@ namespace Microsoft.Hadoop.Avro.Tests
 
                 for (var k = 0; k < expected.Count; ++k)
                 {
-                    Assert.AreEqual(((dynamic)expected[k]).LongToFloatField, ((dynamic)actual[k]).LongToFloatField);
-                    Assert.AreEqual(((dynamic)expected[k]).LongToDoubleField, ((dynamic)actual[k]).LongToDoubleField);
-                    Assert.AreEqual(((dynamic)expected[k]).FloatToDoubleField, ((dynamic)actual[k]).FloatToDoubleField);
+                    Assert.Equal(((dynamic)expected[k]).LongToFloatField, ((dynamic)actual[k]).LongToFloatField);
+                    Assert.Equal(((dynamic)expected[k]).LongToDoubleField, ((dynamic)actual[k]).LongToDoubleField);
+                    Assert.Equal(((dynamic)expected[k]).FloatToDoubleField, ((dynamic)actual[k]).FloatToDoubleField);
                 }
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         [SuppressMessage("Microsoft.Usage", "CA2202:DoNotDisposeObjectsMultipleTimes",
         Justification = "There is no double dispose in this test.")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity",
@@ -1041,12 +1031,12 @@ namespace Microsoft.Hadoop.Avro.Tests
 
                 for (var k = 0; k < expected.Count; ++k)
                 {
-                    Assert.AreEqual(((dynamic)expected[k]).DoubleB, ((dynamic)actual[k]).DoubleB);
-                    Assert.AreEqual(((dynamic)expected[k]).FloatB, ((dynamic)actual[k]).FloatB);
-                    Assert.AreEqual(((dynamic)expected[k]).FloatA, ((dynamic)actual[k]).FloatA);
-                    Assert.AreEqual(((dynamic)expected[k]).BoolB, ((dynamic)actual[k]).BoolB);
-                    Assert.AreEqual(((dynamic)expected[k]).BoolA, ((dynamic)actual[k]).BoolA);
-                    Assert.AreEqual(((dynamic)expected[k]).DoubleA, ((dynamic)actual[k]).DoubleA);
+                    Assert.Equal(((dynamic)expected[k]).DoubleB, ((dynamic)actual[k]).DoubleB);
+                    Assert.Equal(((dynamic)expected[k]).FloatB, ((dynamic)actual[k]).FloatB);
+                    Assert.Equal(((dynamic)expected[k]).FloatA, ((dynamic)actual[k]).FloatA);
+                    Assert.Equal(((dynamic)expected[k]).BoolB, ((dynamic)actual[k]).BoolB);
+                    Assert.Equal(((dynamic)expected[k]).BoolA, ((dynamic)actual[k]).BoolA);
+                    Assert.Equal(((dynamic)expected[k]).DoubleA, ((dynamic)actual[k]).DoubleA);
                 }
             }
         }

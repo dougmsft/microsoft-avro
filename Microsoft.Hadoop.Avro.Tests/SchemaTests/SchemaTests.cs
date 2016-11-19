@@ -20,13 +20,12 @@ namespace Microsoft.Hadoop.Avro.Tests
     using System.Linq;
     using System.Runtime.Serialization;
     using Microsoft.Hadoop.Avro.Schema;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     
-    [TestClass]
+    [Trait("Category","Schema")]
     public sealed class SchemaTests
     {
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaTests_SchemaNameEquality()
         {
             var schemaName = new SchemaName("namespace.name");
@@ -36,8 +35,7 @@ namespace Microsoft.Hadoop.Avro.Tests
         }
 
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", Justification = "Ctor should throw.")]
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaTests_SchemaNameTryArguments()
         {
             Utilities.ShouldThrow<ArgumentException>(() => new SchemaName(null, "namespace"));
@@ -47,36 +45,34 @@ namespace Microsoft.Hadoop.Avro.Tests
             Utilities.ShouldThrow<SerializationException>(() => new SchemaName("validName", "invalid.namespaceŠŽŒ"));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaTests_CreateRecordFieldWithValidPosition()
         {
             var recordSchema = Schema.CreateRecord("SimpleClass", "some.ns");
             Schema.SetFields(
                 recordSchema,
                 new List<RecordField> { Schema.CreateField("IntField", new IntSchema()), Schema.CreateField("StringField", new StringSchema()) });
-            Assert.AreEqual(2, recordSchema.Fields.Count());
-            Assert.IsInstanceOfType(recordSchema.Fields.First(f => f.Position == 0).TypeSchema, typeof(IntSchema));
-            Assert.AreEqual("IntField", recordSchema.Fields.First(f => f.Position == 0).Name);
-            Assert.IsInstanceOfType(recordSchema.Fields.First(f => f.Position == 1).TypeSchema, typeof(StringSchema));
-            Assert.AreEqual("StringField", recordSchema.Fields.First(f => f.Position == 1).Name);
+            Assert.Equal(2, recordSchema.Fields.Count());
+            Assert.IsType(typeof(IntSchema), recordSchema.Fields.First(f => f.Position == 0).TypeSchema);
+            Assert.Equal("IntField", recordSchema.Fields.First(f => f.Position == 0).Name);
+            Assert.IsType(typeof(StringSchema), recordSchema.Fields.First(f => f.Position == 1).TypeSchema);
+            Assert.Equal("StringField", recordSchema.Fields.First(f => f.Position == 1).Name);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SchemaTests_CreateRecursiveRecordField()
         {
             var recursiveRecordSchema = Schema.CreateRecord("SimpleClass", "some.ns");
             Schema.SetFields(
                 recursiveRecordSchema,
                 new List<RecordField> { Schema.CreateField("IntField", new IntSchema()), Schema.CreateField("RecursiveField", recursiveRecordSchema) });
-            Assert.AreEqual(2, recursiveRecordSchema.Fields.Count());
-            Assert.IsInstanceOfType(recursiveRecordSchema.Fields.First(f => f.Position == 0).TypeSchema, typeof(IntSchema));
-            Assert.IsInstanceOfType(recursiveRecordSchema.Fields.First(f => f.Position == 1).TypeSchema, recursiveRecordSchema.GetType());
+            Assert.Equal(2, recursiveRecordSchema.Fields.Count());
+            Assert.IsType(typeof(IntSchema), recursiveRecordSchema.Fields.First(f => f.Position == 0).TypeSchema);
+            Assert.IsType(recursiveRecordSchema.GetType(), recursiveRecordSchema.Fields.First(f => f.Position == 1).TypeSchema);
             var recursiveField = recursiveRecordSchema.Fields.First(f => f.Position == 1).TypeSchema as RecordSchema;
-            Assert.IsNotNull(recursiveField);
-            Assert.AreEqual(2, recursiveField.Fields.Count());
-            Assert.AreEqual(recursiveField.Name, recursiveRecordSchema.Name);
+            Assert.NotNull(recursiveField);
+            Assert.Equal(2, recursiveField.Fields.Count());
+            Assert.Equal(recursiveField.Name, recursiveRecordSchema.Name);
         }
     }
 }

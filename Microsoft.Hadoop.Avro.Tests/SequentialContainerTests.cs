@@ -26,31 +26,28 @@ namespace Microsoft.Hadoop.Avro.Tests
     using global::Avro.Generic;
     using Microsoft.Hadoop.Avro;
     using Microsoft.Hadoop.Avro.Container;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using ApacheAvro = global::Avro;
     using Codec = Microsoft.Hadoop.Avro.Container.Codec;
 
     [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Justification = "Test class.")]
-    [TestClass]
-    public sealed class SequentialContainerTests
+    [Trait("Category","SequentialContainer")]
+    public sealed class SequentialContainerTests : IDisposable
     {
         private Stream resultStream;
 
-        [TestInitialize]
-        public void TestInitialize()
+        public SequentialContainerTests()
         {
             this.resultStream = new MemoryStream();
         }
 
-        [TestCleanup]
-        public void TestCleanup()
+        public void Dispose()
         {
             this.resultStream.Dispose();
             this.resultStream = null;
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SequentialReaderWriter_SerializeThreeObjects()
         {
             var expected = new List<ClassOfInt>
@@ -70,12 +67,11 @@ namespace Microsoft.Hadoop.Avro.Tests
             var r = AvroContainer.CreateReader<ClassOfInt>(this.resultStream);
             using (var reader = new SequentialReader<ClassOfInt>(r))
             {
-                Assert.IsTrue(expected.SequenceEqual(reader.Objects));
+                Assert.True(expected.SequenceEqual(reader.Objects));
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SequentialReaderWriter_SerializeHugeObject()
         {
             var single = new SimpleFlatClass
@@ -102,12 +98,11 @@ namespace Microsoft.Hadoop.Avro.Tests
             var r = AvroContainer.CreateReader<SimpleFlatClass>(this.resultStream, true, new AvroSerializerSettings { Resolver = new AvroDataContractResolver(true) }, new CodecFactory());
             using (var reader = new SequentialReader<SimpleFlatClass>(r))
             {
-                Assert.IsTrue(expected.SequenceEqual(reader.Objects));
+                Assert.True(expected.SequenceEqual(reader.Objects));
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SequentialReaderWriter_SyncAfterEachObject()
         {
             var expected = new List<ClassOfInt>
@@ -127,12 +122,11 @@ namespace Microsoft.Hadoop.Avro.Tests
             var r = AvroContainer.CreateReader<ClassOfInt>(this.resultStream);
             using (var reader = new SequentialReader<ClassOfInt>(r))
             {
-                Assert.IsTrue(expected.SequenceEqual(reader.Objects));
+                Assert.True(expected.SequenceEqual(reader.Objects));
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SequentialReaderWriter_SyncAfter1024Objects()
         {
             var expected = new List<ClassOfInt>();
@@ -151,12 +145,11 @@ namespace Microsoft.Hadoop.Avro.Tests
             var r = AvroContainer.CreateReader<ClassOfInt>(this.resultStream);
             using (var reader = new SequentialReader<ClassOfInt>(r))
             {
-                Assert.IsTrue(expected.SequenceEqual(reader.Objects));
+                Assert.True(expected.SequenceEqual(reader.Objects));
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SequentialReaderWriter_SyncAfterDeflateCodec()
         {
             var expected = new List<ClassOfInt>();
@@ -175,12 +168,11 @@ namespace Microsoft.Hadoop.Avro.Tests
             var r = AvroContainer.CreateReader<ClassOfInt>(this.resultStream);
             using (var reader = new SequentialReader<ClassOfInt>(r))
             {
-                Assert.IsTrue(expected.SequenceEqual(reader.Objects));
+                Assert.True(expected.SequenceEqual(reader.Objects));
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SequentialReaderWriter_Reset()
         {
             var expected = new List<ClassOfListOfGuid>();
@@ -200,15 +192,14 @@ namespace Microsoft.Hadoop.Avro.Tests
             var r = AvroContainer.CreateReader<ClassOfListOfGuid>(this.resultStream);
             using (var reader = new SequentialReader<ClassOfListOfGuid>(r))
             {
-                Assert.IsTrue(expected.SequenceEqual(reader.Objects));
+                Assert.True(expected.SequenceEqual(reader.Objects));
 
                 var enumerator = (IEnumerator)reader.Objects.GetEnumerator();
-                Assert.IsFalse(enumerator.MoveNext());
+                Assert.False(enumerator.MoveNext());
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SequentialWriter_MicrosoftWriterApacheReader()
         {
             var expected = new List<ClassOfInt>();
@@ -229,20 +220,19 @@ namespace Microsoft.Hadoop.Avro.Tests
 
             for (var i = 0; i < expected.Count; ++i)
             {
-                Assert.AreEqual(expected[i].PrimitiveInt, actual[i]["PrimitiveInt"]);
+                Assert.Equal(expected[i].PrimitiveInt, actual[i]["PrimitiveInt"]);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SequentialReader_ApacheWriterMicrosoftReader()
         {
             var serializer = AvroSerializer.Create<ClassOfInt>(new AvroSerializerSettings { Resolver = new AvroDataContractResolver(true) });
             var schema = ApacheAvro.Schema.Parse(serializer.WriterSchema.ToString()) as ApacheAvro.UnionSchema;
-            Assert.IsNotNull(schema);
+            Assert.NotNull(schema);
 
             var recordSchema = schema.Schemas[1] as ApacheAvro.RecordSchema;
-            Assert.IsNotNull(recordSchema);
+            Assert.NotNull(recordSchema);
 
             var expected = new List<GenericRecord>();
             for (var i = 0; i < 7; i++)
@@ -269,16 +259,15 @@ namespace Microsoft.Hadoop.Avro.Tests
             {
                 var actual = reader.Objects.ToList();
 
-                Assert.AreEqual(expected.Count, actual.Count);
+                Assert.Equal(expected.Count, actual.Count);
                 for (var i = 0; i < expected.Count; ++i)
                 {
-                    Assert.AreEqual(expected[i]["PrimitiveInt"], actual[i].PrimitiveInt);
+                    Assert.Equal(expected[i]["PrimitiveInt"], actual[i].PrimitiveInt);
                 }
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SequentialWriter_MicrosoftWriterApacherReaderOfNestedType()
         {
             var expected = new List<NestedClass>();
@@ -300,21 +289,20 @@ namespace Microsoft.Hadoop.Avro.Tests
 
             for (var i = 0; i < expected.Count; ++i)
             {
-                Assert.AreEqual(expected[i].PrimitiveInt, actual[i]["PrimitiveInt"]);
+                Assert.Equal(expected[i].PrimitiveInt, actual[i]["PrimitiveInt"]);
                 if (expected[i].ClassOfIntReference == null)
                 {
-                    Assert.IsNull(actual[i]["ClassOfIntReference"]);
+                    Assert.Null(actual[i]["ClassOfIntReference"]);
                 }
                 else
                 {
-                    Assert.IsNotNull(actual[i]["ClassOfIntReference"] as GenericRecord);
-                    Assert.AreEqual(expected[i].ClassOfIntReference.PrimitiveInt, (actual[i]["ClassOfIntReference"] as GenericRecord)["PrimitiveInt"]);
+                    Assert.NotNull(actual[i]["ClassOfIntReference"] as GenericRecord);
+                    Assert.Equal(expected[i].ClassOfIntReference.PrimitiveInt, (actual[i]["ClassOfIntReference"] as GenericRecord)["PrimitiveInt"]);
                 }
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SequentialWriter_MicrosoftWriterApacherReaderOfDictionary()
         {
             var expected = new List<ContainingDictionaryClass<string, string>>();
@@ -338,85 +326,96 @@ namespace Microsoft.Hadoop.Avro.Tests
             var reader = DataFileReader<GenericRecord>.OpenReader(this.resultStream);
             var actual = new List<GenericRecord>(reader);
 
-            Assert.AreEqual(expected.Count, actual.Count);
+            Assert.Equal(expected.Count, actual.Count);
 
             for (var i = 0; i < expected.Count; ++i)
             {
                 var actualValue = actual[i]["Property"] as Dictionary<string, object>;
-                Assert.IsNotNull(actualValue);
-                Assert.AreEqual(actualValue["testkey" + i] as string, expected[i].Property["testkey" + i]);
+                Assert.NotNull(actualValue);
+                Assert.Equal(actualValue["testkey" + i] as string, expected[i].Property["testkey" + i]);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void SequentialWriter_CreateWithNullStream()
         {
-            using (new SequentialWriter<ClassOfInt>(null, 0))
-            {
-            }
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    using (new SequentialWriter<ClassOfInt>(null, 0))
+                    {
+                    }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        [Fact]
         public void SequentialWriter_CreateWithInvalidNumberOfSyncObjects()
         {
-            var writer = AvroContainer.CreateWriter<ClassOfInt>(this.resultStream, Codec.Null);
-            using (new SequentialWriter<ClassOfInt>(writer, -10))
-            {
-            }
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                {
+                    var writer = AvroContainer.CreateWriter<ClassOfInt>(this.resultStream, Codec.Null);
+                    using (new SequentialWriter<ClassOfInt>(writer, -10))
+                    {
+                    }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void SequentialReader_CorruptedMagicInHeader()
         {
-            var randomByteArray = new byte[] { 0, 1, 2, 3, 4 };
-            using (var stream = new MemoryStream(randomByteArray))
-            {
-                var reader = AvroContainer.CreateReader<ClassWithNullableIntField>(stream);
-            }
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var randomByteArray = new byte[] {0, 1, 2, 3, 4};
+                    using (var stream = new MemoryStream(randomByteArray))
+                    {
+                        var reader = AvroContainer.CreateReader<ClassWithNullableIntField>(stream);
+                    }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void SequentialWriter_AddMetadataWithNullKey()
         {
-            var writer = AvroContainer.CreateWriter<ClassOfInt>(this.resultStream, Codec.Null);
-            using (var sequentialWriter = new SequentialWriter<ClassOfInt>(writer, 2))
-            {
-                sequentialWriter.AddMetadata(null, Utilities.GetRandom<byte[]>(false));
-            }
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    var writer = AvroContainer.CreateWriter<ClassOfInt>(this.resultStream, Codec.Null);
+                    using (var sequentialWriter = new SequentialWriter<ClassOfInt>(writer, 2))
+                    {
+                        sequentialWriter.AddMetadata(null, Utilities.GetRandom<byte[]>(false));
+                    }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void SequentialWriter_AddMetadataWithNullValue()
         {
-            var writer = AvroContainer.CreateWriter<ClassOfInt>(this.resultStream, Codec.Null);
-            using (var sequentialWriter = new SequentialWriter<ClassOfInt>(writer, 2))
-            {
-                sequentialWriter.AddMetadata("Key", null);
-            }
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    var writer = AvroContainer.CreateWriter<ClassOfInt>(this.resultStream, Codec.Null);
+                    using (var sequentialWriter = new SequentialWriter<ClassOfInt>(writer, 2))
+                    {
+                        sequentialWriter.AddMetadata("Key", null);
+                    }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void SequentialReader_CreateWithNullReader()
         {
-            using (new SequentialReader<ClassOfInt>(null))
-            {
-            }
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    using (new SequentialReader<ClassOfInt>(null))
+                    {
+                    }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void SequentialReaderWriter_CreateReaderForSchemaWithNullableField()
         {
             var expected = new ClassWithNullableIntField { NullableIntField = 10 };
@@ -440,7 +439,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 {
                     foreach (var actual in sreader.Objects)
                     {
-                        Assert.AreEqual(expected.NullableIntField, actual.NullableIntField);
+                        Assert.Equal(expected.NullableIntField, actual.NullableIntField);
                     }
                 }
             }

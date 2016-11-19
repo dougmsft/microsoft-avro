@@ -18,15 +18,14 @@ namespace Microsoft.Hadoop.Avro.Tests
     using System.Diagnostics;
     using System.IO;
     using System.Runtime.CompilerServices;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
 
-    [TestClass]
+    [Trait("Category","Performance")]
     public sealed class PerformanceTests
     {
         private const int NumberOfRuns = 100000;
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public void Performance_SimpleFlatClass()
         {

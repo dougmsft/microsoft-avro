@@ -17,107 +17,120 @@ namespace Microsoft.Hadoop.Avro.Tests
     using System;
     using System.Linq;
     using System.Runtime.Serialization;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
 
-    [TestClass]
+    [Trait("Category","Resolver")]
     public sealed class ResolverTests
     {
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Resolver_GetSerializationInfoUsingDataContactResolverWithNullFieldInfo()
         {
-            var resolver = new AvroDataContractResolver();
-            resolver.ResolveMembers(null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    var resolver = new AvroDataContractResolver();
+                    resolver.ResolveMembers(null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void Resolver_GetSerializationInfoDataContractResolverWithUnsupportedTypes()
         {
-            var resolver = new AvroDataContractResolver();
-            resolver.ResolveType(typeof(ClassWithoutParameterlessConstructor));
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var resolver = new AvroDataContractResolver();
+                    resolver.ResolveType(typeof(ClassWithoutParameterlessConstructor));
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Resolver_GetSerializationInfoUsingPublicMembersResolverWithNullFieldInfo()
         {
-            var resolver = new AvroPublicMemberContractResolver();
-            resolver.ResolveMembers(null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    var resolver = new AvroPublicMemberContractResolver();
+                    resolver.ResolveMembers(null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void Resolver_GetSerializationInfoPublicMembersResolverWithUnsupportedTypes()
         {
-            var resolver = new AvroPublicMemberContractResolver();
-            resolver.ResolveType(typeof(ClassWithoutParameterlessConstructor));
+            Assert.Throws<SerializationException>(() =>
+                {
+                    var resolver = new AvroPublicMemberContractResolver();
+                    resolver.ResolveType(typeof(ClassWithoutParameterlessConstructor));
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Resolver_GetKnownTypesUsingDataContactResolverForAbstractClassAndInvalidTypes()
         {
             var resolver = new AvroDataContractResolver();
             var knownTypes = resolver.GetKnownTypes(typeof(AbstractClassWithInvalidKnownTypes));
-            Assert.IsTrue(knownTypes.SequenceEqual(new[] { typeof(Rectangle) }));
+            Assert.True(knownTypes.SequenceEqual(new[] { typeof(Rectangle) }));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Resolver_GetKnownTypesUsingDataContractResolverWithNull()
         {
-            var resolver = new AvroDataContractResolver();
-            resolver.GetKnownTypes(null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    var resolver = new AvroDataContractResolver();
+                    resolver.GetKnownTypes(null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Resolver_GetKnownTypesUsingPublicMembersResolverWithNull()
         {
-            var resolver = new AvroPublicMemberContractResolver();
-            resolver.GetKnownTypes(null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    var resolver = new AvroPublicMemberContractResolver();
+                    resolver.GetKnownTypes(null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Resolver_GetKnownTypesUsingDataContactResolverForAbstractClassAndValidTypes()
         {
             var resolver = new AvroDataContractResolver();
             var knownTypes = resolver.GetKnownTypes(typeof(AbstractShape)).ToList();
 
-            Assert.AreEqual(2, knownTypes.Count);
-            Assert.IsTrue(
+            Assert.Equal(2, knownTypes.Count);
+            Assert.True(
                 (knownTypes[0] == typeof(Square) && knownTypes[1] == typeof(Rectangle)) ||
                 (knownTypes[1] == typeof(Square) && knownTypes[0] == typeof(Rectangle)));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Resolver_GetSerializationInfoUsingDataContactResolverWithNullType()
         {
-            var resolver = new AvroDataContractResolver();
-            resolver.ResolveType(null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    var resolver = new AvroDataContractResolver();
+                    resolver.ResolveType(null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Resolver_GetSerializationInfoUsingPublicMembersResolverWithNullType()
         {
-            var resolver = new AvroPublicMemberContractResolver();
-            resolver.ResolveType(null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    var resolver = new AvroPublicMemberContractResolver();
+                    resolver.ResolveType(null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Resolver_DataContractResolverEquality()
         {
             var resolver = new AvroDataContractResolver();
@@ -127,8 +140,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             Utilities.VerifyEquality(resolver, secondResolver, thirdResolver);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Resolver_PublicMembersResolverEquality()
         {
             var resolver = new AvroPublicMemberContractResolver();

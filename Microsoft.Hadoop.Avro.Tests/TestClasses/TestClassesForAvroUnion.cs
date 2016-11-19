@@ -1,4 +1,4 @@
-﻿namespace Microsoft.Hadoop.Avro.Tests.TestClasses
+﻿namespace Microsoft.Hadoop.Avro.Tests.Classes
 {
     using System;
     using System.Collections.Generic;

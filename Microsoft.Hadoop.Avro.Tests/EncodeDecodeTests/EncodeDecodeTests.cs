@@ -19,20 +19,19 @@ namespace Microsoft.Hadoop.Avro.Tests
     using System.IO;
     using System.Linq;
     using System.Runtime.Serialization;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
 
     [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable",
         Justification = "This should be fixed when we can bring in disposable object. [tgs]")]
-    [TestClass]
-    public class EncodeDecodeTests
+    [Trait("Category","EncodeDecode")]
+    public class EncodeDecodeTests : IDisposable
     {
         protected MemoryStream Stream;
         protected IEncoder Encoder;
         protected IDecoder Decoder;
         private Random random;
 
-        [TestInitialize]
-        public void TestSetup()
+        public EncodeDecodeTests()
         {
             const int Seed = 13;
             this.Stream = new MemoryStream();
@@ -41,14 +40,12 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.random = new Random(Seed);
         }
 
-        [TestCleanup]
-        public void TestTeardown()
+        public void Dispose()
         {
             this.Stream.Dispose();
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_ZeroInt()
         {
             const int Expected = 0;
@@ -58,11 +55,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeInt();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_PositiveInt()
         {
             const int Expected = 105;
@@ -72,11 +68,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeInt();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_NegativeInt()
         {
             const int Expected = -106;
@@ -86,11 +81,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeInt();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_MaxInt()
         {
             const int Expected = int.MaxValue;
@@ -100,11 +94,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeInt();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_MinInt()
         {
             const int Expected = int.MinValue;
@@ -114,28 +107,29 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeInt();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void Decode_InvalidInt()
         {
-            this.Stream.WriteByte(0xFF);
-            this.Stream.WriteByte(0xFF);
-            this.Stream.WriteByte(0xFF);
-            this.Stream.WriteByte(0xFF);
-            //causes corruption
-            this.Stream.WriteByte(0xFF);
-            this.Stream.WriteByte(0x1);
-            this.Stream.Flush();
-            this.Stream.Seek(0, SeekOrigin.Begin);
-            var result = this.Decoder.DecodeInt();
+            Assert.Throws<SerializationException>(() =>
+                {
+                    this.Stream.WriteByte(0xFF);
+                    this.Stream.WriteByte(0xFF);
+                    this.Stream.WriteByte(0xFF);
+                    this.Stream.WriteByte(0xFF);
+                    //causes corruption
+                    this.Stream.WriteByte(0xFF);
+                    this.Stream.WriteByte(0x1);
+                    this.Stream.Flush();
+                    this.Stream.Seek(0, SeekOrigin.Begin);
+                    var result = this.Decoder.DecodeInt();
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_ZeroLong()
         {
             const long Expected = 0;
@@ -145,11 +139,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeLong();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_PositiveLong()
         {
             const long Expected = 105;
@@ -159,11 +152,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeLong();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_NegativeLong()
         {
             const long Expected = -106;
@@ -173,11 +165,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeLong();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_MaxLong()
         {
             const long Expected = long.MaxValue;
@@ -187,11 +178,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeLong();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_MinLong()
         {
             const long Expected = long.MinValue;
@@ -201,42 +191,45 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeLong();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void Decode_InvalidLong()
         {
-            this.Stream.WriteByte(0xFF);
-            this.Stream.WriteByte(0xFF);
-            this.Stream.WriteByte(0xFF);
-            this.Stream.WriteByte(0xFF);
-            this.Stream.WriteByte(0xFF);
-            this.Stream.WriteByte(0xFF);
-            this.Stream.WriteByte(0xFF);
-            this.Stream.WriteByte(0xFF);
-            this.Stream.WriteByte(0xFF);
-            //causes corruption
-            this.Stream.WriteByte(0xFF);
-            this.Stream.WriteByte(0x1);
-            this.Stream.Flush();
-            this.Stream.Seek(0, SeekOrigin.Begin);
-            var result = this.Decoder.DecodeLong();
+            Assert.Throws<SerializationException>(() =>
+                {
+                    this.Stream.WriteByte(0xFF);
+                    this.Stream.WriteByte(0xFF);
+                    this.Stream.WriteByte(0xFF);
+                    this.Stream.WriteByte(0xFF);
+                    this.Stream.WriteByte(0xFF);
+                    this.Stream.WriteByte(0xFF);
+                    this.Stream.WriteByte(0xFF);
+                    this.Stream.WriteByte(0xFF);
+                    this.Stream.WriteByte(0xFF);
+                    //causes corruption
+                    this.Stream.WriteByte(0xFF);
+                    this.Stream.WriteByte(0x1);
+                    this.Stream.Flush();
+                    this.Stream.Seek(0, SeekOrigin.Begin);
+                    var result = this.Decoder.DecodeLong();
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(Exception), AllowDerivedTypes = true)]
+        [Fact]
         public void Decode_InvalidLongWithEmptyStream()
         {
-            this.Stream.Position = 0;
-            this.Decoder.DecodeLong();
+            Assert.ThrowsAny<Exception>(() =>
+                {
+                    this.Stream.Position = 0;
+                    this.Decoder.DecodeLong();
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_BooleanTrue()
         {
             const bool Expected = true;
@@ -246,11 +239,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeBool();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_BooleanFalse()
         {
             const bool Expected = false;
@@ -260,11 +252,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeBool();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_EmptyByteArray()
         {
             var expected = new byte[] { };
@@ -274,11 +265,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeByteArray();
 
-            CollectionAssert.AreEqual(expected, actual);
+            Assert.Equal(expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_NotEmptyByteArray()
         {
             var expected = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -288,11 +278,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeByteArray();
 
-            CollectionAssert.AreEqual(expected, actual);
+            Assert.Equal(expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_FloatMax()
         {
             const float Expected = float.MaxValue;
@@ -302,11 +291,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeFloat();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_FloatMin()
         {
             const float Expected = float.MinValue;
@@ -316,11 +304,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeFloat();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_DoubleMax()
         {
             const double Expected = double.MaxValue;
@@ -330,11 +317,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeDouble();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_DoubleMin()
         {
             const double Expected = double.MinValue;
@@ -344,11 +330,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeDouble();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_EmptyString()
         {
             const string Expected = "";
@@ -358,11 +343,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeString();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_NotEmptyString()
         {
             const string Expected = "Test string";
@@ -372,11 +356,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
             var actual = this.Decoder.DecodeString();
 
-            Assert.AreEqual(Expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_HundredThousandRandomInts()
         {
             const int NumberOfTests = 100000;
@@ -394,12 +377,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 this.Stream.Seek(0, SeekOrigin.Begin);
                 var actual = this.Decoder.DecodeInt();
 
-                Assert.AreEqual(expected, actual);
+                Assert.Equal(expected, actual);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_HundredThousandRandomLongs()
         {
             const int NumberOfTests = 100000;
@@ -419,12 +401,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 this.Stream.Seek(0, SeekOrigin.Begin);
                 var actual = this.Decoder.DecodeLong();
 
-                Assert.AreEqual(expected, actual);
+                Assert.Equal(expected, actual);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_DifferentInts()
         {
             var values = new[]
@@ -446,12 +427,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 this.Stream.Seek(0, SeekOrigin.Begin);
 
                 var actual = this.Decoder.DecodeInt();
-                Assert.AreEqual(expected, actual);
+                Assert.Equal(expected, actual);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_DifferentLongs()
         {
             var values = new[]
@@ -477,12 +457,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 this.Stream.Seek(0, SeekOrigin.Begin);
 
                 var actual = this.Decoder.DecodeLong();
-                Assert.AreEqual(expected, actual);
+                Assert.Equal(expected, actual);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void EncodeDecode_NotEmptyStream()
         {
             var expected = Utilities.GetRandom<byte[]>(false);
@@ -496,11 +475,10 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Stream.Seek(0, SeekOrigin.Begin);
 
             var actual = this.Decoder.DecodeByteArray();
-            Assert.IsTrue(expected.SequenceEqual(actual));
+            Assert.True(expected.SequenceEqual(actual));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Skip_Double()
         {
             var valueToSkip = this.random.NextDouble();
@@ -509,8 +487,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 d => d.SkipDouble());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Skip_Float()
         {
             var valueToSkip = (float)this.random.NextDouble();
@@ -519,8 +496,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 d => d.SkipFloat());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Skip_Bool()
         {
             var valueToSkip = this.random.Next(0, 100) % 2 == 1;
@@ -529,8 +505,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 d => d.SkipBool());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Skip_Int()
         {
             var valueToSkip = this.random.Next();
@@ -539,8 +514,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 d => d.SkipInt());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Skip_Long()
         {
             long valueToSkip = this.random.Next();
@@ -549,8 +523,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 d => d.SkipLong());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Skip_ByteArray()
         {
             var valueToSkip = new byte[128];
@@ -561,8 +534,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 d => d.SkipByteArray());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Skip_String()
         {
             this.CheckSkipping(
@@ -570,56 +542,67 @@ namespace Microsoft.Hadoop.Avro.Tests
                 d => d.SkipString());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Encoder_NullByteArray()
         {
-            this.Encoder.Encode((byte[])null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    this.Encoder.Encode((byte[]) null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Encode_NullStream()
         {
-            this.Encoder.Encode((Stream)null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    this.Encoder.Encode((Stream) null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Encode_NullFixed()
         {
-            this.Encoder.EncodeFixed(null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    this.Encoder.EncodeFixed(null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        [Fact]
         public void Decode_FixedWithNegativeSize()
         {
-            this.Decoder.DecodeFixed(-1);
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                {
+                    this.Decoder.DecodeFixed(-1);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(Exception), AllowDerivedTypes = true)]
+        [Fact]
         public void Skip_FixedWithNegativeSize()
         {
-            this.Decoder.SkipFixed(-1);
+            Assert.ThrowsAny<Exception>(() =>
+                {
+                    this.Decoder.SkipFixed(-1);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Encode_NullString()
         {
-            this.Encoder.Encode((string)null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    this.Encoder.Encode((string)null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void Decode_NotGivingPartialDataFromStream()
         {
             var expected = Utilities.GetRandom<byte[]>(false);
@@ -635,7 +618,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 var decoder = this.CreateDecoder(chunked);
                 var actual = decoder.DecodeByteArray();
 
-                Assert.IsTrue(expected.SequenceEqual(actual));
+                Assert.True(expected.SequenceEqual(actual));
             }
         }
 
@@ -661,9 +644,9 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.Encoder.Flush();
             this.Stream.Seek(0, SeekOrigin.Begin);
 
-            Assert.AreEqual(startGuard, this.Decoder.DecodeInt());
+            Assert.Equal(startGuard, this.Decoder.DecodeInt());
             skip(this.Decoder);
-            Assert.AreEqual(endGuard, this.Decoder.DecodeInt());
+            Assert.Equal(endGuard, this.Decoder.DecodeInt());
         }
 
         private class ChunkedStream : Stream

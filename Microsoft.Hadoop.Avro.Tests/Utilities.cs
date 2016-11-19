@@ -9,6 +9,10 @@
 // MERCHANTABLITY OR NON-INFRINGEMENT.
 // See the Apache Version 2.0 License for specific language governing
 // permissions and limitations under the License.
+
+using System.Runtime.Remoting.Messaging;
+using System.Security.Permissions;
+
 namespace Microsoft.Hadoop.Avro.Tests
 {
     using System;
@@ -27,7 +31,7 @@ namespace Microsoft.Hadoop.Avro.Tests
     using Microsoft.CSharp;
     using Microsoft.Hadoop.Avro.Schema;
     using Microsoft.Hadoop.Avro.Utils;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
 
     public static class Utilities
     {
@@ -394,11 +398,11 @@ namespace Microsoft.Hadoop.Avro.Tests
             try
             {
                 action();
-                Assert.Fail("Expected exception of type {0} but no exception is thrown.", typeof(T));
+                Assert.True(false, "Expected exception of type " + typeof(T) + " but no exception is thrown.");
             }
             catch (Exception e)
             {
-                Assert.IsInstanceOfType(e, typeof(T));
+                Assert.IsType<T>(e);
             }
         }
 
@@ -411,31 +415,31 @@ namespace Microsoft.Hadoop.Avro.Tests
         private static void TestEquals<T>(T obj1, object obj2, object obj3)
         {
             //reflexivity
-            Assert.IsTrue(obj1.Equals(obj1));
+            Assert.True(obj1.Equals(obj1));
 
             //symmetry
             if (obj1.Equals(obj2))
             {
-                Assert.IsTrue(obj2.Equals(obj1));
-                Assert.IsTrue(obj1.GetHashCode() == obj2.GetHashCode());
+                Assert.True(obj2.Equals(obj1));
+                Assert.True(obj1.GetHashCode() == obj2.GetHashCode());
             }
             else
             {
-                Assert.IsFalse(obj2.Equals(obj1));
+                Assert.False(obj2.Equals(obj1));
             }
 
             //transitivity
             if (obj1.Equals(obj2))
             {
-                Assert.IsTrue(obj1.GetHashCode() == obj2.GetHashCode());
+                Assert.True(obj1.GetHashCode() == obj2.GetHashCode());
                 if (obj2.Equals(obj3))
                 {
-                    Assert.IsTrue(obj1.Equals(obj3));
-                    Assert.IsTrue(obj1.GetHashCode() == obj3.GetHashCode());
+                    Assert.True(obj1.Equals(obj3));
+                    Assert.True(obj1.GetHashCode() == obj3.GetHashCode());
                 }
                 else
                 {
-                    Assert.IsFalse(obj1.Equals(obj3));
+                    Assert.False(obj1.Equals(obj3));
                 }
             }
 
@@ -443,8 +447,8 @@ namespace Microsoft.Hadoop.Avro.Tests
             object nullObject = default(T);
             object anotherNullObject = default(T);
 
-            Assert.IsFalse(obj1.Equals(nullObject));
-            Assert.IsTrue(nullObject == anotherNullObject);
+            Assert.False(obj1.Equals(nullObject));
+            Assert.True(nullObject == anotherNullObject);
         }
 
         public static IEnumerable<string> GenerateCode(string jsonSchema, string defaultNamespace, bool namespaceIsForced)
@@ -479,7 +483,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 compilerParameters.ReferencedAssemblies.Add("Microsoft.Hadoop.Avro.dll");
 
                 CompilerResults compilerResults = csharpCodeProvider.CompileAssemblyFromSource(compilerParameters, sources.ToArray());
-                Assert.AreEqual(compilerResults.Errors.Count, 0);
+                Assert.Equal(compilerResults.Errors.Count, 0);
 
                 return compilerResults.CompiledAssembly;
             }
@@ -521,6 +525,21 @@ namespace Microsoft.Hadoop.Avro.Tests
                    || type == typeof(string)
                    || type.IsEnum
                    || Nullable.GetUnderlyingType(type) != null;
+        }
+
+        public static void ContainersEqual<T1, T2>(IEnumerable<T1> cleft, IEnumerable<T2> cright)
+        {
+            var l1 = cleft.ToList();
+            var l2 = cright.ToList();
+
+            Assert.True(l1.Count() == l2.Count(), "Containers are different lengths");
+            l1.Zip<T1, T2, int>(l2,
+                (T1 ll, T2 rr) =>
+                    {
+                        Assert.True(((object)ll).Equals((object)rr), "Container values do not match");
+                        return 0;
+                    }
+                );
         }
 
         #endregion //Type extensions
