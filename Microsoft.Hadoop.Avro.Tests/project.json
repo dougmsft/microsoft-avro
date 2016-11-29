@@ -4,8 +4,9 @@
     "debugType": "portable"
   },
   "dependencies": {
-    "Microsoft.Avro": "1.0.0-*",
     "System.Runtime.Serialization.Primitives": "4.3.0-preview1-24530-04",
+    "CoreCompat.System.CodeDOM": "4.2.3-beta002",
+    "Microsoft.Avro": "1.0.0-*",
     "xunit": "2.1.0",
     "dotnet-test-xunit": "1.0.0-rc2-build10015",
     "SpecFlow.NetCore": "1.0.0-*"
@@ -26,9 +27,25 @@
         }
       },
       "imports": [
+        "dnxcore50",
+        "dotnet5.4",
+        "portable-net451+win8"
+      ]
+    },
+    "net46": {
+      "dependencies": {
+        "Microsoft.NETCore.Platforms": "1.0.1",
+        "System.Runtime.Serialization.Primitives": "4.1.1"
+      },
+      "imports": [
+        "dnxcore50",
         "dotnet5.4",
         "portable-net451+win8"
       ]
     }
+  },
+  "configurations": {
+    "Release": {},
+    "Debug": {}
   }
 }
