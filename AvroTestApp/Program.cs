@@ -17,11 +17,8 @@ namespace AvroTestApp
 {
     using System;
     using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
     using System.Collections.Generic;
     using System.Runtime.Serialization;
-    using Microsoft.Hadoop.Avro;
     using Microsoft.Hadoop.Avro.Container;
 
     [DataContract]
