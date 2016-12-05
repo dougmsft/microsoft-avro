@@ -23,7 +23,7 @@ namespace Microsoft.Hadoop.Avro.Utils
     /// <summary>
     /// Generates CSharp code from an Avro schema.
     /// </summary>
-    internal static class CodeGenerator
+    public static class CodeGenerator
     {
         /// <summary>
         /// Searches a schema for other schemas that can be used for code generation.

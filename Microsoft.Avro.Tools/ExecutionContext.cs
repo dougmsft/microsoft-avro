@@ -9,13 +9,13 @@
 // MERCHANTABLITY OR NON-INFRINGEMENT.
 // See the Apache Version 2.0 License for specific language governing
 // permissions and limitations under the License.
-namespace Microsoft.Hadoop.Avro.Tools
+namespace Microsoft.Avro.Tools
 {
     using System;
     using System.Globalization;
     using System.IO;
 
-    using Microsoft.Hadoop.Avro.Tools.Properties;
+    using Microsoft.Avro.Tools.Properties;
 
     internal sealed class ExecutionContext : IExecutionContext
     {

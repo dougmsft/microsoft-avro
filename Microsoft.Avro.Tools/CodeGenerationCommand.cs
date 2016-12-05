@@ -9,7 +9,7 @@
 // MERCHANTABLITY OR NON-INFRINGEMENT.
 // See the Apache Version 2.0 License for specific language governing
 // permissions and limitations under the License.
-namespace Microsoft.Hadoop.Avro.Tools
+namespace Microsoft.Avro.Tools
 {
     using System;
     using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace Microsoft.Hadoop.Avro.Tools
     using System.Text.RegularExpressions;
 
     using Microsoft.Hadoop.Avro.Schema;
-    using Microsoft.Hadoop.Avro.Tools.Properties;
+    using Microsoft.Avro.Tools.Properties;
     using Microsoft.Hadoop.Avro.Utils;
 
     internal class CodeGenerationCommand : ICommand

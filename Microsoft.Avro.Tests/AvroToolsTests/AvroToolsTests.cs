@@ -16,8 +16,8 @@ namespace Microsoft.Hadoop.Avro.Tests
     using System.IO;
     using System.Linq;
 
-    using Microsoft.Hadoop.Avro.Tools;
-    using Microsoft.Hadoop.Avro.Tools.Properties;
+    using Microsoft.Avro.Tools;
+    using Microsoft.Avro.Tools.Properties;
     using Xunit;
 
     [Trait("Category","Tool")]

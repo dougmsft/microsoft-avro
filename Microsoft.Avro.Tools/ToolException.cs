@@ -9,7 +9,7 @@
 // MERCHANTABLITY OR NON-INFRINGEMENT.
 // See the Apache Version 2.0 License for specific language governing
 // permissions and limitations under the License.
-namespace Microsoft.Hadoop.Avro.Tools
+namespace Microsoft.Avro.Tools
 {
     using System;
     using System.Globalization;
@@ -57,9 +57,9 @@ namespace Microsoft.Hadoop.Avro.Tools
         /// </summary>
         /// <param name="info">The info.</param>
         /// <param name="context">The context.</param>
-        private ToolException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
+        // private ToolException(SerializationInfo info, StreamingContext context) : base(info, context)
+        // {
+        // }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ToolException" /> class.

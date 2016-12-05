@@ -16,7 +16,7 @@ namespace Microsoft.Hadoop.Avro.Tests
     using System.IO;
     using System.Text;
 
-    using Microsoft.Hadoop.Avro.Tools;
+    using Microsoft.Avro.Tools;
 
     internal sealed class MockExecutionContext : IExecutionContext
     {

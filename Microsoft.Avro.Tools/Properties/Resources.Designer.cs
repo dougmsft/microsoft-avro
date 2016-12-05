@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.Hadoop.Avro.Tools.Properties {
+namespace Microsoft.Avro.Tools.Properties {
     using System;
     
     
@@ -39,7 +39,8 @@ namespace Microsoft.Hadoop.Avro.Tools.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Hadoop.Avro.Tools.Properties.Resources", typeof(Resources).Assembly);
+                    //global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Avro.Tools.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager(typeof(Resources));
                     resourceMan = temp;
                 }
                 return resourceMan;
