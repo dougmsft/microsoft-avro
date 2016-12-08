@@ -69,6 +69,60 @@ namespace Microsoft.Hadoop.Avro.Tests
             { typeof(DateTime), new Func<DateTime>(() => new DateTime(Random.Next())) },
         };
 
+        public static bool IsInterface(Type type)
+        {
+            #if NETCOREAPP1_0
+                return type.GetTypeInfo().IsInterface;
+            #else
+                return type.IsInterface;
+            #endif
+        }
+
+        public static bool IsGenericType(Type type)
+        {
+            #if NETCOREAPP1_0
+                return type.GetTypeInfo().IsGenericType;
+            #else
+                return type.IsGenericType;
+            #endif
+        }
+
+        public static bool IsClass(Type type)
+        {
+            #if NETCOREAPP1_0
+                return type.GetTypeInfo().IsClass;
+            #else
+                return type.IsClass;
+            #endif
+        }
+
+        public static bool IsEnum(Type type)
+        {
+            #if NETCOREAPP1_0
+                return type.GetTypeInfo().IsEnum;
+            #else
+                return type.IsEnum;
+            #endif
+        }
+
+        public static Assembly Assembly(Type type)
+        {
+            #if NETCOREAPP1_0
+                return type.GetTypeInfo().Assembly;
+            #else
+                return type.Assembly;
+            #endif
+        }
+
+        public static EventInfo[] GetEvents(Type type)
+        {
+            #if NETCOREAPP1_0
+                return type.GetTypeInfo().GetEvents();
+            #else
+                return type.GetEvents();
+            #endif
+        }
+
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = "Needed to create a generic random function.")]
         public static T GetRandom<T>(bool nullsAllowed)
         {
@@ -138,14 +192,14 @@ namespace Microsoft.Hadoop.Avro.Tests
                 return (T)Convert.ChangeType(array, type);
             }
 
-            if (type.GetAllInterfaces().Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDictionary<,>))
-                || (type.IsInterface && type.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+            if (type.GetAllInterfaces().Any(t => IsGenericType(t) && t.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+                || (IsInterface(type) && type.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
             {
                 var keyType = type.GetGenericArguments()[0];
                 var keyRandomCall = typeof(Utilities).GetMethod("GetRandom").MakeGenericMethod(keyType);
                 var valueType = type.GetGenericArguments()[1];
                 var valueRandomCall = typeof(Utilities).GetMethod("GetRandom").MakeGenericMethod(valueType);
-                var dictionaryType = type.IsInterface ? typeof(Dictionary<,>).MakeGenericType(keyType, valueType) : type;
+                var dictionaryType = IsInterface(type) ? typeof(Dictionary<,>).MakeGenericType(keyType, valueType) : type;
                 var dictionary = Activator.CreateInstance(dictionaryType);
                 var addMethod = dictionaryType.GetMethod("Add", new[] { keyType, valueType });
                 var dictionarySize = Random.Next(100);
@@ -166,14 +220,14 @@ namespace Microsoft.Hadoop.Avro.Tests
                 Type enumerableType = null;
                 foreach (var aType in type.GetInterfaces())
                 {
-                    if (aType.IsGenericType && aType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                    if (IsGenericType(aType) && aType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                     {
                         enumerableType = aType.GetGenericArguments()[0];
                     }
                 }
                 if (enumerableType != null)
                 {
-                    Type resultType = type.IsInterface ? typeof(List<>).MakeGenericType(enumerableType) : type;
+                    Type resultType = IsInterface(type) ? typeof(List<>).MakeGenericType(enumerableType) : type;
                     var enumerable = Activator.CreateInstance(resultType);
                     var arraySize = Random.Next(100);
                     var enumerableItemTypeCall = typeof(Utilities).GetMethod("GetRandom").MakeGenericMethod(enumerableType);
@@ -207,7 +261,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 return (T)Activator.CreateInstance(typeof(Uri), new object[] { "http://whatever" + GetRandom<string>(nullsAllowed) });
             }
 
-            if (type.IsClass)
+            if (IsClass(type))
             {
                 var createMethod = type.GetMethod("Create", BindingFlags.Static | BindingFlags.Public);
                 if (createMethod != null)
@@ -347,7 +401,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 }
                 return true;
             }
-            if (type.IsGenericType && typeof(List<>).IsAssignableFrom(type.GetGenericTypeDefinition()))
+            if (IsGenericType(type) && typeof(List<>).IsAssignableFrom(type.GetGenericTypeDefinition()))
             {
                 var firstList = expected as IList;
                 var secondList = actual as IList;
@@ -359,7 +413,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 }
                 return !firstList.Cast<object>().Where((t, i) => !GeneratedTypesEquality(t, secondList[i])).Any();
             }
-            if (type.IsGenericType && typeof(Dictionary<,>).IsAssignableFrom(type.GetGenericTypeDefinition()))
+            if (IsGenericType(type) && typeof(Dictionary<,>).IsAssignableFrom(type.GetGenericTypeDefinition()))
             {
                 var firstDictionary = expected as IDictionary;
                 var secondDictionary = actual as IDictionary;
@@ -376,7 +430,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 }
                 return firstDictionary.Keys.Cast<object>().All(key => GeneratedTypesEquality(firstDictionary[key], secondDictionary[key]));
             }
-            if (type.IsClass)
+            if (IsClass(type))
             {
                 foreach (var property in type.GetProperties())
                 {
@@ -469,6 +523,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             return sources;
         }
 
+        /*
         public static Assembly CompileSources(IEnumerable<string> sources)
         {
             using (var csharpCodeProvider = new CSharpCodeProvider())
@@ -485,6 +540,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 return compilerResults.CompiledAssembly;
             }
         }
+        */
 
         public static string GetTypeFullName(string type)
         {
@@ -504,11 +560,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 .Replace(" ", string.Empty);
         }
 
-        #region Type extensions
+#region Type extensions
 
         public static bool IsGenerated(this Type type)
         {
-            return string.IsNullOrEmpty(type.Assembly.Location);
+            return string.IsNullOrEmpty(Assembly(type).Location);
         }
 
         private static bool IsPrimitive(this Type type)
@@ -520,7 +576,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                    || type == typeof(float)
                    || type == typeof(double)
                    || type == typeof(string)
-                   || type.IsEnum
+                   || IsEnum(type)
                    || Nullable.GetUnderlyingType(type) != null;
         }
 
@@ -539,6 +595,6 @@ namespace Microsoft.Hadoop.Avro.Tests
                 );
         }
 
-        #endregion //Type extensions
+#endregion //Type extensions
     }
 }

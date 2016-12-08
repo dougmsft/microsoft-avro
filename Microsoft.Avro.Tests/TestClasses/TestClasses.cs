@@ -1373,7 +1373,7 @@ namespace Microsoft.Hadoop.Avro.Tests
 
         public override MemberSerializationInfo[] ResolveMembers(Type type)
         {
-            return type.GetEvents().Select(info => new MemberSerializationInfo { Name = info.Name, MemberInfo = info, Nullable = false }).ToArray();
+            return Utilities.GetEvents(type).Select(info => new MemberSerializationInfo { Name = info.Name, MemberInfo = info, Nullable = false }).ToArray();
         }
     }
 

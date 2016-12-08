@@ -1,9 +1,22 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+  <ItemGroup>
+    <DotNetCliToolReference Include="SpecFlow.NetCore">
+      <Version>1.0.0-*</Version>
+    </DotNetCliToolReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CodeGenTests\" />
+  </ItemGroup>
+  <Target Name="PrecompileScript" BeforeTargets="Build" Condition=" '$(IsCrossTargetingBuild)' != 'true' ">
+    <Exec Command="dotnet SpecFlow.NetCore" />
+  </Target>
+  -->
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
-    <TargetFrameworks>net46</TargetFrameworks>
+    <TargetFrameworks>netcoreapp1.0;net46</TargetFrameworks>
     <AssemblyName>Microsoft.Avro.Tests</AssemblyName>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dnxcore50;dotnet5.4;portable-net451+win8</PackageTargetFallback>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);netcore50;dnxcore50;dotnet5.4;portable-net451+win8</PackageTargetFallback>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'net46' ">$(PackageTargetFallback);dnxcore50;dotnet5.4;portable-net451+win8</PackageTargetFallback>
   </PropertyGroup>
   <ItemGroup>
@@ -53,6 +66,9 @@
     <PackageReference Include="xunit.abstractions">
       <Version>2.0.1</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.CSharp">
+      <Version>4.3.0</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Avro">
@@ -71,22 +87,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-  
     <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-	<Reference Include="System.Runtime" />
+    <Reference Include="System.Runtime" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="Microsoft.CSharp"/>
   </ItemGroup>
-  <ItemGroup>
-    <DotNetCliToolReference Include="SpecFlow.NetCore">
-      <Version>1.0.0-*</Version>
-    </DotNetCliToolReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="CodeGenTests\" />
-  </ItemGroup>
-  <Target Name="PrecompileScript" BeforeTargets="Build" Condition=" '$(IsCrossTargetingBuild)' != 'true' ">
-    <Exec Command="dotnet SpecFlow.NetCore" />
-  </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

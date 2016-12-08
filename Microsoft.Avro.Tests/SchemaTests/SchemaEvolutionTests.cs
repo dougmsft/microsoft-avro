@@ -18,6 +18,8 @@ namespace Microsoft.Hadoop.Avro.Tests
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Linq;
+    using Microsoft.CSharp.RuntimeBinder;
     using System.Runtime.Serialization;
     using Microsoft.Hadoop.Avro.Schema;
     using Xunit;
@@ -76,7 +78,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Position = 0;
 
                 var actual = deserializer.Deserialize(stream);
+#if NETCOREAPP1_0
+                var expectedConvert = expected.Select(i => (long)i).ToArray();
+                Assert.Equal(expectedConvert, actual);
+#else
                 Assert.Equal(Array.ConvertAll(expected, i => (long)i), actual);
+#endif
             }
         }
 
