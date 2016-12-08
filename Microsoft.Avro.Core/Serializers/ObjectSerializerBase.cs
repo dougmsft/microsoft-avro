@@ -21,7 +21,7 @@ namespace Microsoft.Hadoop.Avro.Serializers
     using System.Reflection;
     using Microsoft.Hadoop.Avro.Schema;
 
-    internal abstract class ObjectSerializerBase<TSchema> : IObjectSerializer
+    public abstract class ObjectSerializerBase<TSchema> : IObjectSerializer
         where TSchema : TypeSchema
     {
         private static readonly Dictionary<Type, string> DecoderTypes = new Dictionary<Type, string>
@@ -58,7 +58,7 @@ namespace Microsoft.Hadoop.Avro.Serializers
 
         private readonly TSchema schema;
 
-        protected ObjectSerializerBase(TSchema schema)
+        public ObjectSerializerBase(TSchema schema)
         {
             if (schema == null)
             {

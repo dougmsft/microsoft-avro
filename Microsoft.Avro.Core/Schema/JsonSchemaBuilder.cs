@@ -25,7 +25,7 @@ namespace Microsoft.Hadoop.Avro.Schema
     /// <summary>
     ///     Class responsible for building the internal representation of the schema given a JSON string.
     /// </summary>
-    internal sealed class JsonSchemaBuilder
+    public sealed class JsonSchemaBuilder
     {
         private static readonly Dictionary<string, Func<PrimitiveTypeSchema>> PrimitiveRuntimeType
             = new Dictionary<string, Func<PrimitiveTypeSchema>>

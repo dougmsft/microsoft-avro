@@ -10,11 +10,11 @@
 // See the Apache Version 2.0 License for specific language governing
 // permissions and limitations under the License.
 
-namespace Microsoft.Avro.Tools
+namespace Microsoft.Hadoop.Avro.Tools
 {
     using System.IO;
 
-    internal interface IExecutionContext
+    public interface IExecutionContext
     {
         void Error(string message);
 

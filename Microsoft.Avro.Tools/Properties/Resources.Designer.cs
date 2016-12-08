@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.Avro.Tools.Properties {
+namespace Microsoft.Hadoop.Avro.Tools.Properties {
     using System;
     
     

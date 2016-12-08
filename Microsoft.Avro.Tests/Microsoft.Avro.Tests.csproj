@@ -1,17 +1,27 @@
-﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <TargetFrameworks>net46</TargetFrameworks>
+    <AssemblyName>Microsoft.Avro.Tests</AssemblyName>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dnxcore50;dotnet5.4;portable-net451+win8</PackageTargetFallback>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'net46' ">$(PackageTargetFallback);dnxcore50;dotnet5.4;portable-net451+win8</PackageTargetFallback>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="**\*.cs" />
     <EmbeddedResource Include="**\*.resx" />
+    <EmbeddedResource Include="compiler\resources\**\*" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NETCore.App">
-      <Version>1.1.0</Version>
-    </PackageReference>
+    <Compile Remove="CodeGenTests\CodeGenerationTests.cs" />
+    <Compile Remove="CodeGenTests\CodeGenerationVerificationSteps.cs" />
+    <Compile Remove="CodeGenTests\GenerationVerification.feature.cs" />
+    <Compile Remove="SchemaTests\ReflectionSchemaBuilderTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Avro.Core\Microsoft.Avro.Core.csproj" />
+    <ProjectReference Include="..\Microsoft.Avro.Tools\Microsoft.Avro.Tools.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Sdk">
       <Version>1.0.0-alpha-20161104-2</Version>
       <PrivateAssets>All</PrivateAssets>
@@ -19,19 +29,30 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk">
       <Version>15.0.0-preview-20161024-02</Version>
     </PackageReference>
-    <PackageReference Include="System.ComponentModel.TypeConverter">
+    <PackageReference Include="Microsoft.NETCore.Portable.Compatibility">
+      <Version>1.0.1-*</Version>
+    </PackageReference>
+    <PackageReference Include="System.Runtime.Serialization.Primitives">
       <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="CoreCompat.System.CodeDOM">
+      <Version>4.2.3-beta002</Version>
+    </PackageReference>
+    <PackageReference Include="SpecFlow.NetCore">
+      <Version>1.0.0-*</Version>
+    </PackageReference>
+    <PackageReference Include="xunit.runner.visualstudio">
+      <Version>2.2.0-beta4-build1194</Version>
     </PackageReference>
     <PackageReference Include="xunit">
       <Version>2.2.0-beta3-build3402</Version>
     </PackageReference>
-    <PackageReference Include="xunit.runner.visualstudio">
-      <Version>2.2.0-beta4-build1188</Version>
+    <PackageReference Include="dotnet-test-xunit">
+      <Version>1.0.0-rc2-build10025</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Avro.Core\Microsoft.Avro.Core.csproj" />
-    <ProjectReference Include="..\Microsoft.Avro.Tools\Microsoft.Avro.Tools.csproj" />
+    <PackageReference Include="xunit.abstractions">
+      <Version>2.0.1</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Avro">
@@ -44,5 +65,28 @@
       <HintPath>..\external\protobuf.net\r602\net30\protobuf-net.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+    <PackageReference Include="Microsoft.NETCore.App">
+      <Version>1.1.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
+  
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+	<Reference Include="System.Runtime" />
+    <Reference Include="System.Runtime.Serialization" />
+  </ItemGroup>
+  <ItemGroup>
+    <DotNetCliToolReference Include="SpecFlow.NetCore">
+      <Version>1.0.0-*</Version>
+    </DotNetCliToolReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CodeGenTests\" />
+  </ItemGroup>
+  <Target Name="PrecompileScript" BeforeTargets="Build" Condition=" '$(IsCrossTargetingBuild)' != 'true' ">
+    <Exec Command="dotnet SpecFlow.NetCore" />
+  </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

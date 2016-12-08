@@ -1326,7 +1326,7 @@ namespace Microsoft.Hadoop.Avro.Tests
         }
     }
 
-    internal class DummyObjectSerializerBase : ObjectSerializerBase<TypeSchema>
+    public class DummyObjectSerializerBase : ObjectSerializerBase<TypeSchema>
     {
         public DummyObjectSerializerBase(TypeSchema schema)
             : base(schema)
