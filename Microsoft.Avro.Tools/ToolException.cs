@@ -18,12 +18,9 @@ namespace Microsoft.Hadoop.Avro.Tools
     /// <summary>
     /// Exception for the avro tool.
     /// </summary>
-    [Serializable]
     public sealed class ToolException : Exception
     {
-        [NonSerialized]
         private readonly string outMessage = string.Empty;
-        [NonSerialized]
         private readonly ExitCode exitCode = ExitCode.InvalidArguments;
 
         /// <summary>
