@@ -10,7 +10,7 @@
 
 namespace Microsoft.Hadoop.Avro.Tools.Properties {
     using System;
-    
+    using System.Reflection;
     
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
@@ -39,8 +39,7 @@ namespace Microsoft.Hadoop.Avro.Tools.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    //global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Avro.Tools.Properties.Resources", typeof(Resources).Assembly);
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager(typeof(Resources));
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Avro.Tools.Properties.Resources", typeof(Resources).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
