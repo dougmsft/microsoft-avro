@@ -33,7 +33,7 @@ ForEach ($child in $children) {
     Write-Host "Building in $child" -ForegroundColor Green
     $path = Join-Path $parent $child
     Set-Location -LiteralPath $path
-    if (($Clean -or CleanOnly) -and (Test-Path bin))
+    if (($Clean -or $CleanOnly) -and (Test-Path bin))
     {
         Write-Host "Deleting bin directory" -ForegroundColor Red
         Remove-Item -Path bin -Recurse
