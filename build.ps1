@@ -8,7 +8,7 @@ param
     (
         # Build configuration
         [Parameter(Mandatory=$False, HelpMessage=".NET framework to build (netcoreapp1.0, net46)", Position=1)]
-        [string]$Configuration="netcoreapp1.0",
+        [string]$Framework="netcoreapp1.0",
         # Restore option
         [Parameter(Mandatory=$False, HelpMessage="Upate nuget packages and dependencies", Position=2)]
         [switch]$Restore=$False,
@@ -43,14 +43,17 @@ ForEach ($child in $children) {
         Write-Host "Deleting obj directory" -ForegroundColor Red
         Remove-Item -Path obj -Recurse
     }
-    if (-not $CleanOnly)
+    if ($Restore)
     {
-        if ($Restore)
+        dotnet restore
+    }
+    else
+    {
+        if (-not $CleanOnly)
         {
-            dotnet restore
+            dotnet build -f $Framework
         }
-        dotnet build -f $Configuration
     }
-    }
+}
 
 Set-Location $parent

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <packageTypes>
+      <packageType name="DotnetCliTool"/> 
+    </packageTypes>
+    <id>Microsoft.Avro.Tools</id>
+    <version>0.0.1-alpha</version>
+    <authors>Microsoft.Avro.Tools</authors>
+    <owners>Microsoft.Avro.Tools</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <description>Highly experimental prerelease of .NET Core 1.1 compatible version of Avro tools.</description>
+    <language>C#</language>
+    <developmentDependency>true</developmentDependency>
+    <dependencies>
+      <group targetFramework=".NETCoreApp1.0">
+        <dependency id="Microsoft.Avro.Core" version="1.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.NETCore.App" version="1.1.0" exclude="Build,Analyzers" />
+        <dependency id="System.Reflection" version="4.3.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETFramework4.6">
+        <dependency id="Microsoft.Avro.Core" version="1.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Runtime.Serialization.Formatters" version="4.3.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="E:\code\avro\microsoft-avro\Microsoft.Avro.Tools\obj\Release\netcoreapp1.0\Microsoft.Avro.Tools.dll" target="lib\netcoreapp1.0\Microsoft.Avro.Tools.dll" />
+    <file src="E:\code\avro\microsoft-avro\Microsoft.Avro.Tools\obj\Release\net46\Microsoft.Avro.Tools.exe" target="lib\net46\Microsoft.Avro.Tools.exe" />
+  </files>
+</package>
