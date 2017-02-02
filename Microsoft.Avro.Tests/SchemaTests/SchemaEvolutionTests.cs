@@ -78,7 +78,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Position = 0;
 
                 var actual = deserializer.Deserialize(stream);
-#if NETCOREAPP1_0
+#if NETCOREAPP1_1
                 var expectedConvert = expected.Select(i => (long)i).ToArray();
                 Assert.Equal(expectedConvert, actual);
 #else
