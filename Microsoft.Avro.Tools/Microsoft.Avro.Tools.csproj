@@ -5,7 +5,8 @@
     </PackageReference>
     -->
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp1.1;netcoreapp2.0;net46</TargetFrameworks>
+    <TargetFrameworks Condition="'$(BuildingInsideVisualStudio)' == 'true'">netcoreapp1.1;net46</TargetFrameworks>
+    <TargetFrameworks Condition="'$(BuildingInsideVisualStudio)' != 'true'">netcoreapp1.1;netcoreapp2.0;net46</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">$(PackageTargetFallback);dnxcore50;dotnet5.4;portable-net451+win8</PackageTargetFallback>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">$(PackageTargetFallback);dnxcore50;dotnet5.4;portable-net451+win8</PackageTargetFallback>
