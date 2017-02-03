@@ -18,59 +18,66 @@ namespace Microsoft.Hadoop.Avro.Tests
     using System.IO;
     using System.Linq;
     using Microsoft.Hadoop.Avro.Container;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
 
-    [TestClass]
+    [Trait("Category","Codecs")]
     public sealed class CodecsTests
     {
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void DeflateCodec_GetCompressedStreamFromNull()
         {
-            var codec = new DeflateCodec();
-            codec.GetCompressedStreamOver(null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    var codec = new DeflateCodec();
+                    codec.GetCompressedStreamOver(null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void DeflateCodec_GetDecompressedStreamOver()
         {
-            var codec = new DeflateCodec();
-            codec.GetDecompressedStreamOver(null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    var codec = new DeflateCodec();
+                    codec.GetDecompressedStreamOver(null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void NullCodec_GetCompressedStreamFromNull()
         {
-            var codec = new NullCodec();
-            codec.GetCompressedStreamOver(null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    var codec = new NullCodec();
+                    codec.GetCompressedStreamOver(null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void NullCodec_GetDecompressedStreamOver()
         {
-            var codec = new NullCodec();
-            codec.GetDecompressedStreamOver(null);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    var codec = new NullCodec();
+                    codec.GetDecompressedStreamOver(null);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void DeflateCodec_CompressionDecompressionRoundTrip()
         {
             var codec = new DeflateCodec();
             using (var memoryStream = new MemoryStream())
             using (var compressedStream = codec.GetCompressedStreamOver(memoryStream))
             {
-                Assert.IsTrue(compressedStream.CanRead);
-                Assert.IsTrue(compressedStream.CanWrite);
-                Assert.IsTrue(compressedStream.CanSeek);
-                Assert.AreEqual(0, compressedStream.Position);
+                Assert.True(compressedStream.CanRead);
+                Assert.True(compressedStream.CanWrite);
+                Assert.True(compressedStream.CanSeek);
+                Assert.Equal(0, compressedStream.Position);
                 var expected = Utilities.GetRandom<byte[]>(false);
                 compressedStream.Write(expected, 0, expected.Length);
                 compressedStream.Flush();
@@ -79,11 +86,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                 {
                     var actual = new byte[expected.Length];
                     decompressedStream.Read(actual, 0, actual.Length);
-                    Assert.IsTrue(expected.SequenceEqual(actual));
-                    Assert.IsTrue(decompressedStream.CanRead);
-                    Assert.IsFalse(decompressedStream.CanWrite);
+                    Assert.True(expected.SequenceEqual(actual));
+                    Assert.True(decompressedStream.CanRead);
+                    Assert.False(decompressedStream.CanWrite);
                     //TODO CanSeek should be 'false' however it is 'true' now although an exception is thrown when Seek() is called 
-                    //Assert.IsFalse(decompressedStream.CanSeek);
+                    //Assert.False(decompressedStream.CanSeek);
                     Utilities.ShouldThrow<NotSupportedException>(() => { var result = decompressedStream.Position; });
                     Utilities.ShouldThrow<NotSupportedException>(() => { var result = decompressedStream.Length; });
                     Utilities.ShouldThrow<NotSupportedException>(() => { decompressedStream.Seek(0, SeekOrigin.Begin); });

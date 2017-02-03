@@ -18,41 +18,41 @@ namespace Microsoft.Hadoop.Avro.Tests
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
 
-    [TestClass]
+    [Trait("Category","TypeExtensions")]
     public class TypeExtensionsTest
     {
-        [TestMethod]
+        [Fact]
         public void CanBeKnownTypeOfTest()
         {
             // Object itself could not be known type of any type
-            Assert.IsFalse(typeof(object).CanBeKnownTypeOf(typeof(int)));
-            Assert.IsTrue(typeof(int).CanBeKnownTypeOf(typeof(object)));
-            Assert.IsFalse(typeof(object).CanBeKnownTypeOf(typeof(object)));
+            Assert.False(typeof(object).CanBeKnownTypeOf(typeof(int)));
+            Assert.True(typeof(int).CanBeKnownTypeOf(typeof(object)));
+            Assert.False(typeof(object).CanBeKnownTypeOf(typeof(object)));
 
-            Assert.IsTrue(typeof(List<int>).CanBeKnownTypeOf(typeof(IEnumerable<int>)));
-            Assert.IsTrue(typeof(Collection<int>).CanBeKnownTypeOf(typeof(IEnumerable<int>)));
-            Assert.IsTrue(typeof(int[]).CanBeKnownTypeOf(typeof(IEnumerable<int>)));
+            Assert.True(typeof(List<int>).CanBeKnownTypeOf(typeof(IEnumerable<int>)));
+            Assert.True(typeof(Collection<int>).CanBeKnownTypeOf(typeof(IEnumerable<int>)));
+            Assert.True(typeof(int[]).CanBeKnownTypeOf(typeof(IEnumerable<int>)));
 
-            Assert.IsFalse(typeof(IEnumerable<int>).CanBeKnownTypeOf(typeof(IEnumerable<int>)));
-            Assert.IsFalse(typeof(IEnumerable<int>).CanBeKnownTypeOf(typeof(IEnumerable<string>)));
-            Assert.IsFalse(typeof(IEnumerable<int>).CanBeKnownTypeOf(typeof(IEnumerable<Guid>)));
-            Assert.IsFalse(typeof(IEnumerable<int>).CanBeKnownTypeOf(typeof(IEnumerable<IListClass>)));
-            Assert.IsFalse(typeof(IList<Guid>).CanBeKnownTypeOf(typeof(int[])));
-            Assert.IsFalse(typeof(int).CanBeKnownTypeOf(typeof(Guid)));
-            Assert.IsFalse(typeof(IList<int>).CanBeKnownTypeOf(typeof(IList<Guid>)));
+            Assert.False(typeof(IEnumerable<int>).CanBeKnownTypeOf(typeof(IEnumerable<int>)));
+            Assert.False(typeof(IEnumerable<int>).CanBeKnownTypeOf(typeof(IEnumerable<string>)));
+            Assert.False(typeof(IEnumerable<int>).CanBeKnownTypeOf(typeof(IEnumerable<Guid>)));
+            Assert.False(typeof(IEnumerable<int>).CanBeKnownTypeOf(typeof(IEnumerable<IListClass>)));
+            Assert.False(typeof(IList<Guid>).CanBeKnownTypeOf(typeof(int[])));
+            Assert.False(typeof(int).CanBeKnownTypeOf(typeof(Guid)));
+            Assert.False(typeof(IList<int>).CanBeKnownTypeOf(typeof(IList<Guid>)));
 
-            Assert.IsFalse(typeof(int[]).CanBeKnownTypeOf(typeof(IList<IListClass>)));
-            Assert.IsFalse(typeof(int[]).CanBeKnownTypeOf(typeof(IList<Guid>)));
+            Assert.False(typeof(int[]).CanBeKnownTypeOf(typeof(IList<IListClass>)));
+            Assert.False(typeof(int[]).CanBeKnownTypeOf(typeof(IList<Guid>)));
         }
 
-        [TestMethod]
+        [Fact]
         public void GenericIsAssignableTest()
         {
-            Assert.IsFalse(typeof(int[]).GenericIsAssignable(typeof(IDictionary<int, Guid>)));
-            Assert.IsFalse(typeof(IList<int>).GenericIsAssignable(typeof(IDictionary<int, Guid>)));
-            Assert.IsFalse(typeof(IDictionary<int, Guid>).GenericIsAssignable(typeof(IList<int>)));
+            Assert.False(typeof(int[]).GenericIsAssignable(typeof(IDictionary<int, Guid>)));
+            Assert.False(typeof(IList<int>).GenericIsAssignable(typeof(IDictionary<int, Guid>)));
+            Assert.False(typeof(IDictionary<int, Guid>).GenericIsAssignable(typeof(IList<int>)));
         }
     }
 }

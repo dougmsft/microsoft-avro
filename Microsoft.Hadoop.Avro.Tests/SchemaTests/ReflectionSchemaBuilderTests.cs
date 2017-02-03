@@ -20,58 +20,53 @@ namespace Microsoft.Hadoop.Avro.Tests
     using System.Text.RegularExpressions;
     using Microsoft.Hadoop.Avro;
     using Microsoft.Hadoop.Avro.Schema;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
-    [TestClass]
-    public sealed class ReflectionSchemaTests
+    [Trait("Category", "ReflectionSchema")]
+    public sealed class ReflectionSchemaTests : IDisposable
     {
         private readonly AvroSerializerSettings settings = new AvroSerializerSettings();
 
         private ReflectionSchemaBuilder builder;
 
-        [TestInitialize]
-        public void TestSetup()
+        public ReflectionSchemaTests()
         {
             this.builder = new ReflectionSchemaBuilder(this.settings);
         }
 
-        [TestCleanup]
-        public void TestTeardown()
+        public void Dispose()
         {
             this.builder = null;
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void ReflectionSchemaBuilder_BuildSchemaForSimpleFlatClass()
         {
             var recordSchema = this.builder.BuildSchema(typeof(SimpleFlatClass)) as RecordSchema;
-            Assert.IsNotNull(recordSchema);
+            Assert.NotNull(recordSchema);
 
-            Assert.AreEqual(
+            Assert.Equal(
                 typeof(SimpleFlatClass).GetProperties().Length,
                 recordSchema.Fields.Count);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void ReflectionSchemaBuilder_BuildSchemaForNestedClass()
         {
             var recordSchema = this.builder.BuildSchema(typeof(NestedClass)) as RecordSchema;
 
-            Assert.IsNotNull(recordSchema);
-            Assert.AreEqual(
+            Assert.NotNull(recordSchema);
+            Assert.Equal(
                 typeof(NestedClass).GetFields().Length,
                 recordSchema.Fields.Count);
-            Assert.AreEqual(
+            Assert.Equal(
                 typeof(ClassOfInt).GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Length,
                 (recordSchema.Fields[0].TypeSchema as RecordSchema).Fields.Count);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void ReflectionSchemaBuilder_BuildSchemaForUnicodeClassName()
         {
             var serializer = AvroSerializer.Create<UnicodeClassNameŠŽŒ>(new AvroSerializerSettings { Resolver = new AvroDataContractResolver(true) });
@@ -80,36 +75,32 @@ namespace Microsoft.Hadoop.Avro.Tests
             var obj = jsonArray[1] as JObject;
             string qualifiedRecordName = obj.GetValue("name", StringComparison.Ordinal).ToString();
             string recordName = qualifiedRecordName.Substring(qualifiedRecordName.LastIndexOf('.') + 1);
-            Assert.IsTrue(Regex.Match(recordName, @"^[a-zA-Z_]([a-zA-Z0-9_]*)$").Success, @"Avro 1.7.4 spec does not allow unicode characters in names");
+            Assert.True(Regex.Match(recordName, @"^[a-zA-Z_]([a-zA-Z0-9_]*)$").Success, @"Avro 1.7.4 spec does not allow unicode characters in names");
         }
 
         // TODO: think about better expression schemas for tests.
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void ReflectionSchemaBuilder_BuildSchemaForSchemaNullableUsingDataContractResolverWithCSharpNulls()
         {
             var nullableSettings = new AvroSerializerSettings { Resolver = new AvroDataContractResolver(true) };
             RoundTripTestNullableSchema(nullableSettings, true, true, true, true, false, true, true);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void ReflectionSchemaBuilder_BuildSchemaForSchemaNullableUsingDataContractResolverWithNoNulls()
         {
             var nullableSettings = new AvroSerializerSettings { Resolver = new AvroDataContractResolver(false) };
             RoundTripTestNullableSchema(nullableSettings, false, true, false, true, false, true, false);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void ReflectionSchemaBuilder_BuildSchemaForSchemaNullableUsingPublicMembersResolverWithCSharpNulls()
         {
             var nullableSettings = new AvroSerializerSettings { Resolver = new AvroPublicMemberContractResolver(true) };
             RoundTripTestNullableSchema(nullableSettings, true, true, true, true, false, true, true);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void ReflectionSchemaBuilder_BuildSchemaForSchemaNullableUsingPublicMembersResolverWithNoNulls()
         {
             var nullableSettings = new AvroSerializerSettings { Resolver = new AvroPublicMemberContractResolver(false) };
@@ -133,22 +124,22 @@ namespace Microsoft.Hadoop.Avro.Tests
             if (rootSchemaIsUnion)
             {
                 var asUnion = schema as UnionSchema;
-                Assert.IsNotNull(asUnion);
+                Assert.NotNull(asUnion);
 
                 var innerNullSchema = asUnion.Schemas[0] is NullSchema
                 ? asUnion.Schemas[0]
                 : asUnion.Schemas[1];
 
                 recordSchema = asUnion.Schemas.Single(s => s != innerNullSchema) as RecordSchema;
-                Assert.IsNotNull(recordSchema);
+                Assert.NotNull(recordSchema);
             }
             else
             {
                 recordSchema = schema as RecordSchema;
-                Assert.IsNotNull(recordSchema);
+                Assert.NotNull(recordSchema);
             }
 
-            Assert.AreEqual(typeof(ClassWithSchemaNullableField).GetAllFields().Count(), recordSchema.Fields.Count);
+            Assert.Equal(typeof(ClassWithSchemaNullableField).GetAllFields().Count(), recordSchema.Fields.Count);
 
             var nullableValueSchemaNullable = recordSchema.Fields.Single(f => f.Name == "NullableValueNullableSchema");
             ValidateSchema(nullableValueSchemaNullable.TypeSchema, nullableValueSchemaNullableIsUnion, typeof(IntSchema));
@@ -174,7 +165,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             if (isUnion)
             {
                 var asUnion = typeSchema as UnionSchema;
-                Assert.IsNotNull(asUnion);
+                Assert.NotNull(asUnion);
 
                 var innerNullSchema = asUnion.Schemas[0] is NullSchema
                 ? asUnion.Schemas[0]
@@ -183,7 +174,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 var secondSchema = asUnion.Schemas.Single(s => s != innerNullSchema);
                 var asNullabelSchema = secondSchema as NullableSchema;
                 var innerSchema = asNullabelSchema == null ? secondSchema : asNullabelSchema.ValueSchema;
-                Assert.IsInstanceOfType(innerSchema, innerSchemaType);
+                Assert.IsType(innerSchemaType, innerSchema);
             }
             else
             {
@@ -191,7 +182,7 @@ namespace Microsoft.Hadoop.Avro.Tests
                 var innerType = asNullableSchema == null
                     ? typeSchema
                     : asNullableSchema.ValueSchema;
-                Assert.IsInstanceOfType(innerType, innerSchemaType);
+                Assert.IsType(innerSchemaType, innerType);
             }
         }
     }

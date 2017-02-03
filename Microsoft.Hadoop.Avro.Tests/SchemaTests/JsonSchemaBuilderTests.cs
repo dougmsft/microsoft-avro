@@ -20,47 +20,43 @@ namespace Microsoft.Hadoop.Avro.Tests
     using System.Linq;
     using System.Runtime.Serialization;
     using Microsoft.Hadoop.Avro.Schema;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using ProtoBuf;
 
-    [TestClass]
-    public sealed class JsonSchemaTests
+    [Trait("Category","JsonSchema")]
+    public sealed class JsonSchemaTests : IDisposable
     {
         private JsonSchemaBuilder builder;
         private readonly Dictionary<string, string> emptyAttributes = new Dictionary<string, string>();
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildBooleanSchema()
         {
             var schema = this.builder.BuildSchema(@"""boolean""");
 
-            Assert.IsTrue(schema is BooleanSchema);
-            CollectionAssert.AreEqual(this.emptyAttributes.ToList(), schema.Attributes.ToList());
+            Assert.True(schema is BooleanSchema);
+            Assert.Equal(this.emptyAttributes.ToList(), schema.Attributes.ToList());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildIntSchema()
         {
             var schema = this.builder.BuildSchema(@"""int""");
 
-            Assert.IsTrue(schema is IntSchema);
-            CollectionAssert.AreEqual(this.emptyAttributes.ToList(), schema.Attributes.ToList());
+            Assert.True(schema is IntSchema);
+            Assert.Equal(this.emptyAttributes.ToList(), schema.Attributes.ToList());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildLongSchema()
         {
             var schema = this.builder.BuildSchema(@"""long""");
 
-            Assert.IsTrue(schema is LongSchema);
-            CollectionAssert.AreEqual(this.emptyAttributes.ToList(), schema.Attributes.ToList());
+            Assert.True(schema is LongSchema);
+            Assert.Equal(this.emptyAttributes.ToList(), schema.Attributes.ToList());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_ClassOfGuidWriterSchema()
         {
             var settings = new AvroSerializerSettings { Resolver = new AvroDataContractResolver(false) };
@@ -69,55 +65,50 @@ namespace Microsoft.Hadoop.Avro.Tests
              AvroSerializer.CreateDeserializerOnly<ClassOfGuid>(writerSchema, settings);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildFloatSchema()
         {
             var schema = this.builder.BuildSchema(@"""float""");
 
-            Assert.IsTrue(schema is FloatSchema);
-            CollectionAssert.AreEqual(this.emptyAttributes.ToList(), schema.Attributes.ToList());
+            Assert.True(schema is FloatSchema);
+            Assert.Equal(this.emptyAttributes.ToList(), schema.Attributes.ToList());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildDoubleSchema()
         {
             var schema = this.builder.BuildSchema(@"""double""");
 
-            Assert.IsTrue(schema is DoubleSchema);
-            CollectionAssert.AreEqual(this.emptyAttributes.ToList(), schema.Attributes.ToList());
+            Assert.True(schema is DoubleSchema);
+            Assert.Equal(this.emptyAttributes.ToList(), schema.Attributes.ToList());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildStringSchema()
         {
             var schema = this.builder.BuildSchema(@"""string""");
 
-            Assert.IsTrue(schema is StringSchema);
-            CollectionAssert.AreEqual(this.emptyAttributes.ToList(), schema.Attributes.ToList());
+            Assert.True(schema is StringSchema);
+            Assert.Equal(this.emptyAttributes.ToList(), schema.Attributes.ToList());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildEnumSchema()
         {
             var schema =
                 this.builder.BuildSchema(@"{ ""type"": ""enum"",""name"": ""Suit"",""symbols"" : [""SPADES"", ""HEARTS"", ""DIAMONDS"", ""CLUBS""]}");
             var actual = schema as EnumSchema;
 
-            Assert.IsNotNull(actual);
-            Assert.AreEqual(4, actual.Symbols.Count);
-            Assert.AreEqual(4, actual.AvroToCSharpValueMapping.Count());
-            Assert.AreEqual(0, actual.AvroToCSharpValueMapping.ElementAt(0));
-            Assert.IsTrue(actual.Symbols.ElementAt(0).Equals("SPADES"));
-            Assert.AreEqual(3, actual.AvroToCSharpValueMapping.ElementAt(3));
-            Assert.IsTrue(actual.Symbols.ElementAt(3).Equals("CLUBS"));
+            Assert.NotNull(actual);
+            Assert.Equal(4, actual.Symbols.Count);
+            Assert.Equal(4, actual.AvroToCSharpValueMapping.Count());
+            Assert.Equal(0, actual.AvroToCSharpValueMapping.ElementAt(0));
+            Assert.True(actual.Symbols.ElementAt(0).Equals("SPADES"));
+            Assert.Equal(3, actual.AvroToCSharpValueMapping.ElementAt(3));
+            Assert.True(actual.Symbols.ElementAt(3).Equals("CLUBS"));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildEnumSchemaUsingPublicMemberContractResolverWithCSharpNulls()
         {
             const string Expected =
@@ -141,52 +132,48 @@ namespace Microsoft.Hadoop.Avro.Tests
                 AvroSerializer.Create<Utilities.RandomEnumeration>(
                     new AvroSerializerSettings { Resolver = new AvroPublicMemberContractResolver(true) });
 
-            Assert.AreEqual(serializer.WriterSchema, serializer.ReaderSchema);
-            Assert.AreEqual(Expected, serializer.ReaderSchema.ToString());
+            Assert.Equal(serializer.WriterSchema, serializer.ReaderSchema);
+            Assert.Equal(Expected, serializer.ReaderSchema.ToString());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildNullSchema()
         {
             const string StringSchema = @"""null""";
             var schema = this.builder.BuildSchema(StringSchema);
 
-            Assert.IsTrue(schema is NullSchema);
-            CollectionAssert.AreEqual(this.emptyAttributes.ToList(), schema.Attributes.ToList());
+            Assert.True(schema is NullSchema);
+            Assert.Equal(this.emptyAttributes.ToList(), schema.Attributes.ToList());
 
             var actual = SerializeRoundTrip(StringSchema, null);
-            Assert.AreEqual(null, actual);
+            Assert.Equal(null, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildNullSchemaWithCustomAttribute()
         {
             const string StringSchema = @"{ ""type"" : ""null"", ""custom attribute"": ""custom value"" }";
             var schema = this.builder.BuildSchema(StringSchema);
 
-            Assert.IsTrue(schema is NullSchema);
-            Assert.IsTrue(schema.Attributes.ContainsKey("custom attribute"));
+            Assert.True(schema is NullSchema);
+            Assert.True(schema.Attributes.ContainsKey("custom attribute"));
 
             var actual = SerializeRoundTrip(StringSchema, null);
-            Assert.AreEqual(null, actual);
+            Assert.Equal(null, actual);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildBytesSchema()
         {
             var schema = this.builder.BuildSchema(@"""bytes""");
 
-            Assert.IsTrue(schema is BytesSchema);
-            CollectionAssert.AreEqual(this.emptyAttributes.ToList(), schema.Attributes.ToList());
+            Assert.True(schema is BytesSchema);
+            Assert.Equal(this.emptyAttributes.ToList(), schema.Attributes.ToList());
         }
 
         #region record schema tests
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildSimpleRecordSchema()
         {
             const string InputJson = @"{
@@ -207,13 +194,12 @@ namespace Microsoft.Hadoop.Avro.Tests
 
             var schema = this.builder.BuildSchema(InputJson) as RecordSchema;
 
-            Assert.IsNotNull(schema);
-            Assert.AreEqual("testrecord", schema.Name);
-            Assert.IsTrue(schema.Attributes.ContainsKey(".netclass"));
+            Assert.NotNull(schema);
+            Assert.Equal("testrecord", schema.Name);
+            Assert.True(schema.Attributes.ContainsKey(".netclass"));
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildRecordSchemaForIntClassUsingPublicMemberContractResolverWithCSharpNulls()
         {
             const string Expected =
@@ -229,12 +215,11 @@ namespace Microsoft.Hadoop.Avro.Tests
             var serializer =
                 AvroSerializer.Create<ClassOfInt>(new AvroSerializerSettings { Resolver = new AvroPublicMemberContractResolver(true) });
 
-            Assert.AreEqual(serializer.WriterSchema, serializer.ReaderSchema);
-            Assert.AreEqual(Expected, serializer.ReaderSchema.ToString());
+            Assert.Equal(serializer.WriterSchema, serializer.ReaderSchema);
+            Assert.Equal(Expected, serializer.ReaderSchema.ToString());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildRecordSchemaForNestedClassUsingPublicMemberContractResolverWithCSharpNulls()
         {
             const string Expected =
@@ -274,12 +259,11 @@ namespace Microsoft.Hadoop.Avro.Tests
             var serializer =
                 AvroSerializer.Create<NestedClass>(new AvroSerializerSettings { Resolver = new AvroPublicMemberContractResolver(true) });
 
-            Assert.AreEqual(serializer.WriterSchema, serializer.ReaderSchema);
-            Assert.AreEqual(Expected, serializer.ReaderSchema.ToString());
+            Assert.Equal(serializer.WriterSchema, serializer.ReaderSchema);
+            Assert.Equal(Expected, serializer.ReaderSchema.ToString());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildRecordSchemaForRecursiveTypeUsingPublicMemberContractResolverWithCSharpNulls()
         {
             const string Expected =
@@ -299,12 +283,11 @@ namespace Microsoft.Hadoop.Avro.Tests
             var serializer =
                 AvroSerializer.Create<Recursive>(new AvroSerializerSettings { Resolver = new AvroPublicMemberContractResolver(true) });
 
-            Assert.AreEqual(serializer.WriterSchema, serializer.ReaderSchema);
-            Assert.AreEqual(Expected, serializer.ReaderSchema.ToString());
+            Assert.Equal(serializer.WriterSchema, serializer.ReaderSchema);
+            Assert.Equal(Expected, serializer.ReaderSchema.ToString());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildRecordSchemaWithAliases()
         {
             const string InputJson =
@@ -317,13 +300,12 @@ namespace Microsoft.Hadoop.Avro.Tests
 
             var schema = this.builder.BuildSchema(InputJson) as RecordSchema;
 
-            Assert.AreEqual(2, schema.Aliases.Count);
-            Assert.AreEqual("Microsoft.Hadoop.Avro.Tests.Alternative1", schema.Aliases[0]);
-            Assert.AreEqual("Microsoft.Hadoop.Avro.Tests.Alternative2", schema.Aliases[1]);
+            Assert.Equal(2, schema.Aliases.Count);
+            Assert.Equal("Microsoft.Hadoop.Avro.Tests.Alternative1", schema.Aliases[0]);
+            Assert.Equal("Microsoft.Hadoop.Avro.Tests.Alternative2", schema.Aliases[1]);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildRecordSchemaForClassWithListFieldUsingPublicMemberContractResolverWithCSharpNulls()
         {
             const string Expected =
@@ -347,12 +329,11 @@ namespace Microsoft.Hadoop.Avro.Tests
             var serializer =
                 AvroSerializer.Create<ClassOfListOfGuid>(new AvroSerializerSettings { Resolver = new AvroPublicMemberContractResolver(true) });
 
-            Assert.AreEqual(serializer.WriterSchema, serializer.ReaderSchema);
-            Assert.AreEqual(Expected, serializer.ReaderSchema.ToString());
+            Assert.Equal(serializer.WriterSchema, serializer.ReaderSchema);
+            Assert.Equal(Expected, serializer.ReaderSchema.ToString());
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildRecordSchemaFromAnotherRecordSchema()
         {
             const string InputJson =
@@ -365,229 +346,260 @@ namespace Microsoft.Hadoop.Avro.Tests
                 "}";
             var expected = this.builder.BuildSchema(InputJson) as RecordSchema;
             var actual = this.builder.BuildSchema(expected.ToString()) as RecordSchema;
-            Assert.AreEqual(expected.Name, actual.Name);
-            Assert.IsTrue(expected.Aliases.SequenceEqual(actual.Aliases));
-            Assert.AreEqual(expected.Fields.Count, actual.Fields.Count);
-            Assert.AreEqual(expected.Fields[0].FullName, actual.Fields[0].FullName);
+            Assert.Equal(expected.Name, actual.Name);
+            Assert.True(expected.Aliases.SequenceEqual(actual.Aliases));
+            Assert.Equal(expected.Fields.Count, actual.Fields.Count);
+            Assert.Equal(expected.Fields[0].FullName, actual.Fields[0].FullName);
             //TODO Sort order should also be the same
-            //TODO Assert.AreEqual(expected.Attributes.Count, actual.Attributes.Count);
+            //TODO Assert.Equal(expected.Attributes.Count, actual.Attributes.Count);
         }
 
         #endregion //record schema tests
 
         #region union schema tests
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildUnionSchema()
         {
             var schema = this.builder.BuildSchema(@"[""string"", ""null""]") as UnionSchema;
-            Assert.IsNotNull(schema);
-            Assert.AreEqual(2, schema.Schemas.Count());
-            Assert.IsTrue(schema.Schemas[0] is StringSchema);
-            Assert.IsTrue(schema.Schemas[1] is NullSchema);
+            Assert.NotNull(schema);
+            Assert.Equal(2, schema.Schemas.Count());
+            Assert.True(schema.Schemas[0] is StringSchema);
+            Assert.True(schema.Schemas[1] is NullSchema);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_BuildNamedUnionSchema()
         {
             var schema = this.builder.BuildSchema(@"{ ""type"": [""string"", ""null""], ""name"": ""TestUnion""}");
             var schemaAsUnion = schema as UnionSchema;
-            Assert.IsNotNull(schemaAsUnion);
-            Assert.AreEqual(2, schemaAsUnion.Schemas.Count());
-            Assert.IsTrue(schemaAsUnion.Schemas[0] is StringSchema);
-            Assert.IsTrue(schemaAsUnion.Schemas[1] is NullSchema);
+            Assert.NotNull(schemaAsUnion);
+            Assert.Equal(2, schemaAsUnion.Schemas.Count());
+            Assert.True(schemaAsUnion.Schemas[0] is StringSchema);
+            Assert.True(schemaAsUnion.Schemas[1] is NullSchema);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void JsonSchemaBuilder_BuildDirectNestingUnionsSchema()
         {
-            this.builder.BuildSchema(@"{ ""type"": [ [""string"", ""null""], ""null""], ""name"": ""TestUnion""}");
+            Assert.Throws<SerializationException>(() =>
+                {
+                    this.builder.BuildSchema(
+                        @"{ ""type"": [ [""string"", ""null""], ""null""], ""name"": ""TestUnion""}");
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void JsonSchemaBuilder_BuildIndirectNestingUnionsSchema()
         {
-            this.builder.BuildSchema(@"{ ""type"": [{""type"": [""string"", ""null""], ""name"": ""TestUnion""}, ""null""], ""name"": ""TestUnion""}");
+            Assert.Throws<SerializationException>(() =>
+                {
+                    this.builder.BuildSchema(
+                        @"{ ""type"": [{""type"": [""string"", ""null""], ""name"": ""TestUnion""}, ""null""], ""name"": ""TestUnion""}");
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void JsonSchemaBuilder_BuildUnionWithIdenticalUnnamedTypes()
         {
-            this.builder.BuildSchema(@"{ ""type"": [""string"", ""string""], ""name"": ""TestUnion""}");
+            Assert.Throws<SerializationException>(() =>
+                {
+                    this.builder.BuildSchema(@"{ ""type"": [""string"", ""string""], ""name"": ""TestUnion""}");
+                }
+            );
         }
 
         #endregion //union schema tests
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void JsonSchemaBuilder_BuildEmptySchema()
         {
-            this.builder.BuildSchema(string.Empty);
+            Assert.Throws<ArgumentNullException>(() =>
+                {
+                    this.builder.BuildSchema(string.Empty);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void JsonSchemaBuilder_BuildInvalidSchema()
         {
-            this.builder.BuildSchema("1");
+            Assert.Throws<SerializationException>(() =>
+                {
+                    this.builder.BuildSchema("1");
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void JsonSchemaBuilder_BuildSchemaWithInvalidAvroType()
         {
-            const string StringSchema = @"{ ""type"" : ""invalid"", ""custom attribute"": ""custom value"" }";
-            this.builder.BuildSchema(StringSchema);
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string StringSchema = @"{ ""type"" : ""invalid"", ""custom attribute"": ""custom value"" }";
+                    this.builder.BuildSchema(StringSchema);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void JsonSchemaBuilder_BuildEnumSchemaWithInvalidSymbols()
         {
-            const string Expected =
-                "{" +
-                    "\"type\":\"enum\"," +
-                    "\"name\":\"Microsoft.Hadoop.Avro.Tests.RandomEnumeration\"," +
-                    "\"symbols\":" + "[" +
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string Expected =
+                        "{" +
+                        "\"type\":\"enum\"," +
+                        "\"name\":\"Microsoft.Hadoop.Avro.Tests.RandomEnumeration\"," +
+                        "\"symbols\":" + "[" +
                         "\"Value0\"," +
                         "{\"InvalidName\":\"InvalidValue\"}," +
-                "]}";
+                        "]}";
 
-            this.builder.BuildSchema(Expected);
+                    this.builder.BuildSchema(Expected);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void JsonSchemaBuilder_BuildArraySchemaWithNoItems()
         {
-            const string Expected = "{\"type\":\"array\"}";
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string Expected = "{\"type\":\"array\"}";
 
-            this.builder.BuildSchema(Expected);
+                    this.builder.BuildSchema(Expected);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void JsonSchemaBuilder_BuildMapSchemaWithNoValues()
         {
-            const string Expected = "{\"type\":\"map\"}";
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string Expected = "{\"type\":\"map\"}";
 
-            this.builder.BuildSchema(Expected);
+                    this.builder.BuildSchema(Expected);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void JsonSchemaBuilder_BuildRecordSchemaWithInvalidAliaseJsonType()
         {
-            const string Expected = "{" +
-                    "\"type\":\"record\"," +
-                    "\"name\":\"Microsoft.Hadoop.Avro.Tests.SomeRecord\"," +
-                    "\"aliases\":[{\"InvalidName\":\"InvalidValue\"}, \"Alternative2\"]," +
-                    "\"fields\":[{\"name\":\"IntField\",\"type\":\"int\"}]," +
-                    "\"optionalproperty\":\"optionalvalue\"" +
-                "}";
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string Expected = "{" +
+                                            "\"type\":\"record\"," +
+                                            "\"name\":\"Microsoft.Hadoop.Avro.Tests.SomeRecord\"," +
+                                            "\"aliases\":[{\"InvalidName\":\"InvalidValue\"}, \"Alternative2\"]," +
+                                            "\"fields\":[{\"name\":\"IntField\",\"type\":\"int\"}]," +
+                                            "\"optionalproperty\":\"optionalvalue\"" +
+                                            "}";
 
-            this.builder.BuildSchema(Expected);
+                    this.builder.BuildSchema(Expected);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void JsonSchemaBuilder_BuildRecordSchemaWithEmptyAliases()
         {
-            const string Expected = "{" +
-                    "\"type\":\"record\"," +
-                    "\"name\":\"Microsoft.Hadoop.Avro.Tests.SomeRecord\"," +
-                    "\"aliases\":[\"\", \"Alternative2\"]," +
-                    "\"fields\":[{\"name\":\"IntField\",\"type\":\"int\"}]," +
-                    "\"optionalproperty\":\"optionalvalue\"" +
-                "}";
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string Expected = "{" +
+                                            "\"type\":\"record\"," +
+                                            "\"name\":\"Microsoft.Hadoop.Avro.Tests.SomeRecord\"," +
+                                            "\"aliases\":[\"\", \"Alternative2\"]," +
+                                            "\"fields\":[{\"name\":\"IntField\",\"type\":\"int\"}]," +
+                                            "\"optionalproperty\":\"optionalvalue\"" +
+                                            "}";
 
-            this.builder.BuildSchema(Expected);
+                    this.builder.BuildSchema(Expected);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void JsonSchemaBuilder_BuildRecordSchemaWithMissingFieldType()
         {
-            const string Expected = "{" +
-                    "\"type\":\"record\"," +
-                    "\"name\":\"Microsoft.Hadoop.Avro.Tests.SomeRecord\"," +
-                    "\"fields\":[{\"name\":\"IntField\"}]" +
-                "}";
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string Expected = "{" +
+                                            "\"type\":\"record\"," +
+                                            "\"name\":\"Microsoft.Hadoop.Avro.Tests.SomeRecord\"," +
+                                            "\"fields\":[{\"name\":\"IntField\"}]" +
+                                            "}";
 
-            this.builder.BuildSchema(Expected);
+                    this.builder.BuildSchema(Expected);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void JsonSchemaBuilder_BuildRecordSchemaWithInvalidFieldJsonType()
         {
-            const string Expected = "{" +
-                    "\"type\":\"record\"," +
-                    "\"name\":\"Microsoft.Hadoop.Avro.Tests.SomeRecord\"," +
-                    "\"fields\":[\"invalidfield\", {\"name\":\"IntField\"}]" +
-                "}";
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string Expected = "{" +
+                                            "\"type\":\"record\"," +
+                                            "\"name\":\"Microsoft.Hadoop.Avro.Tests.SomeRecord\"," +
+                                            "\"fields\":[\"invalidfield\", {\"name\":\"IntField\"}]" +
+                                            "}";
 
-            this.builder.BuildSchema(Expected);
+                    this.builder.BuildSchema(Expected);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void JsonSchemaBuilder_BuildRecordSchemaWithInvalidSortOrder()
         {
-            const string Expected = "{" +
-                    "\"type\":\"record\"," +
-                    "\"name\":\"Microsoft.Hadoop.Avro.Tests.SomeRecord\"," +
-                    "\"fields\":[{\"name\":\"IntField\",\"type\":\"int\", \"order\":\"invalidOrder\"}]," +
-                "}";
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string Expected = "{" +
+                        "\"type\":\"record\"," +
+                        "\"name\":\"Microsoft.Hadoop.Avro.Tests.SomeRecord\"," +
+                        "\"fields\":[{\"name\":\"IntField\",\"type\":\"int\", \"order\":\"invalidOrder\"}]," +
+                        "}";
 
-            this.builder.BuildSchema(Expected);
+                    this.builder.BuildSchema(Expected);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void JsonSchemaBuilder_BuildFixedSchemaWithInvalidSize()
         {
-            const string Expected = "{\"type\": \"fixed\", \"size\": -10, \"name\": \"Name\"}";
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string Expected = "{\"type\": \"fixed\", \"size\": -10, \"name\": \"Name\"}";
 
-            this.builder.BuildSchema(Expected);
+                    this.builder.BuildSchema(Expected);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void JsonSchemaBuilder_BuildNotMatchingSchema()
         {
-            const string StringSchema = @"""null""";
-            var schema = this.builder.BuildSchema(StringSchema);
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string StringSchema = @"""null""";
+                    var schema = this.builder.BuildSchema(StringSchema);
 
-            Assert.IsTrue(schema is NullSchema);
-            CollectionAssert.AreEqual(this.emptyAttributes.ToList(), schema.Attributes.ToList());
+                    Assert.True(schema is NullSchema);
+                    Assert.Equal(this.emptyAttributes.ToList(), schema.Attributes.ToList());
 
-            SerializeRoundTrip(StringSchema, 5);
+                    SerializeRoundTrip(StringSchema, 5);
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_InheritingTheNamespace()
         {
             var schemaWithoutNamespace = @"{
@@ -642,12 +654,11 @@ namespace Microsoft.Hadoop.Avro.Tests
             var schema1 = this.builder.BuildSchema(schemaWithoutNamespace);
             var schema2 = this.builder.BuildSchema(schemaWithNamespace);
 
-            Assert.AreEqual(schema1.ToString(), schema2.ToString());
+            Assert.Equal(schema1.ToString(), schema2.ToString());
         }
 
         // Test for https://github.com/Azure/azure-sdk-for-net/issues/1206
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void JsonSchemaBuilder_FixedTypeReferences()
         {
             var guidSchemaJson = "{ \"type\": \"fixed\", \"name\": \"System.Guid\", \"size\": 16 }";
@@ -669,14 +680,12 @@ namespace Microsoft.Hadoop.Avro.Tests
             var schema = this.builder.BuildSchema(schemaWithFixedType);
         }
 
-        [TestInitialize]
-        public void TestSetup()
+        public JsonSchemaTests()
         {
             this.builder = new JsonSchemaBuilder();
         }
 
-        [TestCleanup]
-        public void TestTeardown()
+        public void Dispose()
         {
             this.builder = null;
         }

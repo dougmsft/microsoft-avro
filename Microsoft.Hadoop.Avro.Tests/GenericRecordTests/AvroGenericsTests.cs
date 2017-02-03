@@ -12,6 +12,7 @@
 // 
 // See the Apache Version 2.0 License for specific language governing
 // permissions and limitations under the License.
+
 namespace Microsoft.Hadoop.Avro.Tests
 {
     using System;
@@ -20,39 +21,35 @@ namespace Microsoft.Hadoop.Avro.Tests
     using System.Linq;
     using System.Runtime.Serialization;
     using Microsoft.Hadoop.Avro.Schema;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
 
-    [TestClass]
+    [Trait("Category","Generics")]
     public sealed class AvroGenericsTests : IDisposable
     {
         private MemoryStream stream;
 
-        [TestInitialize]
-        public void TestInitialize()
+        public AvroGenericsTests()
         {
             this.stream = new MemoryStream();
         }
 
-        [TestCleanup]
-        public void TestCleanup()
+        public void Dispose()
         {
             this.stream.Dispose();
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroRecord_CreateWithNonRecordTypeSchema()
         {
             var schema = TypeSchema.Create(@"""float""");
             Utilities.ShouldThrow<ArgumentException>(() =>
             {
                 var _ = new AvroRecord(schema);
-                Assert.IsNotNull(_);
+                Assert.NotNull(_);
             });
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroRecord_CreateUnionOfAvroRecordAndNull()
         {
             const string Schema =
@@ -78,15 +75,14 @@ namespace Microsoft.Hadoop.Avro.Tests
 
             this.stream.Seek(0, SeekOrigin.Begin);
             var actual1 = serializer.Deserialize(this.stream);
-            Assert.IsNull(actual1);
+            Assert.Null(actual1);
 
             var actual2 = (AvroRecord)serializer.Deserialize(this.stream);
-            Assert.IsNotNull(actual2);
-            Assert.AreEqual(expected["IntField"], actual2["IntField"]);
+            Assert.NotNull(actual2);
+            Assert.Equal(expected["IntField"], actual2["IntField"]);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroEnum_CreateUnionOfAvroEnumAndNull()
         {
             const string Schema = @"
@@ -113,13 +109,12 @@ namespace Microsoft.Hadoop.Avro.Tests
             this.stream.Seek(0, SeekOrigin.Begin);
 
             var actual1 = serializer.Deserialize(this.stream);
-            Assert.IsNull(actual1);
+            Assert.Null(actual1);
             var actual2 = (AvroEnum)serializer.Deserialize(this.stream);
-            Assert.AreEqual(expected.Value, actual2.Value);
+            Assert.Equal(expected.Value, actual2.Value);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroRecord_CreateArrayOfAvroRecord()
         {
             const string Schema = @"
@@ -154,12 +149,11 @@ namespace Microsoft.Hadoop.Avro.Tests
             dynamic actual = serializer.Deserialize(this.stream);
             for (int i = 0; i < 10; i++)
             {
-                Assert.AreEqual(expected[i]["IntField"], actual[i].IntField);
+                Assert.Equal(expected[i]["IntField"], actual[i].IntField);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroEnum_CreateArrayOfAvroEnum()
         {
             const string Schema = @"
@@ -189,12 +183,11 @@ namespace Microsoft.Hadoop.Avro.Tests
             dynamic actual = serializer.Deserialize(this.stream);
             for (int i = 0; i < 10; i++)
             {
-                Assert.AreEqual(expected[i].Value, actual[i].Value);
+                Assert.Equal(expected[i].Value, actual[i].Value);
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroRecord_CreateMapOfArrayOfAvroRecords()
         {
             const string Schema = @"
@@ -237,17 +230,16 @@ namespace Microsoft.Hadoop.Avro.Tests
             dynamic actual = serializer.Deserialize(this.stream);
             foreach (var expectedKeyValuePair in expected)
             {
-                Assert.IsTrue(actual.ContainsKey(expectedKeyValuePair.Key));
+                Assert.True(actual.ContainsKey(expectedKeyValuePair.Key));
                 dynamic actualValue = actual[expectedKeyValuePair.Key];
                 for (int i = 0; i < 10; i++)
                 {
-                    Assert.AreEqual(expectedKeyValuePair.Value[i]["IntField"], actualValue[i].IntField);
+                    Assert.Equal(expectedKeyValuePair.Value[i]["IntField"], actualValue[i].IntField);
                 }
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroRecord_SerializeRecordWithSByteFields()
         {
             var schema = AvroSerializer.Create<ClassWithSByteFields>().WriterSchema;
@@ -259,14 +251,13 @@ namespace Microsoft.Hadoop.Avro.Tests
                 stream.Seek(0, SeekOrigin.Begin);
                 var result = serializer.Deserialize(stream);
                 var actual = ClassWithSByteFields.Create((AvroRecord)result);
-                Assert.AreEqual(expected, actual);
+                Assert.Equal(expected, actual);
             }
         }
 
         #region Testing for exceptions
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroRecord_CheckInvalidField()
         {
             var schema = TypeSchema.Create(
@@ -286,113 +277,122 @@ namespace Microsoft.Hadoop.Avro.Tests
             Utilities.ShouldThrow<ArgumentOutOfRangeException>(() => { avroRecord["InvalidField"] = 1; });
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void GenericSerializer_UnionOfNullAndArrayWithInvalidArrayType()
         {
-            const string Schema = @"[""null"", { ""type"" :""array"", ""items"":""int"" } ]";
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string Schema = @"[""null"", { ""type"" :""array"", ""items"":""int"" } ]";
 
-            var arrayOfDoubles = Utilities.GetRandom<double[]>(false);
+                    var arrayOfDoubles = Utilities.GetRandom<double[]>(false);
 
-            var serializer = AvroSerializer.CreateGeneric(Schema);
-            using (var memoryStream = new MemoryStream())
-            {
-                serializer.Serialize(memoryStream, arrayOfDoubles);
-            }
+                    var serializer = AvroSerializer.CreateGeneric(Schema);
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        serializer.Serialize(memoryStream, arrayOfDoubles);
+                    }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void GenericSerializer_UnionOfNullAndArrayWithInvalidType()
         {
-            const string Schema = @"[""null"", { ""type"" :""array"", ""items"":""int"" } ]";
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string Schema = @"[""null"", { ""type"" :""array"", ""items"":""int"" } ]";
 
-            var dictionaryOfDoubles = Utilities.GetRandom<Dictionary<string, double>>(false);
+                    var dictionaryOfDoubles = Utilities.GetRandom<Dictionary<string, double>>(false);
 
-            var serializer = AvroSerializer.CreateGeneric(Schema);
-            using (var memoryStream = new MemoryStream())
-            {
-                serializer.Serialize(memoryStream, dictionaryOfDoubles);
-            }
+                    var serializer = AvroSerializer.CreateGeneric(Schema);
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        serializer.Serialize(memoryStream, dictionaryOfDoubles);
+                    }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void GenericSerializer_UnionOfNullAndMapWithInvalidMapValueType()
         {
-            const string Schema = @"[""null"", { ""type"" :""map"", ""values"":""int"" } ]";
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string Schema = @"[""null"", { ""type"" :""map"", ""values"":""int"" } ]";
 
-            var dictionaryOfDoubles = Utilities.GetRandom<Dictionary<string, double>>(false);
+                    var dictionaryOfDoubles = Utilities.GetRandom<Dictionary<string, double>>(false);
 
-            var serializer = AvroSerializer.CreateGeneric(Schema);
-            using (var memoryStream = new MemoryStream())
-            {
-                serializer.Serialize(memoryStream, dictionaryOfDoubles);
-            }
+                    var serializer = AvroSerializer.CreateGeneric(Schema);
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        serializer.Serialize(memoryStream, dictionaryOfDoubles);
+                    }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void GenericSerializer_UnionOfNullAndMapWithInvalidType()
         {
-            const string Schema = @"[""null"", { ""type"" :""map"", ""values"":""int"" } ]";
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string Schema = @"[""null"", { ""type"" :""map"", ""values"":""int"" } ]";
 
-            var arrayOfDoubles = Utilities.GetRandom<double[]>(false);
+                    var arrayOfDoubles = Utilities.GetRandom<double[]>(false);
 
-            var serializer = AvroSerializer.CreateGeneric(Schema);
-            using (var memoryStream = new MemoryStream())
-            {
-                serializer.Serialize(memoryStream, arrayOfDoubles);
-            }
+                    var serializer = AvroSerializer.CreateGeneric(Schema);
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        serializer.Serialize(memoryStream, arrayOfDoubles);
+                    }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
-        [ExpectedException(typeof(SerializationException))]
+        [Fact]
         public void GenericSerializer_UnionOfNullAndEnumWithInvalidEnum()
         {
-            const string Schema = @"
-                [
-                    ""null"",
-                    {
+            Assert.Throws<SerializationException>(() =>
+                {
+                    const string Schema = @"
+                        [
+                            ""null"",
+                            {
+                                ""type"":""enum"",
+                                ""name"":""Microsoft.Hadoop.Avro.Tests.TestEnum"",
+                                ""symbols"":
+                                [
+                                    ""EnumValue3"",
+                                    ""EnumValue2"",
+                                    ""EnumValue1""
+                                ]
+                            }
+                        ]";
+
+                    const string InvalidEnumSchema = @"{
                         ""type"":""enum"",
-                        ""name"":""Microsoft.Hadoop.Avro.Tests.TestEnum"",
+                        ""name"":""Microsoft.Hadoop.Avro.Tests.InvalidEnum"",
                         ""symbols"":
                         [
-                            ""EnumValue3"",
-                            ""EnumValue2"",
-                            ""EnumValue1""
+                            ""InvalidValue3"",
+                            ""InvalidValue2"",
+                            ""InvalidValue1""
                         ]
+                    }";
+
+                    var invalidSchemaSerializer = AvroSerializer.CreateGeneric(InvalidEnumSchema);
+                    var invalidEnum = new AvroEnum(invalidSchemaSerializer.WriterSchema) {Value = "InvalidValue3"};
+                    var serializer = AvroSerializer.CreateGeneric(Schema);
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        serializer.Serialize(memoryStream, invalidEnum);
                     }
-                ]";
-
-            const string InvalidEnumSchema = @"{
-                ""type"":""enum"",
-                ""name"":""Microsoft.Hadoop.Avro.Tests.InvalidEnum"",
-                ""symbols"":
-                [
-                    ""InvalidValue3"",
-                    ""InvalidValue2"",
-                    ""InvalidValue1""
-                ]
-            }";
-
-            var invalidSchemaSerializer = AvroSerializer.CreateGeneric(InvalidEnumSchema);
-            var invalidEnum = new AvroEnum(invalidSchemaSerializer.WriterSchema) { Value = "InvalidValue3" };
-            var serializer = AvroSerializer.CreateGeneric(Schema);
-
-            using (var memoryStream = new MemoryStream())
-            {
-                serializer.Serialize(memoryStream, invalidEnum);
-            }
+                }
+            );
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroEnum_SerializeInvalidObject()
         {
             const string Schema = @"{
@@ -429,8 +429,7 @@ namespace Microsoft.Hadoop.Avro.Tests
             }
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroRecord_SerializeInvalidObject()
         {
             const string Schema = @"{
@@ -453,9 +452,5 @@ namespace Microsoft.Hadoop.Avro.Tests
 
         #endregion //Testing for exceptions
 
-        public void Dispose()
-        {
-            this.stream.Dispose();
-        }
     }
 }

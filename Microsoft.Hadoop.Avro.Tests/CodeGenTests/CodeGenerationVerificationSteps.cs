@@ -19,7 +19,7 @@ namespace Microsoft.Hadoop.Avro.Tests.CodeGenTests
     using System.Text;
 
     using Microsoft.Hadoop.Avro.Schema;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
 
     using Newtonsoft.Json.Linq;
 
@@ -87,9 +87,9 @@ namespace Microsoft.Hadoop.Avro.Tests.CodeGenTests
         [Then(@"the generated code is a class containing one field of the corresponding ""(.*)""")]
         public void ThenTheGeneratedCodeIsAClassContainingOneFieldOfTheCorresponding(string type)
         {
-            Assert.IsTrue(this.GetRecordType().IsClass);
+            Assert.True(this.GetRecordType().IsClass);
             Type fieldType = this.GetRecordType().GetProperty("AvroField").PropertyType;
-            Assert.AreEqual(Utilities.GetTypeFullName(type), fieldType.ToString());
+            Assert.Equal(Utilities.GetTypeFullName(type), fieldType.ToString());
         }
 
         [Then(@"I can perform roundtrip serialization of (a randomly created|an) object of the generated class")]
@@ -120,14 +120,14 @@ namespace Microsoft.Hadoop.Avro.Tests.CodeGenTests
                     .Invoke(serializer, new object[] { this.Stream });
                 this.ActualSchema = (Schema)serializer.GetType().GetProperty("WriterSchema").GetGetMethod().Invoke(serializer, new object[] { });
             }
-            Assert.IsNotNull(this.Actual);
+            Assert.NotNull(this.Actual);
         }
 
         [Then(@"The serialized object should match the deserialized object and namespace of original schema should match namespace of serialized schema")]
         public void ThenTheSerializedObjectShouldMatchTheDeserializedObjectAndNamespacesOfOriginalAndSerializedSchemataShouldMatch()
         {
-            Assert.IsTrue(Utilities.GeneratedTypesEquality(this.Expected, this.Actual));
-            Assert.AreEqual(JObject.Parse(this.RootSchema)["namespace"].ToString(), ((NamedSchema)((UnionSchema)this.ActualSchema).Schemas[1]).Namespace);
+            Assert.True(Utilities.GeneratedTypesEquality(this.Expected, this.Actual));
+            Assert.Equal(JObject.Parse(this.RootSchema)["namespace"].ToString(), ((NamedSchema)((UnionSchema)this.ActualSchema).Schemas[1]).Namespace);
         }
 
         [Given(@"The default namespace is ""(.*)""")]
@@ -140,16 +140,16 @@ namespace Microsoft.Hadoop.Avro.Tests.CodeGenTests
         public void ThenTheMustHaveTheNamespace(string generatedUnionType, string defaultNamespace)
         {
             var namespaces = this.Assembly.GetTypes().Select(t => t.Namespace).Distinct();
-            Assert.IsTrue(namespaces.Contains(defaultNamespace));
+            Assert.True(namespaces.Contains(defaultNamespace));
             var generatedTypeFullName = string.Concat(defaultNamespace, ".", generatedUnionType);
-            Assert.IsNotNull(this.Assembly.GetType(generatedTypeFullName));
+            Assert.NotNull(this.Assembly.GetType(generatedTypeFullName));
         }
 
         [Then(@"the generated class should have one field of the ""(.*)""")]
         public void ThenTheGeneratedClassShouldHaveOneFieldOfThe(string type)
         {
             Type fieldType = this.GetRecordType().GetProperty("AvroField").PropertyType;
-            Assert.AreEqual(this.Namespace + "." + type, fieldType.ToString());
+            Assert.Equal(this.Namespace + "." + type, fieldType.ToString());
         }
 
         private Type GetRecordType()

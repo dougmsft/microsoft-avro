@@ -18,19 +18,17 @@ namespace Microsoft.Hadoop.Avro.Tests
 
     using Microsoft.Hadoop.Avro.Tools;
     using Microsoft.Hadoop.Avro.Tools.Properties;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
 
-    [TestClass]
+    [Trait("Category","Tool")]
     public sealed class AvroToolsTests
     {
-        [TestInitialize]
-        public void TestInitialize()
+        public AvroToolsTests()
         {
             MockExecutionContext.Initialize();
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunWithNoArguments()
         {
             using (var stringReader = new StringReader(string.Empty))
@@ -38,120 +36,110 @@ namespace Microsoft.Hadoop.Avro.Tests
                 Console.SetIn(stringReader);
 
                 var actualExitCode = Execute(new string[] { });
-                Assert.AreEqual(ExitCode.InvalidArguments, actualExitCode);
+                Assert.Equal(ExitCode.InvalidArguments, actualExitCode);
             }
             var expectedMessage = new HelpCommand().GetCommandsList();
-            Assert.AreEqual(Resources.InvalidArgsErrorMessage, MockExecutionContext.ErrorMessage);
-            Assert.AreEqual(expectedMessage, MockExecutionContext.OutMessage);
+            Assert.Equal(Resources.InvalidArgsErrorMessage, MockExecutionContext.ErrorMessage);
+            Assert.Equal(expectedMessage, MockExecutionContext.OutMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunWithWrongArgument()
         {
             var actualExitCode = Execute(new[] { Utilities.GetRandom<string>(false) });
             var expectedMessage = new HelpCommand().GetCommandsList();
-            Assert.AreEqual(ExitCode.InvalidArguments, actualExitCode);
-            Assert.AreEqual(Resources.InvalidArgsErrorMessage, MockExecutionContext.ErrorMessage);
-            Assert.AreEqual(expectedMessage, MockExecutionContext.OutMessage);
+            Assert.Equal(ExitCode.InvalidArguments, actualExitCode);
+            Assert.Equal(Resources.InvalidArgsErrorMessage, MockExecutionContext.ErrorMessage);
+            Assert.Equal(expectedMessage, MockExecutionContext.OutMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunWithCaseInsensitiveCorrectArgument()
         {
             var actualExitCode = Execute(new[] { "hElP" });
             var expectedMessage = new HelpCommand().GetCommandsList();
-            Assert.AreEqual(expectedMessage, MockExecutionContext.OutMessage);
-            Assert.AreEqual(ExitCode.Success, actualExitCode);
-            Assert.IsNull(MockExecutionContext.ErrorMessage);
+            Assert.Equal(expectedMessage, MockExecutionContext.OutMessage);
+            Assert.Equal(ExitCode.Success, actualExitCode);
+            Assert.Null(MockExecutionContext.ErrorMessage);
         }
 
         #region Help Command tests
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunHelpWithNoArgument()
         {
             var actualExitCode = Execute(new[] { "Help" });
             var expectedMessage = new HelpCommand().GetCommandsList();
-            Assert.AreEqual(expectedMessage, MockExecutionContext.OutMessage);
-            Assert.AreEqual(ExitCode.Success, actualExitCode);
-            Assert.IsNull(MockExecutionContext.ErrorMessage);
+            Assert.Equal(expectedMessage, MockExecutionContext.OutMessage);
+            Assert.Equal(ExitCode.Success, actualExitCode);
+            Assert.Null(MockExecutionContext.ErrorMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunHelpWithWrongArgument()
         {
             var actualExitCode = Execute(new[] { "Help", Utilities.GetRandom<string>(false) });
             var expectedMessage = new HelpCommand().GetCommandsList();
-            Assert.AreEqual(expectedMessage, MockExecutionContext.OutMessage);
-            Assert.AreEqual(ExitCode.InvalidArguments, actualExitCode);
-            Assert.AreEqual(Resources.InvalidArgsErrorMessage, MockExecutionContext.ErrorMessage);
+            Assert.Equal(expectedMessage, MockExecutionContext.OutMessage);
+            Assert.Equal(ExitCode.InvalidArguments, actualExitCode);
+            Assert.Equal(Resources.InvalidArgsErrorMessage, MockExecutionContext.ErrorMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunHelpWithEmptyArgument()
         {
             var actualExitCode = Execute(new[] { "Help", HelpCommand.CommandPrefix });
             var expectedMessage = new HelpCommand().GetCommandsList();
-            Assert.AreEqual(expectedMessage, MockExecutionContext.OutMessage);
-            Assert.AreEqual(ExitCode.InvalidArguments, actualExitCode);
-            Assert.AreEqual(Resources.InvalidArgsErrorMessage, MockExecutionContext.ErrorMessage);
+            Assert.Equal(expectedMessage, MockExecutionContext.OutMessage);
+            Assert.Equal(ExitCode.InvalidArguments, actualExitCode);
+            Assert.Equal(Resources.InvalidArgsErrorMessage, MockExecutionContext.ErrorMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunHelpWithCorrectArgument()
         {
             var actualExitCode = Execute(new[] { "Help", HelpCommand.CommandPrefix + "Help" });
             var expectedMessage = new HelpCommand().GetUsage();
-            Assert.AreEqual(expectedMessage, MockExecutionContext.OutMessage);
-            Assert.IsNull(MockExecutionContext.ErrorMessage);
-            Assert.AreEqual(ExitCode.Success, actualExitCode);
+            Assert.Equal(expectedMessage, MockExecutionContext.OutMessage);
+            Assert.Null(MockExecutionContext.ErrorMessage);
+            Assert.Equal(ExitCode.Success, actualExitCode);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunHelpWithTooManyArguments()
         {
             var actualExitCode = Execute(new[] { "Help" }.Concat(Utilities.GetRandom<string[]>(false)).ToArray());
             var expectedMessage = new HelpCommand().GetCommandsList();
-            Assert.AreEqual(expectedMessage, MockExecutionContext.OutMessage);
-            Assert.AreEqual(ExitCode.InvalidArguments, actualExitCode);
-            Assert.AreEqual(Resources.InvalidArgsErrorMessage, MockExecutionContext.ErrorMessage);
+            Assert.Equal(expectedMessage, MockExecutionContext.OutMessage);
+            Assert.Equal(ExitCode.InvalidArguments, actualExitCode);
+            Assert.Equal(Resources.InvalidArgsErrorMessage, MockExecutionContext.ErrorMessage);
         }
 
         #endregion //Help command tests
 
         #region CodeGen command tests
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunCodeGenWithNoArgument()
         {
             var actualExitCode = Execute(new[] { "CodeGen" });
             var expectedMessage = Resources.MissingArgumentsError;
-            Assert.AreEqual(expectedMessage, MockExecutionContext.ErrorMessage);
-            Assert.AreEqual(ExitCode.InvalidArguments, actualExitCode);
-            Assert.IsNull(MockExecutionContext.OutMessage);
+            Assert.Equal(expectedMessage, MockExecutionContext.ErrorMessage);
+            Assert.Equal(ExitCode.InvalidArguments, actualExitCode);
+            Assert.Null(MockExecutionContext.OutMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunCodeGenWithWrongArgumentsCount()
         {
             var actualExitCode = Execute(new[] { "CodeGen", Utilities.GetRandom<string>(false) });
             var expectedMessage = Resources.MissingArgumentsError;
-            Assert.AreEqual(expectedMessage, MockExecutionContext.ErrorMessage);
-            Assert.AreEqual(ExitCode.InvalidArguments, actualExitCode);
-            Assert.IsNull(MockExecutionContext.OutMessage);
+            Assert.Equal(expectedMessage, MockExecutionContext.ErrorMessage);
+            Assert.Equal(ExitCode.InvalidArguments, actualExitCode);
+            Assert.Null(MockExecutionContext.OutMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunCodeGenWithTooManyArguments()
         {
             var actualExitCode =
@@ -162,13 +150,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                         Utilities.GetRandom<string>(false)
                     });
             var expectedMessage = Resources.ErrorTooManyArguments;
-            Assert.AreEqual(expectedMessage, MockExecutionContext.ErrorMessage);
-            Assert.AreEqual(ExitCode.InvalidArguments, actualExitCode);
-            Assert.IsNull(MockExecutionContext.OutMessage);
+            Assert.Equal(expectedMessage, MockExecutionContext.ErrorMessage);
+            Assert.Equal(ExitCode.InvalidArguments, actualExitCode);
+            Assert.Null(MockExecutionContext.OutMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunCodeGenWithMissingInputArgumentPrefix()
         {
             var actualExitCode =
@@ -178,13 +165,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                         "CodeGen", "Bla", "/O:."
                     });
             var expectedMessage = Resources.ErrorMissingInputArguments;
-            Assert.AreEqual(expectedMessage, MockExecutionContext.ErrorMessage);
-            Assert.AreEqual(ExitCode.InvalidArguments, actualExitCode);
-            Assert.IsNull(MockExecutionContext.OutMessage);
+            Assert.Equal(expectedMessage, MockExecutionContext.ErrorMessage);
+            Assert.Equal(ExitCode.InvalidArguments, actualExitCode);
+            Assert.Null(MockExecutionContext.OutMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunCodeGenWithMissingOutputArgumentPrefix()
         {
             var actualExitCode =
@@ -194,13 +180,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                         "CodeGen", "/I:", "Bla"
                     });
             var expectedMessage = Resources.ErrorMissingOutputArguments;
-            Assert.AreEqual(expectedMessage, MockExecutionContext.ErrorMessage);
-            Assert.AreEqual(ExitCode.InvalidArguments, actualExitCode);
-            Assert.IsNull(MockExecutionContext.OutMessage);
+            Assert.Equal(expectedMessage, MockExecutionContext.ErrorMessage);
+            Assert.Equal(ExitCode.InvalidArguments, actualExitCode);
+            Assert.Null(MockExecutionContext.OutMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunCodeGenWithExtraWrongArgumentNames()
         {
             var actualExitCode =
@@ -210,13 +195,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                         "CodeGen", "/I:", "/O:", "Bla"
                     });
             var expectedMessage = Resources.ErrorSomeArgumentsInvalid;
-            Assert.AreEqual(expectedMessage, MockExecutionContext.ErrorMessage);
-            Assert.AreEqual(ExitCode.InvalidArguments, actualExitCode);
-            Assert.IsNull(MockExecutionContext.OutMessage);
+            Assert.Equal(expectedMessage, MockExecutionContext.ErrorMessage);
+            Assert.Equal(ExitCode.InvalidArguments, actualExitCode);
+            Assert.Null(MockExecutionContext.OutMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunCodeGenWithArgumentMissingValue()
         {
             var actualExitCode =
@@ -226,13 +210,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                         "CodeGen", "/I:", "/O:."
                     });
             var expectedMessage = string.Format(CultureInfo.InvariantCulture, Resources.ErrorArgumentMissingItsValue, "/I:");
-            Assert.AreEqual(expectedMessage, MockExecutionContext.ErrorMessage);
-            Assert.AreEqual(ExitCode.InvalidArguments, actualExitCode);
-            Assert.IsNull(MockExecutionContext.OutMessage);
+            Assert.Equal(expectedMessage, MockExecutionContext.ErrorMessage);
+            Assert.Equal(ExitCode.InvalidArguments, actualExitCode);
+            Assert.Null(MockExecutionContext.OutMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunCodeGenWithWrongInputFile()
         {
             var exceptionMessage = Utilities.GetRandom<string>(false);
@@ -243,15 +226,14 @@ namespace Microsoft.Hadoop.Avro.Tests
                     {
                         "CodeGen", "/I:Bla", "/O:."
                     });
-            Assert.AreEqual("Bla", MockExecutionContext.FileToRead);
+            Assert.Equal("Bla", MockExecutionContext.FileToRead);
             var expectedMessage = string.Format(CultureInfo.InvariantCulture, Resources.ErrorReadFile, "Bla", exceptionMessage);
-            Assert.IsTrue(MockExecutionContext.ErrorMessage.Contains(expectedMessage));
-            Assert.AreEqual(ExitCode.InvalidOperation, actualExitCode);
-            Assert.IsNull(MockExecutionContext.OutMessage);
+            Assert.True(MockExecutionContext.ErrorMessage.Contains(expectedMessage));
+            Assert.Equal(ExitCode.InvalidOperation, actualExitCode);
+            Assert.Null(MockExecutionContext.OutMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunCodeGenWithEmptyNamespace()
         {
             MockExecutionContext.FileToReadContent = Utilities.GetRandom<string>(false);
@@ -262,13 +244,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                         "CodeGen", "/I:bla", "/O:.", "/N:"
                     });
             var expectedMessage = string.Format(CultureInfo.InvariantCulture, Resources.ErrorArgumentMissingItsValue, "/N:");
-            Assert.IsTrue(MockExecutionContext.ErrorMessage.Contains(expectedMessage));
-            Assert.AreEqual(ExitCode.InvalidArguments, actualExitCode);
-            Assert.IsNull(MockExecutionContext.OutMessage);
+            Assert.True(MockExecutionContext.ErrorMessage.Contains(expectedMessage));
+            Assert.Equal(ExitCode.InvalidArguments, actualExitCode);
+            Assert.Null(MockExecutionContext.OutMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunCodeGenWithEmptyOutputDirectory()
         {
             MockExecutionContext.FileToReadContent = Utilities.GetRandom<string>(false);
@@ -279,13 +260,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                         "CodeGen", "/I:bla", "/O:"
                     });
             var expectedMessage = string.Format(CultureInfo.InvariantCulture, Resources.ErrorArgumentMissingItsValue, "/O:");
-            Assert.IsTrue(MockExecutionContext.ErrorMessage.Contains(expectedMessage));
-            Assert.AreEqual(ExitCode.InvalidArguments, actualExitCode);
-            Assert.IsNull(MockExecutionContext.OutMessage);
+            Assert.True(MockExecutionContext.ErrorMessage.Contains(expectedMessage));
+            Assert.Equal(ExitCode.InvalidArguments, actualExitCode);
+            Assert.Null(MockExecutionContext.OutMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunCodeGenWithWrongOutputDirectory()
         {
             var exceptionMessage = Utilities.GetRandom<string>(false);
@@ -297,13 +277,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                         "CodeGen", "/I:bla", "/O:."
                     });
             var expectedMessage = string.Format(CultureInfo.InvariantCulture, Resources.ErrorWriteDirectory, ".", exceptionMessage);
-            Assert.IsTrue(MockExecutionContext.ErrorMessage.Contains(expectedMessage));
-            Assert.AreEqual(ExitCode.InvalidOperation, actualExitCode);
-            Assert.IsNull(MockExecutionContext.OutMessage);
+            Assert.True(MockExecutionContext.ErrorMessage.Contains(expectedMessage));
+            Assert.Equal(ExitCode.InvalidOperation, actualExitCode);
+            Assert.Null(MockExecutionContext.OutMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunCodeGenWithWrongSchema()
         {
             MockExecutionContext.FileToReadContent = Utilities.GetRandom<string>(false);
@@ -314,13 +293,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                         "CodeGen", "/I:bla", "/O:."
                     });
             var expectedMessage = Resources.GenerationError.Substring(0, Resources.GenerationError.IndexOf('{'));
-            Assert.IsTrue(MockExecutionContext.ErrorMessage.Contains(expectedMessage));
-            Assert.AreEqual(ExitCode.InvalidOperation, actualExitCode);
-            Assert.IsNull(MockExecutionContext.OutMessage);
+            Assert.True(MockExecutionContext.ErrorMessage.Contains(expectedMessage));
+            Assert.Equal(ExitCode.InvalidOperation, actualExitCode);
+            Assert.Null(MockExecutionContext.OutMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunCodeGenWithWrongSchemaType()
         {
             MockExecutionContext.FileToReadContent = "[\"null\", \"int\"]";
@@ -330,13 +308,12 @@ namespace Microsoft.Hadoop.Avro.Tests
                     {
                         "CodeGen", "/I:bla", "/O:."
                     });
-            Assert.AreEqual(Resources.NoSchemataForGeneration, MockExecutionContext.OutMessage);
-            Assert.AreEqual(ExitCode.Success, actualExitCode);
-            Assert.IsNull(MockExecutionContext.ErrorMessage);
+            Assert.Equal(Resources.NoSchemataForGeneration, MockExecutionContext.OutMessage);
+            Assert.Equal(ExitCode.Success, actualExitCode);
+            Assert.Null(MockExecutionContext.ErrorMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunCodeGenWithSchemaAndNamespace()
         {
             var expectedFilePath = ".\\E.cs";
@@ -347,15 +324,14 @@ namespace Microsoft.Hadoop.Avro.Tests
                     {
                         "CodeGen", "/I:bla", "/O:.", "/N:Bla"
                     });
-            Assert.AreEqual(expectedFilePath, MockExecutionContext.FileToWrite);
-            Assert.AreEqual(ExitCode.Success, actualExitCode);
-            Assert.IsNull(MockExecutionContext.ErrorMessage);
+            Assert.Equal(expectedFilePath, MockExecutionContext.FileToWrite);
+            Assert.Equal(ExitCode.Success, actualExitCode);
+            Assert.Null(MockExecutionContext.ErrorMessage);
             var expectedOutMessage = string.Format(Resources.GenerationInfoMessage, expectedFilePath) + Resources.GenerationFinishedMessage;
-            Assert.AreEqual(expectedOutMessage, MockExecutionContext.OutMessage);
+            Assert.Equal(expectedOutMessage, MockExecutionContext.OutMessage);
         }
 
-        [TestMethod]
-        [TestCategory("CheckIn")]
+        [Fact]
         public void AvroTools_RunCodeGenWithSchemaAndNamespaceCaseInsensitive()
         {
             var expectedFilePath = ".\\E.cs";
@@ -366,11 +342,11 @@ namespace Microsoft.Hadoop.Avro.Tests
                     {
                         "CodeGEN", "/i:bla", "/o:.", "/n:Bla"
                     });
-            Assert.AreEqual(expectedFilePath, MockExecutionContext.FileToWrite);
-            Assert.AreEqual(ExitCode.Success, actualExitCode);
-            Assert.IsNull(MockExecutionContext.ErrorMessage);
+            Assert.Equal(expectedFilePath, MockExecutionContext.FileToWrite);
+            Assert.Equal(ExitCode.Success, actualExitCode);
+            Assert.Null(MockExecutionContext.ErrorMessage);
             var expectedOutMessage = string.Format(Resources.GenerationInfoMessage, expectedFilePath) + Resources.GenerationFinishedMessage;
-            Assert.AreEqual(expectedOutMessage, MockExecutionContext.OutMessage);
+            Assert.Equal(expectedOutMessage, MockExecutionContext.OutMessage);
         }
 
         #endregion //CodeGen command tests
