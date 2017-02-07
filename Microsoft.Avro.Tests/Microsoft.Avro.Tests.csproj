@@ -22,7 +22,7 @@
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'net46' ">$(PackageTargetFallback);dnxcore50;dotnet5.4;portable-net451+win8</PackageTargetFallback>
     <OutputPath>bin\</OutputPath>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
-    <RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">2.0.0-beta-001450-00</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">2.0.0-beta-001507-00</RuntimeFrameworkVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="CodeGenTests\CodeGenerationTests.cs" />
