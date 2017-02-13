@@ -72,7 +72,7 @@ namespace Microsoft.Hadoop.Avro
         /// <value>
         /// The integer value.
         /// </value>
-        internal int IntegerValue
+        public int IntegerValue
         {
             get
             {

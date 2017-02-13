@@ -1,0 +1,21 @@
+<Project>
+  <PropertyGroup>
+    <Version>0.16.0</Version>
+    <Authors>Microsoft</Authors>
+    <Owners>Microsoft</Owners>
+    <ProductId>$(AssemblyName)</ProductId>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Copyright>Microsoft</Copyright>
+    <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <DefaultItemExcludes>$(DefaultItemExcludes);packages.config;*.nuspec</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>..\bin\$(AssemblyName)</OutputPath>
+    <NewtonsoftVersion>10.0.1</NewtonsoftVersion>
+  </PropertyGroup>
+
+</Project>
+

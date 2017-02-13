@@ -1,26 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <AssemblyName>AvroTestApp</AssemblyName>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks Condition="'$(BuildingInsideVisualStudio)' == 'true'">netcoreapp1.1;net46</TargetFrameworks>
-    <TargetFrameworks Condition="'$(BuildingInsideVisualStudio)' != 'true'">netcoreapp1.1;netcoreapp2.0;net46</TargetFrameworks>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">$(PackageTargetFallback);dnxcore50;dotnet5.4;portable-net451+win8</PackageTargetFallback>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">$(PackageTargetFallback);dnxcore50;dotnet5.4;portable-net451+win8</PackageTargetFallback>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'net46' ">$(PackageTargetFallback);dnxcore50;dotnet5.4;portable-net451+win8</PackageTargetFallback>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'net45' ">$(PackageTargetFallback);dnxcore50;dotnet5.4;portable-net451+win8</PackageTargetFallback>
+    <Description>Test Application for Microsoft Avro libraries</Description>
+    <PackageTags>Avro</PackageTags>
+    <TargetFrameworks>netcoreapp2.0;net451</TargetFrameworks>
+	<RuntimeIdentifiers>win7-x64;win7-x86;ubuntu.16.04-x64;ubuntu.16.04-x86</RuntimeIdentifiers>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
-    <OutputPath>bin\</OutputPath>
-    <RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">2.0.0-beta-001507-00</RuntimeFrameworkVersion> 
   </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Runtime.Serialization" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Runtime.Serialization" />
-  </ItemGroup>
+  <Import Project="..\build.props" />
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Avro.Core\Microsoft.Avro.Core.csproj" />
   </ItemGroup>

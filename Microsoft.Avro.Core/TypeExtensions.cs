@@ -33,7 +33,7 @@ namespace Microsoft.Hadoop.Avro
         /// <returns>True if type t has a public parameter-less constructor, false otherwise.</returns>
         public static bool HasParameterlessConstructor(this Type type)
         {
-            return type.GetTypeInfo().GetConstructor(Type.EmptyTypes) != null;
+            return type.GetConstructor(Type.EmptyTypes) != null;
         }
 
         /// <summary>
@@ -107,8 +107,8 @@ namespace Microsoft.Hadoop.Avro
         {
             return type.GetTypeInfo().IsClass
                 && type.GetTypeInfo().GetCustomAttributes(false).Any(a => a is CompilerGeneratedAttribute)
-                && !type.IsNested
-                && type.Name.StartsWith("<>", StringComparison.Ordinal)
+                && !type.GetTypeInfo().IsNested
+                && type.GetTypeInfo().Name.StartsWith("<>", StringComparison.Ordinal)
                 && type.Name.Contains("__Anonymous");
         }
 
@@ -244,10 +244,10 @@ namespace Microsoft.Hadoop.Avro
                    && ! type.IsUnsupported()
                    && (type.GetTypeInfo().IsSubclassOf(baseType) 
                    || type == baseType 
-                   || (baseType.GetTypeInfo().IsInterface && baseType.GetTypeInfo().IsAssignableFrom(type))
+                   || (baseType.GetTypeInfo().IsInterface && baseType.IsAssignableFrom(type))
                    || (baseType.GetTypeInfo().IsGenericType && baseType.GetTypeInfo().IsInterface && baseType.GenericIsAssignable(type)
                            && type.GetGenericArguments()
-                                  .Zip(baseType.GetTypeInfo().GetGenericArguments(), (type1, type2) => new Tuple<Type, Type>(type1, type2))
+                                  .Zip(baseType.GetGenericArguments(), (type1, type2) => new Tuple<Type, Type>(type1, type2))
                                   .ToList()
                                   .TrueForAll(tuple => CanBeKnownTypeOf(tuple.Item1, tuple.Item2))));
         }

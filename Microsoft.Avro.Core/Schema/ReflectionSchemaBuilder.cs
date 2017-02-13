@@ -214,12 +214,12 @@ namespace Microsoft.Hadoop.Avro.Schema
                 .SingleOrDefault(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
 
             if (dictionaryType != null
-                && (dictionaryType.GetGenericArguments()[0] == typeof(string)
-                 || dictionaryType.GetGenericArguments()[0] == typeof(Uri)))
+                && (dictionaryType.GenericTypeArguments[0] == typeof(string)
+                 || dictionaryType.GenericTypeArguments[0] == typeof(Uri)))
             {
                 return new MapSchema(
-                    this.CreateNotNullableSchema(dictionaryType.GetGenericArguments()[0], schemas, currentDepth + 1),
-                    this.CreateSchema(false, dictionaryType.GetGenericArguments()[1], schemas, currentDepth + 1),
+                    this.CreateNotNullableSchema(dictionaryType.GenericTypeArguments[0], schemas, currentDepth + 1),
+                    this.CreateSchema(false, dictionaryType.GenericTypeArguments[1], schemas, currentDepth + 1),
                     type);
             }
 
@@ -229,7 +229,7 @@ namespace Microsoft.Hadoop.Avro.Schema
                 .SingleOrDefault(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
             if (enumerableType != null)
             {
-                var itemType = enumerableType.GetGenericArguments()[0];
+                var itemType = enumerableType.GetTypeInfo().GetGenericArguments()[0];
                 return new ArraySchema(this.CreateSchema(false, itemType, schemas, currentDepth + 1), type);
             }
 
