@@ -1,42 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks Condition="'$(BuildingInsideVisualStudio)' == 'true'">netcoreapp1.1;net46</TargetFrameworks>
-    <TargetFrameworks Condition="'$(BuildingInsideVisualStudio)' != 'true'">netcoreapp1.1;netcoreapp2.0;net46</TargetFrameworks>
-    <DebugType>portable</DebugType>
     <AssemblyName>Microsoft.Avro.Core</AssemblyName>
-    <RuntimeIdentifiers>win7-x64;win7-x86;ubuntu.16.04-x64</RuntimeIdentifiers>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.1'">$(PackageTargetFallback);dnxcore50;dotnet5.4;portable-net451+win8</PackageTargetFallback>
-    <RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">2.0.0-beta-001507-00</RuntimeFrameworkVersion> 
+    <Description>Core library for the Microsoft Avro libraries</Description>
+    <PackageTags>Avro</PackageTags>
+    <TargetFrameworks>netstandard2.0;net451</TargetFrameworks>
   </PropertyGroup>
-  <PropertyGroup>
-    <OutputPath>bin\</OutputPath>
-  </PropertyGroup>
+  <Import Project="..\build.props"/>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+      <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftVersion)"/>
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">
-    <PackageReference Include="System.ComponentModel.TypeConverter" Version="4.3.0" />
-    <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.0" />
-    <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
-    <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Runtime.Serialization" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Runtime.Serialization" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Utils\Templates\ClassTemplate.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
-    <None Update="Utils\Templates\EnumTemplate.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
   </ItemGroup>
 </Project>
