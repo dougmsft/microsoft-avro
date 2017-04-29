@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Microsoft.Avro.Core</AssemblyName>
-    <Description>Core library for the Microsoft Avro libraries</Description>
+    <Description>Microsoft Avro library for .NET Standard 2.0 and .NET Framework 4.5.1.</Description>
     <PackageTags>Avro</PackageTags>
     <TargetFrameworks>netstandard2.0;net451</TargetFrameworks>
   </PropertyGroup>
