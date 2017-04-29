@@ -3,7 +3,7 @@
     <AssemblyName>Microsoft.Avro.Tools</AssemblyName>
     <OutputType>Exe</OutputType>
     <Description>Microsoft Avro Tools for .NET Core 2.0 and .NET Framework 4.5.1.</Description>
-    <PackageTags>Avro</PackageTags>
+    <PackageTags>Avro Serialization Json Binary Schema</PackageTags>
     <TargetFrameworks>netcoreapp2.0;net451</TargetFrameworks>
 	<RuntimeIdentifiers>win7-x64;ubuntu.16.04-x64</RuntimeIdentifiers>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>Microsoft.Avro.Core</AssemblyName>
     <Description>Microsoft Avro library for .NET Standard 2.0 and .NET Framework 4.5.1.</Description>
-    <PackageTags>Avro</PackageTags>
+    <PackageTags>Avro  Serialization Json Binary Schema</PackageTags>
     <TargetFrameworks>netstandard2.0;net451</TargetFrameworks>
   </PropertyGroup>
   <Import Project="..\build.props"/>
