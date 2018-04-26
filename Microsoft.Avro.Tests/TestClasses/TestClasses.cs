@@ -573,6 +573,10 @@ namespace Microsoft.Hadoop.Avro.Tests
         [DataMember]
         public Recursive RecursiveField { get; set; }
 
+        [ProtoMember(4)]
+        [DataMember]
+        public Dictionary<int, string> DictionaryField { get; set; }
+
         public static Random R = new Random(typeof(ComplexNestedClass).GetHashCode());
 
         public static ComplexNestedClass Create()
@@ -581,7 +585,8 @@ namespace Microsoft.Hadoop.Avro.Tests
             {
                 NestedField = SimpleFlatClass.Create(),
                 IntNestedField = R.Next(),
-                RecursiveField = Recursive.Create()
+                RecursiveField = Recursive.Create(),
+                DictionaryField = new Dictionary<int, string> {[R.Next()] = $"val:{R.Next()}"}
             };
         }
 
@@ -598,6 +603,11 @@ namespace Microsoft.Hadoop.Avro.Tests
             }
 
             if (!this.NestedField.Equals(other.NestedField))
+            {
+                return false;
+            }
+
+            if (this.DictionaryField.Count != other.DictionaryField.Count || this.DictionaryField.Except(other.DictionaryField).Any())
             {
                 return false;
             }
