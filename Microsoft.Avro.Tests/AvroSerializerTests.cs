@@ -105,6 +105,16 @@ namespace Microsoft.Hadoop.Avro.Tests
         }
 
         [Fact]
+        public void Serializer_SerializeListOfComplexNestedClass()
+        {
+            RoundTripSerializationWithCheck(new List<ComplexNestedClass>
+            {
+                ComplexNestedClass.Create(),
+                ComplexNestedClass.Create()
+            });
+        }
+
+        [Fact]
         public void Serializer_SerializeGuidClass()
         {
             RoundTripSerializationWithCheck(ClassOfGuid.Create(true));

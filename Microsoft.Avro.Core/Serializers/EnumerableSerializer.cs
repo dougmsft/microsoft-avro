@@ -80,6 +80,7 @@ namespace Microsoft.Hadoop.Avro.Serializers
                 Expression.Assign(buffer, Expression.New(listType)),
                 Expression.Assign(counter, Expression.Constant(0)),
                 Expression.Assign(enumerator, Expression.Call(value, getEnumerator)),
+                Expression.Assign(chunkCounter, Expression.Constant(0)),
                 Expression.Loop(
                     Expression.IfThenElse(
                         Expression.NotEqual(Expression.Call(enumerator, moveNext), Expression.Constant(false)),
