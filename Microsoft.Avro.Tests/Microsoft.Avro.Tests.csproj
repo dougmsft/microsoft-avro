@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Microsoft.Avro.Tests</AssemblyName>
-	  <TargetFrameworks>netcoreapp2.0;net451</TargetFrameworks>
+	  <TargetFrameworks>net451</TargetFrameworks>
     <Description>Tests Microsoft Avro libraries</Description>
     <PackageTags>Avro</PackageTags>
   </PropertyGroup>
