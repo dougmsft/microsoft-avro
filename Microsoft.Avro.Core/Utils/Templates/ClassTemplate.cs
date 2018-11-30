@@ -259,18 +259,17 @@ this.Write("\")]");
         }
 
         var unionSchema = typeSchema as UnionSchema;
-        if(unionSchema == null)
+        if (unionSchema == null)
         {
             return;
         }
-        if (unionSchema.Schemas.Count == 2 && ((unionSchema.Schemas[0] is NullSchema && unionSchema.Schemas[1] is PrimitiveTypeSchema)
-            || (unionSchema.Schemas[1] is NullSchema && unionSchema.Schemas[0] is PrimitiveTypeSchema)))
+        if (unionSchema.Schemas.Count == 2 && unionSchema.Schemas.Count(s => s is NullSchema) == 1)
         {
-            return;
+this.Write("\r\n        [NullableSchema]");
         }
         else
         {
-            if(unionSchema.Schemas.Any())
+            if (unionSchema.Schemas.Any())
             {
                 
 this.Write("\r\n        [AvroUnion(");
